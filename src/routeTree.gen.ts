@@ -9,38 +9,159 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LojaRouteImport } from './routes/loja'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
+import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
+import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
+import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
+import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
 
+const LojaRoute = LojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
+  id: '/produto/$slug',
+  path: '/produto/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProdutorRoute = AuthenticatedProdutorRouteImport.update({
+  id: '/produtor',
+  path: '/produtor',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProdutorIndexRoute =
+  AuthenticatedProdutorIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorProdutosRoute =
+  AuthenticatedProdutorProdutosRouteImport.update({
+    id: '/produtos',
+    path: '/produtos',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorNovoRoute =
+  AuthenticatedProdutorNovoRouteImport.update({
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/loja': typeof LojaRoute
+  '/produtor': typeof AuthenticatedProdutorRouteWithChildren
+  '/produto/$slug': typeof ProdutoSlugRoute
+  '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
+  '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/produtor/': typeof AuthenticatedProdutorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/loja': typeof LojaRoute
+  '/produto/$slug': typeof ProdutoSlugRoute
+  '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
+  '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/produtor': typeof AuthenticatedProdutorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/loja': typeof LojaRoute
+  '/_authenticated/produtor': typeof AuthenticatedProdutorRouteWithChildren
+  '/produto/$slug': typeof ProdutoSlugRoute
+  '/_authenticated/produtor/novo': typeof AuthenticatedProdutorNovoRoute
+  '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/_authenticated/produtor/': typeof AuthenticatedProdutorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/loja'
+    | '/produtor'
+    | '/produto/$slug'
+    | '/produtor/novo'
+    | '/produtor/produtos'
+    | '/produtor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/loja'
+    | '/produto/$slug'
+    | '/produtor/novo'
+    | '/produtor/produtos'
+    | '/produtor'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/loja'
+    | '/_authenticated/produtor'
+    | '/produto/$slug'
+    | '/_authenticated/produtor/novo'
+    | '/_authenticated/produtor/produtos'
+    | '/_authenticated/produtor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  LojaRoute: typeof LojaRoute
+  ProdutoSlugRoute: typeof ProdutoSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/loja': {
+      id: '/loja'
+      path: '/loja'
+      fullPath: '/loja'
+      preLoaderRoute: typeof LojaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +169,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produto/$slug': {
+      id: '/produto/$slug'
+      path: '/produto/$slug'
+      fullPath: '/produto/$slug'
+      preLoaderRoute: typeof ProdutoSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/produtor': {
+      id: '/_authenticated/produtor'
+      path: '/produtor'
+      fullPath: '/produtor'
+      preLoaderRoute: typeof AuthenticatedProdutorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/produtor/': {
+      id: '/_authenticated/produtor/'
+      path: '/'
+      fullPath: '/produtor/'
+      preLoaderRoute: typeof AuthenticatedProdutorIndexRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/produtos': {
+      id: '/_authenticated/produtor/produtos'
+      path: '/produtos'
+      fullPath: '/produtor/produtos'
+      preLoaderRoute: typeof AuthenticatedProdutorProdutosRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/novo': {
+      id: '/_authenticated/produtor/novo'
+      path: '/novo'
+      fullPath: '/produtor/novo'
+      preLoaderRoute: typeof AuthenticatedProdutorNovoRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
   }
 }
 
+interface AuthenticatedProdutorRouteChildren {
+  AuthenticatedProdutorNovoRoute: typeof AuthenticatedProdutorNovoRoute
+  AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
+  AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
+}
+
+const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
+  AuthenticatedProdutorNovoRoute: AuthenticatedProdutorNovoRoute,
+  AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
+  AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,
+}
+
+const AuthenticatedProdutorRouteWithChildren =
+  AuthenticatedProdutorRoute._addFileChildren(
+    AuthenticatedProdutorRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedProdutorRoute: typeof AuthenticatedProdutorRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedProdutorRoute: AuthenticatedProdutorRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  LojaRoute: LojaRoute,
+  ProdutoSlugRoute: ProdutoSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
