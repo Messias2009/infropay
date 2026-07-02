@@ -5,7 +5,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
 import { listCategories, listPublishedProducts } from "@/lib/catalog.functions";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/hero-banner.jpg";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   GraduationCap, BookOpen, LayoutTemplate, Users, Code2, Package, Video, Headphones, Smartphone, Plug, Wrench, Repeat, Sparkles,
