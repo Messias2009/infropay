@@ -61,6 +61,7 @@ export type Database = {
           product_type: Database["public"]["Enums"]["product_type"]
           promo_price_cents: number | null
           rating: number | null
+          rejection_reason: string | null
           reviews_count: number
           sales_count: number
           sales_video_url: string | null
@@ -90,6 +91,7 @@ export type Database = {
           product_type?: Database["public"]["Enums"]["product_type"]
           promo_price_cents?: number | null
           rating?: number | null
+          rejection_reason?: string | null
           reviews_count?: number
           sales_count?: number
           sales_video_url?: string | null
@@ -119,6 +121,7 @@ export type Database = {
           product_type?: Database["public"]["Enums"]["product_type"]
           promo_price_cents?: number | null
           rating?: number | null
+          rejection_reason?: string | null
           reviews_count?: number
           sales_count?: number
           sales_video_url?: string | null
@@ -198,6 +201,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bootstrap_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -208,7 +212,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "producer" | "buyer"
-      product_status: "rascunho" | "publicado" | "pausado"
+      product_status: "rascunho" | "publicado" | "pausado" | "em_analise"
       product_type:
         | "ebook"
         | "curso"
@@ -350,7 +354,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "producer", "buyer"],
-      product_status: ["rascunho", "publicado", "pausado"],
+      product_status: ["rascunho", "publicado", "pausado", "em_analise"],
       product_type: [
         "ebook",
         "curso",

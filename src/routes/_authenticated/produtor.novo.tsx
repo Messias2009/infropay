@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MediaUpload } from "@/components/MediaUpload";
 import { createProduct } from "@/lib/products.functions";
 import { listCategories } from "@/lib/catalog.functions";
 
@@ -37,9 +38,10 @@ function NovoProduto() {
   const [form, setForm] = useState({
     title: "", slug: "", short_description: "", description: "",
     product_type: "ebook" as const, category_id: "" as string,
-    cover_url: "", external_url: "",
+    cover_url: "" as string | null, banner_url: "" as string | null, file_url: "" as string | null,
+    external_url: "",
     price: "", promo_price: "", currency: "AOA",
-    status: "rascunho" as "rascunho" | "publicado", tags: "",
+    submit_for_review: false, tags: "",
     guarantee_days: 7,
   });
   const [loading, setLoading] = useState(false);
@@ -60,17 +62,19 @@ function NovoProduto() {
         product_type: form.product_type,
         category_id: form.category_id || null,
         cover_url: form.cover_url || null,
+        banner_url: form.banner_url || null,
+        file_url: form.file_url || null,
         external_url: form.external_url || null,
         price_cents: Math.round(Number(form.price || "0") * 100),
         promo_price_cents: form.promo_price ? Math.round(Number(form.promo_price) * 100) : null,
         currency: form.currency.toUpperCase(),
-        status: form.status,
+        status: form.submit_for_review ? ("publicado" as const) : ("rascunho" as const),
         tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
       };
       const row = await createFn({ data: payload });
-      toast.success("Produto criado!");
-      router.navigate({ to: "/produto/$slug", params: { slug: row.slug } });
+      toast.success(row.status === "em_analise" ? "Produto enviado para aprovação!" : "Produto criado como rascunho!");
+      router.navigate({ to: "/produtor/produtos" });
     } catch (err) {
       toast.error((err as Error).message);
     } finally { setLoading(false); }
@@ -78,12 +82,12 @@ function NovoProduto() {
 
   return (
     <div className="p-6 md:p-10 max-w-4xl">
-      <Link to="/produtor" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+      <Link to="/produtor/produtos" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
         <ArrowLeft className="h-4 w-4 mr-1" /> Voltar
       </Link>
       <div className="text-xs uppercase tracking-widest text-gold font-semibold">Novo produto</div>
       <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Criar produto</h1>
-      <p className="text-muted-foreground mt-2">Preencha os detalhes. Pode editar e publicar depois.</p>
+      <p className="text-muted-foreground mt-2">Preencha os detalhes. Ao enviar para aprovação, o produto ficará em análise por um administrador.</p>
 
       <form onSubmit={submit} className="mt-8 grid gap-6">
         <Section title="Informação principal">
@@ -121,14 +125,23 @@ function NovoProduto() {
           </Field>
         </Section>
 
-        <Section title="Mídia e ficheiros">
-          <Field label="URL da capa"><Input value={form.cover_url} onChange={(e) => set("cover_url", e.target.value)} placeholder="https://…" /></Field>
-          <Field label="URL externa (opcional)"><Input value={form.external_url} onChange={(e) => set("external_url", e.target.value)} placeholder="https://…" /></Field>
+        <Section title="Mídia">
+          <div className="grid gap-4">
+            <MediaUpload kind="image" label="Capa do produto (1:1 ou 4:3)" value={form.cover_url} onChange={(u) => set("cover_url", u ?? "")} productKey={form.slug || "novo"} />
+            <MediaUpload kind="image" label="Banner promocional (opcional, 16:9)" value={form.banner_url} onChange={(u) => set("banner_url", u ?? "")} productKey={form.slug || "novo"} />
+          </div>
+        </Section>
+
+        <Section title="Ficheiro / conteúdo">
+          <MediaUpload kind="file" label="Ficheiro principal (opcional)" hint="PDF, ZIP, MP4… O link será entregue ao comprador." value={form.file_url} onChange={(u) => set("file_url", u ?? "")} productKey={form.slug || "novo"} />
+          <Field label="URL externa (opcional)" hint="Use para produtos hospedados noutro sítio (ex: link de aulas).">
+            <Input value={form.external_url} onChange={(e) => set("external_url", e.target.value)} placeholder="https://…" />
+          </Field>
         </Section>
 
         <Section title="Preço e garantia">
           <div className="grid sm:grid-cols-3 gap-4">
-            <Field label="Preço"><Input type="number" min={0} step="0.01" value={form.price} onChange={(e) => set("price", e.target.value)} required /></Field>
+            <Field label="Preço" required><Input type="number" min={0} step="0.01" value={form.price} onChange={(e) => set("price", e.target.value)} required /></Field>
             <Field label="Preço promocional"><Input type="number" min={0} step="0.01" value={form.promo_price} onChange={(e) => set("promo_price", e.target.value)} /></Field>
             <Field label="Moeda">
               <Select value={form.currency} onValueChange={(v) => set("currency", v)}>
@@ -145,23 +158,21 @@ function NovoProduto() {
           <Field label="Dias de garantia"><Input type="number" min={0} max={60} value={form.guarantee_days} onChange={(e) => set("guarantee_days", Number(e.target.value))} /></Field>
         </Section>
 
-        <Section title="Estado">
-          <Field label="Status">
-            <Select value={form.status} onValueChange={(v) => set("status", v as any)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="rascunho">Rascunho</SelectItem>
-                <SelectItem value="publicado">Publicar imediatamente</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
+        <Section title="Publicação">
+          <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border p-4 hover:border-primary/60 transition">
+            <input type="checkbox" checked={form.submit_for_review} onChange={(e) => set("submit_for_review", e.target.checked)} className="mt-1 h-4 w-4 accent-primary" />
+            <div>
+              <div className="font-medium">Enviar para aprovação agora</div>
+              <div className="text-xs text-muted-foreground">Se ativado, o produto vai para a fila de análise do administrador. Caso contrário, será guardado como rascunho.</div>
+            </div>
+          </label>
         </Section>
 
         <div className="flex gap-3 justify-end pt-4 border-t border-border">
-          <Link to="/produtor"><Button type="button" variant="outline">Cancelar</Button></Link>
+          <Link to="/produtor/produtos"><Button type="button" variant="outline">Cancelar</Button></Link>
           <Button type="submit" disabled={loading} className="gradient-brand text-primary-foreground shadow-glow">
             <Save className="h-4 w-4 mr-1" />
-            {loading ? "A guardar..." : "Guardar produto"}
+            {loading ? "A guardar..." : (form.submit_for_review ? "Enviar para aprovação" : "Guardar rascunho")}
           </Button>
         </div>
       </form>

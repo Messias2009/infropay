@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Plus, Package } from "lucide-react";
+import { Plus, Package, Pencil, Send } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { listMyProducts } from "@/lib/products.functions";
+import { listMyProducts, submitProductForApproval } from "@/lib/products.functions";
 
 export const Route = createFileRoute("/_authenticated/produtor/produtos")({
   component: MeusProdutos,
@@ -14,9 +15,25 @@ function fmt(cents: number, currency: string) {
   catch { return `${currency} ${(cents/100).toFixed(2)}`; }
 }
 
+const BADGE: Record<string, string> = {
+  publicado: "bg-success/15 text-success",
+  em_analise: "bg-gold/15 text-gold",
+  rascunho: "bg-muted text-muted-foreground",
+  pausado: "bg-warning/15 text-warning",
+};
+const LABEL: Record<string, string> = {
+  publicado: "Publicado", em_analise: "Em análise", rascunho: "Rascunho", pausado: "Pausado",
+};
+
 function MeusProdutos() {
   const fn = useServerFn(listMyProducts);
-  const { data: products } = useQuery({ queryKey: ["producer", "products"], queryFn: () => fn() });
+  const submitFn = useServerFn(submitProductForApproval);
+  const { data: products, refetch } = useQuery({ queryKey: ["producer", "products"], queryFn: () => fn() });
+
+  async function submitOne(id: string) {
+    try { await submitFn({ data: { id } }); toast.success("Enviado para aprovação"); refetch(); }
+    catch (e) { toast.error((e as Error).message); }
+  }
 
   return (
     <div className="p-6 md:p-10 max-w-6xl">
@@ -37,19 +54,34 @@ function MeusProdutos() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {products.map((p) => (
-            <Link key={p.id} to="/produto/$slug" params={{ slug: p.slug }} className="rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/60 hover:shadow-glow transition">
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-gold/10">
-                {p.cover_url && <img src={p.cover_url} alt="" className="h-full w-full object-cover" />}
-              </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${p.status === "publicado" ? "bg-success/15 text-success" : "bg-muted text-muted-foreground"}`}>{p.status}</span>
-                  <span className="text-xs text-muted-foreground">{p.sales_count} vendas</span>
+            <div key={p.id} className="rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/60 hover:shadow-glow transition group">
+              <Link to="/produtor/editar/$id" params={{ id: p.id }} className="block">
+                <div className="aspect-video bg-gradient-to-br from-primary/20 to-gold/10 relative">
+                  {p.cover_url && <img src={p.cover_url} alt="" className="h-full w-full object-cover" />}
+                  <div className="absolute top-2 left-2">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${BADGE[p.status] ?? BADGE.rascunho}`}>{LABEL[p.status] ?? p.status}</span>
+                  </div>
                 </div>
-                <h3 className="font-semibold mt-2 line-clamp-2">{p.title}</h3>
-                <div className="mt-3 font-bold text-gradient-gold">{fmt(p.price_cents, p.currency)}</div>
+                <div className="p-4">
+                  <h3 className="font-semibold line-clamp-2">{p.title}</h3>
+                  {p.rejection_reason && <p className="text-xs text-destructive mt-1">Rejeitado: {p.rejection_reason}</p>}
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="font-bold text-gradient-gold">{fmt(p.price_cents, p.currency)}</div>
+                    <div className="text-xs text-muted-foreground">{p.sales_count} vendas</div>
+                  </div>
+                </div>
+              </Link>
+              <div className="px-4 pb-4 flex gap-2">
+                <Link to="/produtor/editar/$id" params={{ id: p.id }} className="flex-1">
+                  <Button size="sm" variant="outline" className="w-full"><Pencil className="h-3.5 w-3.5 mr-1" />Editar</Button>
+                </Link>
+                {(p.status === "rascunho" || p.status === "pausado") && (
+                  <Button size="sm" onClick={() => submitOne(p.id)} className="gradient-brand text-primary-foreground">
+                    <Send className="h-3.5 w-3.5 mr-1" />Publicar
+                  </Button>
+                )}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

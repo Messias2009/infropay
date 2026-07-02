@@ -1,13 +1,15 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { z } from "zod";
 import { useState } from "react";
-import { Sparkles, Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import heroBg from "@/assets/hero-banner.jpg";
+import logoMark from "@/assets/infropay-mark.png";
 
 const search = z.object({ mode: z.enum(["signin", "signup"]).optional() });
 
@@ -64,14 +66,13 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen relative grid lg:grid-cols-2">
-      <div className="relative hidden lg:block overflow-hidden bg-gradient-to-br from-background via-primary/10 to-background">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_transparent_60%)] opacity-30" />
+      <div className="relative hidden lg:block overflow-hidden">
+        <img src={heroBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-background/85 via-background/70 to-background/95" />
         <div className="absolute -top-20 -right-20 h-96 w-96 rounded-full gradient-gold opacity-20 blur-3xl" />
         <div className="relative h-full p-12 flex flex-col justify-between">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="h-9 w-9 rounded-lg gradient-brand grid place-items-center">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
+          <Link to="/" className="inline-flex items-center gap-2.5">
+            <img src={logoMark} alt="" width={512} height={512} className="h-10 w-10 rounded-lg object-contain" />
             <span className="text-xl font-bold">Infro<span className="text-gradient-gold">Pay</span></span>
           </Link>
           <div>
@@ -89,7 +90,7 @@ function AuthPage() {
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md">
           <Link to="/" className="lg:hidden inline-flex items-center gap-2 mb-8">
-            <div className="h-8 w-8 rounded-lg gradient-brand grid place-items-center"><Sparkles className="h-4 w-4 text-primary-foreground" /></div>
+            <img src={logoMark} alt="" width={512} height={512} className="h-8 w-8 rounded-lg object-contain" />
             <span className="text-lg font-bold">Infro<span className="text-gradient-gold">Pay</span></span>
           </Link>
 
