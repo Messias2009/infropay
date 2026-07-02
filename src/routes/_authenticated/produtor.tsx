@@ -34,7 +34,6 @@ function ProdutorLayout() {
         <nav className="p-3 space-y-1 flex-1 overflow-auto">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground px-3 py-2">Produtor</div>
           {items.map((i) => {
-            const active = i.exact ? pathname === i.to : pathname.startsWith(i.to) && !pathname.startsWith("/produtor/editar") ? pathname.startsWith(i.to) : (i.exact ? pathname === i.to : pathname.startsWith(i.to));
             const isActive = i.exact ? pathname === i.to : pathname === i.to || pathname.startsWith(i.to + "/");
             return (
               <Link key={i.to} to={i.to} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${isActive ? "gradient-brand text-primary-foreground shadow-glow" : "text-muted-foreground hover:bg-accent/40 hover:text-foreground"}`}>

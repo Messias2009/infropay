@@ -15,9 +15,13 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
+import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
 import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
+import { Route as AuthenticatedAdmIndexRouteImport } from './routes/_authenticated/adm.index'
 import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
 import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
+import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
+import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
 
 const LojaRoute = LojaRouteImport.update({
   id: '/loja',
@@ -48,12 +52,22 @@ const AuthenticatedProdutorRoute = AuthenticatedProdutorRouteImport.update({
   path: '/produtor',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdmRoute = AuthenticatedAdmRouteImport.update({
+  id: '/adm',
+  path: '/adm',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProdutorIndexRoute =
   AuthenticatedProdutorIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
+const AuthenticatedAdmIndexRoute = AuthenticatedAdmIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdmRoute,
+} as any)
 const AuthenticatedProdutorProdutosRoute =
   AuthenticatedProdutorProdutosRouteImport.update({
     id: '/produtos',
@@ -66,25 +80,44 @@ const AuthenticatedProdutorNovoRoute =
     path: '/novo',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
+const AuthenticatedAdmProdutosRoute =
+  AuthenticatedAdmProdutosRouteImport.update({
+    id: '/produtos',
+    path: '/produtos',
+    getParentRoute: () => AuthenticatedAdmRoute,
+  } as any)
+const AuthenticatedProdutorEditarIdRoute =
+  AuthenticatedProdutorEditarIdRouteImport.update({
+    id: '/editar/$id',
+    path: '/editar/$id',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/loja': typeof LojaRoute
+  '/adm': typeof AuthenticatedAdmRouteWithChildren
   '/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/adm/': typeof AuthenticatedAdmIndexRoute
   '/produtor/': typeof AuthenticatedProdutorIndexRoute
+  '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/loja': typeof LojaRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/adm': typeof AuthenticatedAdmIndexRoute
   '/produtor': typeof AuthenticatedProdutorIndexRoute
+  '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,11 +125,15 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/loja': typeof LojaRoute
+  '/_authenticated/adm': typeof AuthenticatedAdmRouteWithChildren
   '/_authenticated/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/_authenticated/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/_authenticated/adm/': typeof AuthenticatedAdmIndexRoute
   '/_authenticated/produtor/': typeof AuthenticatedProdutorIndexRoute
+  '/_authenticated/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -104,31 +141,42 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/loja'
+    | '/adm'
     | '/produtor'
     | '/produto/$slug'
+    | '/adm/produtos'
     | '/produtor/novo'
     | '/produtor/produtos'
+    | '/adm/'
     | '/produtor/'
+    | '/produtor/editar/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/loja'
     | '/produto/$slug'
+    | '/adm/produtos'
     | '/produtor/novo'
     | '/produtor/produtos'
+    | '/adm'
     | '/produtor'
+    | '/produtor/editar/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/loja'
+    | '/_authenticated/adm'
     | '/_authenticated/produtor'
     | '/produto/$slug'
+    | '/_authenticated/adm/produtos'
     | '/_authenticated/produtor/novo'
     | '/_authenticated/produtor/produtos'
+    | '/_authenticated/adm/'
     | '/_authenticated/produtor/'
+    | '/_authenticated/produtor/editar/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,12 +231,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/adm': {
+      id: '/_authenticated/adm'
+      path: '/adm'
+      fullPath: '/adm'
+      preLoaderRoute: typeof AuthenticatedAdmRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/produtor/': {
       id: '/_authenticated/produtor/'
       path: '/'
       fullPath: '/produtor/'
       preLoaderRoute: typeof AuthenticatedProdutorIndexRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/adm/': {
+      id: '/_authenticated/adm/'
+      path: '/'
+      fullPath: '/adm/'
+      preLoaderRoute: typeof AuthenticatedAdmIndexRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
     }
     '/_authenticated/produtor/produtos': {
       id: '/_authenticated/produtor/produtos'
@@ -204,19 +266,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutorNovoRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
     }
+    '/_authenticated/adm/produtos': {
+      id: '/_authenticated/adm/produtos'
+      path: '/produtos'
+      fullPath: '/adm/produtos'
+      preLoaderRoute: typeof AuthenticatedAdmProdutosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
+    }
+    '/_authenticated/produtor/editar/$id': {
+      id: '/_authenticated/produtor/editar/$id'
+      path: '/editar/$id'
+      fullPath: '/produtor/editar/$id'
+      preLoaderRoute: typeof AuthenticatedProdutorEditarIdRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
   }
 }
+
+interface AuthenticatedAdmRouteChildren {
+  AuthenticatedAdmProdutosRoute: typeof AuthenticatedAdmProdutosRoute
+  AuthenticatedAdmIndexRoute: typeof AuthenticatedAdmIndexRoute
+}
+
+const AuthenticatedAdmRouteChildren: AuthenticatedAdmRouteChildren = {
+  AuthenticatedAdmProdutosRoute: AuthenticatedAdmProdutosRoute,
+  AuthenticatedAdmIndexRoute: AuthenticatedAdmIndexRoute,
+}
+
+const AuthenticatedAdmRouteWithChildren =
+  AuthenticatedAdmRoute._addFileChildren(AuthenticatedAdmRouteChildren)
 
 interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorNovoRoute: typeof AuthenticatedProdutorNovoRoute
   AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
   AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
+  AuthenticatedProdutorEditarIdRoute: typeof AuthenticatedProdutorEditarIdRoute
 }
 
 const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
   AuthenticatedProdutorNovoRoute: AuthenticatedProdutorNovoRoute,
   AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
   AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,
+  AuthenticatedProdutorEditarIdRoute: AuthenticatedProdutorEditarIdRoute,
 }
 
 const AuthenticatedProdutorRouteWithChildren =
@@ -225,10 +316,12 @@ const AuthenticatedProdutorRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdmRoute: typeof AuthenticatedAdmRouteWithChildren
   AuthenticatedProdutorRoute: typeof AuthenticatedProdutorRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdmRoute: AuthenticatedAdmRouteWithChildren,
   AuthenticatedProdutorRoute: AuthenticatedProdutorRouteWithChildren,
 }
 
