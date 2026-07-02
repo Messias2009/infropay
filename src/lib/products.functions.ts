@@ -73,12 +73,11 @@ export const updateProduct = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), patch: productSchema.partial() }).parse(d))
   .handler(async ({ data, context }) => {
     // Producers cannot self-publish; publish requests always go to em_analise
-    const patch: Record<string, unknown> = { ...data.patch };
+    const patch = { ...data.patch } as any;
     if (patch.status === "publicado") patch.status = "em_analise";
-    if (patch.cover_url === "") patch.cover_url = null;
-    if (patch.banner_url === "") patch.banner_url = null;
-    if (patch.file_url === "") patch.file_url = null;
-    if (patch.external_url === "") patch.external_url = null;
+    for (const k of ["cover_url","banner_url","file_url","external_url"] as const) {
+      if (patch[k] === "") patch[k] = null;
+    }
     const { data: row, error } = await context.supabase
       .from("products").update(patch).eq("id", data.id).eq("producer_id", context.userId)
       .select("id, slug, status").single();
