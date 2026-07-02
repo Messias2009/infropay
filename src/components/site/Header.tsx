@@ -1,9 +1,8 @@
-import { Link } from "@tanstack/react-router";
-import { Sparkles, Search, ShoppingBag, User as UserIcon, LogOut } from "lucide-react";
+import { Link, useRouter } from "@tanstack/react-router";
+import { Search, ShoppingBag, User as UserIcon, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useRouter } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import logoMark from "@/assets/infropay-mark.png";
 
 export function Header() {
   const { user } = useAuth();
@@ -24,12 +24,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 glass">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-lg blur-md gradient-brand opacity-60 group-hover:opacity-100 transition" />
-            <div className="relative h-9 w-9 rounded-lg gradient-brand grid place-items-center">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="relative h-9 w-9">
+            <div className="absolute inset-0 rounded-lg blur-md gradient-brand opacity-50 group-hover:opacity-100 transition" />
+            <img src={logoMark} alt="InfroPay" width={512} height={512} className="relative h-9 w-9 rounded-lg object-contain" />
           </div>
           <div className="leading-tight">
             <div className="text-lg font-bold tracking-tight">
@@ -53,15 +51,11 @@ export function Header() {
           {user ? (
             <>
               <Link to="/produtor">
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-                  Painel
-                </Button>
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex">Painel</Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <UserIcon className="h-4 w-4" />
-                  </Button>
+                  <Button variant="ghost" size="icon"><UserIcon className="h-4 w-4" /></Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
                   <DropdownMenuItem disabled className="text-xs">{user.email}</DropdownMenuItem>
@@ -74,13 +68,9 @@ export function Header() {
             </>
           ) : (
             <>
-              <Link to="/auth">
-                <Button variant="ghost" size="sm">Entrar</Button>
-              </Link>
+              <Link to="/auth"><Button variant="ghost" size="sm">Entrar</Button></Link>
               <Link to="/auth" search={{ mode: "signup" }}>
-                <Button size="sm" className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90">
-                  Começar agora
-                </Button>
+                <Button size="sm" className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90">Começar agora</Button>
               </Link>
             </>
           )}
