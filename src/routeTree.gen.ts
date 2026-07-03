@@ -18,8 +18,11 @@ import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
 import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
 import { Route as AuthenticatedAdmIndexRouteImport } from './routes/_authenticated/adm.index'
+import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authenticated/produtor.saques'
 import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
 import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
+import { Route as AuthenticatedProdutorFinanceiroRouteImport } from './routes/_authenticated/produtor.financeiro'
+import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
 import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
 import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
 
@@ -68,6 +71,12 @@ const AuthenticatedAdmIndexRoute = AuthenticatedAdmIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdmRoute,
 } as any)
+const AuthenticatedProdutorSaquesRoute =
+  AuthenticatedProdutorSaquesRouteImport.update({
+    id: '/saques',
+    path: '/saques',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
 const AuthenticatedProdutorProdutosRoute =
   AuthenticatedProdutorProdutosRouteImport.update({
     id: '/produtos',
@@ -80,6 +89,17 @@ const AuthenticatedProdutorNovoRoute =
     path: '/novo',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
+const AuthenticatedProdutorFinanceiroRoute =
+  AuthenticatedProdutorFinanceiroRouteImport.update({
+    id: '/financeiro',
+    path: '/financeiro',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedAdmSaquesRoute = AuthenticatedAdmSaquesRouteImport.update({
+  id: '/saques',
+  path: '/saques',
+  getParentRoute: () => AuthenticatedAdmRoute,
+} as any)
 const AuthenticatedAdmProdutosRoute =
   AuthenticatedAdmProdutosRouteImport.update({
     id: '/produtos',
@@ -101,8 +121,11 @@ export interface FileRoutesByFullPath {
   '/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
+  '/adm/saques': typeof AuthenticatedAdmSaquesRoute
+  '/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm/': typeof AuthenticatedAdmIndexRoute
   '/produtor/': typeof AuthenticatedProdutorIndexRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
@@ -113,8 +136,11 @@ export interface FileRoutesByTo {
   '/loja': typeof LojaRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
+  '/adm/saques': typeof AuthenticatedAdmSaquesRoute
+  '/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm': typeof AuthenticatedAdmIndexRoute
   '/produtor': typeof AuthenticatedProdutorIndexRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
@@ -129,8 +155,11 @@ export interface FileRoutesById {
   '/_authenticated/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
+  '/_authenticated/adm/saques': typeof AuthenticatedAdmSaquesRoute
+  '/_authenticated/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
   '/_authenticated/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
+  '/_authenticated/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/_authenticated/adm/': typeof AuthenticatedAdmIndexRoute
   '/_authenticated/produtor/': typeof AuthenticatedProdutorIndexRoute
   '/_authenticated/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
@@ -145,8 +174,11 @@ export interface FileRouteTypes {
     | '/produtor'
     | '/produto/$slug'
     | '/adm/produtos'
+    | '/adm/saques'
+    | '/produtor/financeiro'
     | '/produtor/novo'
     | '/produtor/produtos'
+    | '/produtor/saques'
     | '/adm/'
     | '/produtor/'
     | '/produtor/editar/$id'
@@ -157,8 +189,11 @@ export interface FileRouteTypes {
     | '/loja'
     | '/produto/$slug'
     | '/adm/produtos'
+    | '/adm/saques'
+    | '/produtor/financeiro'
     | '/produtor/novo'
     | '/produtor/produtos'
+    | '/produtor/saques'
     | '/adm'
     | '/produtor'
     | '/produtor/editar/$id'
@@ -172,8 +207,11 @@ export interface FileRouteTypes {
     | '/_authenticated/produtor'
     | '/produto/$slug'
     | '/_authenticated/adm/produtos'
+    | '/_authenticated/adm/saques'
+    | '/_authenticated/produtor/financeiro'
     | '/_authenticated/produtor/novo'
     | '/_authenticated/produtor/produtos'
+    | '/_authenticated/produtor/saques'
     | '/_authenticated/adm/'
     | '/_authenticated/produtor/'
     | '/_authenticated/produtor/editar/$id'
@@ -252,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmIndexRouteImport
       parentRoute: typeof AuthenticatedAdmRoute
     }
+    '/_authenticated/produtor/saques': {
+      id: '/_authenticated/produtor/saques'
+      path: '/saques'
+      fullPath: '/produtor/saques'
+      preLoaderRoute: typeof AuthenticatedProdutorSaquesRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
     '/_authenticated/produtor/produtos': {
       id: '/_authenticated/produtor/produtos'
       path: '/produtos'
@@ -265,6 +310,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/produtor/novo'
       preLoaderRoute: typeof AuthenticatedProdutorNovoRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/financeiro': {
+      id: '/_authenticated/produtor/financeiro'
+      path: '/financeiro'
+      fullPath: '/produtor/financeiro'
+      preLoaderRoute: typeof AuthenticatedProdutorFinanceiroRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/adm/saques': {
+      id: '/_authenticated/adm/saques'
+      path: '/saques'
+      fullPath: '/adm/saques'
+      preLoaderRoute: typeof AuthenticatedAdmSaquesRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
     }
     '/_authenticated/adm/produtos': {
       id: '/_authenticated/adm/produtos'
@@ -285,11 +344,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdmRouteChildren {
   AuthenticatedAdmProdutosRoute: typeof AuthenticatedAdmProdutosRoute
+  AuthenticatedAdmSaquesRoute: typeof AuthenticatedAdmSaquesRoute
   AuthenticatedAdmIndexRoute: typeof AuthenticatedAdmIndexRoute
 }
 
 const AuthenticatedAdmRouteChildren: AuthenticatedAdmRouteChildren = {
   AuthenticatedAdmProdutosRoute: AuthenticatedAdmProdutosRoute,
+  AuthenticatedAdmSaquesRoute: AuthenticatedAdmSaquesRoute,
   AuthenticatedAdmIndexRoute: AuthenticatedAdmIndexRoute,
 }
 
@@ -297,15 +358,19 @@ const AuthenticatedAdmRouteWithChildren =
   AuthenticatedAdmRoute._addFileChildren(AuthenticatedAdmRouteChildren)
 
 interface AuthenticatedProdutorRouteChildren {
+  AuthenticatedProdutorFinanceiroRoute: typeof AuthenticatedProdutorFinanceiroRoute
   AuthenticatedProdutorNovoRoute: typeof AuthenticatedProdutorNovoRoute
   AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
+  AuthenticatedProdutorSaquesRoute: typeof AuthenticatedProdutorSaquesRoute
   AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
   AuthenticatedProdutorEditarIdRoute: typeof AuthenticatedProdutorEditarIdRoute
 }
 
 const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
+  AuthenticatedProdutorFinanceiroRoute: AuthenticatedProdutorFinanceiroRoute,
   AuthenticatedProdutorNovoRoute: AuthenticatedProdutorNovoRoute,
   AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
+  AuthenticatedProdutorSaquesRoute: AuthenticatedProdutorSaquesRoute,
   AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,
   AuthenticatedProdutorEditarIdRoute: AuthenticatedProdutorEditarIdRoute,
 }
@@ -338,13 +403,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
