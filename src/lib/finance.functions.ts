@@ -11,7 +11,7 @@ export const getMyWallet = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     // release matured sales first (no-op if none)
-    await context.supabase.rpc("release_matured_sales").catch(() => {});
+    try { await (context.supabase as any).rpc("release_matured_sales"); } catch {}
     await ensureWalletRow(context.supabase, context.userId);
     const { data } = await (context.supabase as any)
       .from("wallets").select("*").eq("producer_id", context.userId).maybeSingle();
@@ -21,7 +21,7 @@ export const getMyWallet = createServerFn({ method: "GET" })
 export const getMyFinanceOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await context.supabase.rpc("release_matured_sales").catch(() => {});
+    try { await (context.supabase as any).rpc("release_matured_sales"); } catch {}
     const { data: sales } = await (context.supabase as any)
       .from("sales")
       .select("id, gross_cents, net_cents, platform_fee_cents, status, created_at, product_id, payment_method")
