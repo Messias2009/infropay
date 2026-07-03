@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { LayoutDashboard, Package, Plus, BarChart3, Settings, Shield, ArrowUpRight } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Wallet, Banknote, Settings, Shield, ArrowUpRight } from "lucide-react";
 import logoMark from "@/assets/infropay-mark.png";
 import { isAdmin } from "@/lib/admin.functions";
 
@@ -14,6 +14,8 @@ const items = [
   { to: "/produtor", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/produtor/produtos", icon: Package, label: "Produtos" },
   { to: "/produtor/novo", icon: Plus, label: "Novo produto" },
+  { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
+  { to: "/produtor/saques", icon: Banknote, label: "Saques" },
 ];
 
 function ProdutorLayout() {
