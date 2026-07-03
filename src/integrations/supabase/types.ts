@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank_accounts: {
+        Row: {
+          bank_name: string
+          created_at: string
+          holder_name: string
+          iban: string
+          id: string
+          is_default: boolean
+          phone: string | null
+          producer_id: string
+          updated_at: string
+        }
+        Insert: {
+          bank_name: string
+          created_at?: string
+          holder_name: string
+          iban: string
+          id?: string
+          is_default?: boolean
+          phone?: string | null
+          producer_id: string
+          updated_at?: string
+        }
+        Update: {
+          bank_name?: string
+          created_at?: string
+          holder_name?: string
+          iban?: string
+          id?: string
+          is_default?: boolean
+          phone?: string | null
+          producer_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -175,6 +211,83 @@ export type Database = {
         }
         Relationships: []
       }
+      sales: {
+        Row: {
+          access_token: string
+          buyer_email: string | null
+          buyer_name: string | null
+          buyer_phone: string | null
+          buyer_user_id: string | null
+          created_at: string
+          currency: string
+          gross_cents: number
+          id: string
+          net_cents: number
+          paid_at: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_ref: string | null
+          platform_fee_cents: number
+          producer_id: string
+          product_id: string
+          release_at: string | null
+          released: boolean
+          status: Database["public"]["Enums"]["sale_status"]
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string
+          buyer_email?: string | null
+          buyer_name?: string | null
+          buyer_phone?: string | null
+          buyer_user_id?: string | null
+          created_at?: string
+          currency?: string
+          gross_cents: number
+          id?: string
+          net_cents: number
+          paid_at?: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_ref?: string | null
+          platform_fee_cents?: number
+          producer_id: string
+          product_id: string
+          release_at?: string | null
+          released?: boolean
+          status?: Database["public"]["Enums"]["sale_status"]
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          buyer_email?: string | null
+          buyer_name?: string | null
+          buyer_phone?: string | null
+          buyer_user_id?: string | null
+          created_at?: string
+          currency?: string
+          gross_cents?: number
+          id?: string
+          net_cents?: number
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_ref?: string | null
+          platform_fee_cents?: number
+          producer_id?: string
+          product_id?: string
+          release_at?: string | null
+          released?: boolean
+          status?: Database["public"]["Enums"]["sale_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -196,12 +309,90 @@ export type Database = {
         }
         Relationships: []
       }
+      wallets: {
+        Row: {
+          available_cents: number
+          currency: string
+          pending_cents: number
+          producer_id: string
+          updated_at: string
+        }
+        Insert: {
+          available_cents?: number
+          currency?: string
+          pending_cents?: number
+          producer_id: string
+          updated_at?: string
+        }
+        Update: {
+          available_cents?: number
+          currency?: string
+          pending_cents?: number
+          producer_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          bank_account_id: string
+          created_at: string
+          currency: string
+          fee_cents: number
+          gross_cents: number
+          id: string
+          net_cents: number
+          processed_at: string | null
+          producer_id: string
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          updated_at: string
+        }
+        Insert: {
+          bank_account_id: string
+          created_at?: string
+          currency?: string
+          fee_cents: number
+          gross_cents: number
+          id?: string
+          net_cents: number
+          processed_at?: string | null
+          producer_id: string
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          updated_at?: string
+        }
+        Update: {
+          bank_account_id?: string
+          created_at?: string
+          currency?: string
+          fee_cents?: number
+          gross_cents?: number
+          id?: string
+          net_cents?: number
+          processed_at?: string | null
+          producer_id?: string
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawals_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       bootstrap_admin: { Args: never; Returns: boolean }
+      ensure_wallet: { Args: { _uid: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -209,9 +400,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      release_matured_sales: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "producer" | "buyer"
+      payment_method: "multicaixa_express" | "referencia" | "transferencia"
       product_status: "rascunho" | "publicado" | "pausado" | "em_analise"
       product_type:
         | "ebook"
@@ -226,6 +419,8 @@ export type Database = {
         | "ia"
         | "comunidade"
         | "download"
+      sale_status: "pendente" | "pago" | "reembolsado" | "cancelado"
+      withdrawal_status: "em_analise" | "aprovado" | "pago" | "recusado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -354,6 +549,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "producer", "buyer"],
+      payment_method: ["multicaixa_express", "referencia", "transferencia"],
       product_status: ["rascunho", "publicado", "pausado", "em_analise"],
       product_type: [
         "ebook",
@@ -369,6 +565,8 @@ export const Constants = {
         "comunidade",
         "download",
       ],
+      sale_status: ["pendente", "pago", "reembolsado", "cancelado"],
+      withdrawal_status: ["em_analise", "aprovado", "pago", "recusado"],
     },
   },
 } as const
