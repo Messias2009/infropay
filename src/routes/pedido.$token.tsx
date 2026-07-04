@@ -1,0 +1,121 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { CheckCircle2, Clock, Download, ExternalLink, Copy } from "lucide-react";
+import { SiteLayout } from "@/components/site/SiteLayout";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { getOrderByToken } from "@/lib/checkout.functions";
+
+const opt = (token: string) => queryOptions({
+  queryKey: ["order", token],
+  queryFn: () => getOrderByToken({ data: { token } }),
+  refetchInterval: 15000,
+});
+
+export const Route = createFileRoute("/pedido/$token")({
+  loader: async ({ context, params }) => {
+    const d = await context.queryClient.ensureQueryData(opt(params.token));
+    if (!d) throw notFound();
+  },
+  head: () => ({ meta: [{ title: "Pedido — InfroPay" }, { name: "robots", content: "noindex" }] }),
+  errorComponent: ({ error }) => <div className="p-10 text-center text-destructive text-sm">{(error as Error).message}</div>,
+  notFoundComponent: () => <SiteLayout><div className="p-10 text-center">Pedido não encontrado.</div></SiteLayout>,
+  component: Pedido,
+});
+
+function fmt(c: number, cur: string) {
+  try { return new Intl.NumberFormat("pt-PT",{style:"currency",currency:cur}).format(c/100); }
+  catch { return `${cur} ${(c/100).toFixed(2)}`; }
+}
+
+const METHOD_LABEL: Record<string, string> = {
+  multicaixa_express: "Multicaixa Express",
+  referencia: "Referência Multicaixa",
+  transferencia: "Transferência Bancária",
+};
+
+function Pedido() {
+  const { token } = Route.useParams();
+  const { data: o } = useSuspenseQuery(opt(token));
+  if (!o) return null;
+  const paid = o.status === "pago";
+  const prod = o.product as any;
+
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16">
+        <div className={`rounded-2xl border p-8 text-center ${paid ? "border-success/40 bg-success/5" : "border-gold/40 bg-gold/5"}`}>
+          <div className={`mx-auto h-16 w-16 rounded-full grid place-items-center ${paid ? "gradient-brand" : "gradient-gold"}`}>
+            {paid ? <CheckCircle2 className="h-8 w-8 text-primary-foreground" /> : <Clock className="h-8 w-8 text-gold-foreground" />}
+          </div>
+          <h1 className="mt-4 text-3xl font-bold">{paid ? "Pagamento confirmado!" : "A aguardar pagamento"}</h1>
+          <p className="mt-2 text-muted-foreground">
+            {paid ? "Acesso liberado — obrigado pela sua compra." : "Assim que confirmarmos o pagamento, o acesso será liberado automaticamente."}
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="text-xs font-semibold uppercase tracking-widest text-gold mb-3">Produto</div>
+            <div className="flex gap-3">
+              <div className="h-16 w-16 rounded-xl overflow-hidden bg-secondary shrink-0">
+                {prod?.cover_url && <img src={prod.cover_url} alt="" className="h-full w-full object-cover" />}
+              </div>
+              <div className="min-w-0">
+                <div className="font-semibold line-clamp-2">{prod?.title}</div>
+                <div className="mt-1 text-lg font-bold text-gradient-gold">{fmt(o.gross_cents, o.currency)}</div>
+              </div>
+            </div>
+            {paid && (
+              <div className="mt-4 space-y-2">
+                {prod?.file_url && (
+                  <a href={prod.file_url} target="_blank" rel="noreferrer">
+                    <Button className="w-full gradient-brand text-primary-foreground"><Download className="h-4 w-4 mr-2" />Baixar produto</Button>
+                  </a>
+                )}
+                {prod?.external_url && (
+                  <a href={prod.external_url} target="_blank" rel="noreferrer">
+                    <Button variant="outline" className="w-full"><ExternalLink className="h-4 w-4 mr-2" />Aceder</Button>
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="text-xs font-semibold uppercase tracking-widest text-gold mb-3">Detalhes</div>
+            <dl className="space-y-2 text-sm">
+              <Row k="Método" v={METHOD_LABEL[o.payment_method] ?? o.payment_method} />
+              <Row k="Comprador" v={o.buyer_name ?? "-"} />
+              <Row k="Email" v={o.buyer_email ?? "-"} />
+              <Row k="Data" v={new Date(o.created_at).toLocaleString("pt-PT")} />
+              <Row k="Referência" v={
+                <button onClick={() => { navigator.clipboard.writeText(token); toast.success("Copiado"); }} className="inline-flex items-center gap-1 hover:text-foreground font-mono text-xs">
+                  {token.slice(0, 12)}… <Copy className="h-3 w-3" />
+                </button>
+              } />
+            </dl>
+            {!paid && (
+              <div className="mt-4 rounded-lg bg-secondary/60 p-3 text-xs text-muted-foreground">
+                Guarde esta página. A confirmação atualiza automaticamente a cada 15 segundos.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link to="/loja"><Button variant="outline">Continuar a explorar</Button></Link>
+        </div>
+      </div>
+    </SiteLayout>
+  );
+}
+
+function Row({ k, v }: { k: string; v: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <dt className="text-muted-foreground">{k}</dt>
+      <dd className="font-medium text-right min-w-0 truncate">{v}</dd>
+    </div>
+  );
+}
