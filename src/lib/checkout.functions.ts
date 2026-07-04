@@ -59,8 +59,8 @@ export const createOrder = createServerFn({ method: "POST" })
 export const getOrderByToken = createServerFn({ method: "GET" })
   .inputValidator((d: { token: string }) => z.object({ token: z.string().min(10) }).parse(d))
   .handler(async ({ data }) => {
-    const supabase = pub();
-    const { data: sale, error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: sale, error } = await supabaseAdmin
       .from("sales")
       .select("id, status, gross_cents, currency, payment_method, buyer_name, buyer_email, created_at, paid_at, product:products(title, slug, cover_url, file_url, external_url)")
       .eq("access_token", data.token)
@@ -68,3 +68,4 @@ export const getOrderByToken = createServerFn({ method: "GET" })
     if (error) throw error;
     return sale;
   });
+
