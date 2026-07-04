@@ -39,9 +39,10 @@ export function Header() {
 
         <nav className="hidden md:flex items-center gap-1 text-sm">
           <Link to="/loja" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Loja</Link>
-          <Link to="/loja" search={{ cat: "cursos" }} className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Cursos</Link>
-          <Link to="/loja" search={{ cat: "ebooks" }} className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Ebooks</Link>
-          <Link to="/loja" search={{ cat: "templates" }} className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Templates</Link>
+          <Link to="/legends" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Legends</Link>
+          <Link to="/sobre" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Sobre</Link>
+          <Link to="/faq" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">FAQ</Link>
+          <Link to="/contactos" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Contactos</Link>
         </nav>
 
         <div className="flex items-center gap-2">

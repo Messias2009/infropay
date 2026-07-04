@@ -9,11 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LojaRouteImport } from './routes/loja'
+import { Route as LegendsRouteImport } from './routes/legends'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ContactosRouteImport } from './routes/contactos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
+import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
+import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
 import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
 import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
 import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
@@ -26,9 +34,39 @@ import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
 import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
 
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LojaRoute = LojaRouteImport.update({
   id: '/loja',
   path: '/loja',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegendsRoute = LegendsRouteImport.update({
+  id: '/legends',
+  path: '/legends',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactosRoute = ContactosRouteImport.update({
+  id: '/contactos',
+  path: '/contactos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -48,6 +86,16 @@ const IndexRoute = IndexRouteImport.update({
 const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
   id: '/produto/$slug',
   path: '/produto/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoTokenRoute = PedidoTokenRouteImport.update({
+  id: '/pedido/$token',
+  path: '/pedido/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutSlugRoute = CheckoutSlugRouteImport.update({
+  id: '/checkout/$slug',
+  path: '/checkout/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedProdutorRoute = AuthenticatedProdutorRouteImport.update({
@@ -116,9 +164,17 @@ const AuthenticatedProdutorEditarIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contactos': typeof ContactosRoute
+  '/faq': typeof FaqRoute
+  '/legends': typeof LegendsRoute
   '/loja': typeof LojaRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/adm': typeof AuthenticatedAdmRouteWithChildren
   '/produtor': typeof AuthenticatedProdutorRouteWithChildren
+  '/checkout/$slug': typeof CheckoutSlugRoute
+  '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
@@ -133,7 +189,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contactos': typeof ContactosRoute
+  '/faq': typeof FaqRoute
+  '/legends': typeof LegendsRoute
   '/loja': typeof LojaRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
+  '/checkout/$slug': typeof CheckoutSlugRoute
+  '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
@@ -150,9 +214,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/contactos': typeof ContactosRoute
+  '/faq': typeof FaqRoute
+  '/legends': typeof LegendsRoute
   '/loja': typeof LojaRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/_authenticated/adm': typeof AuthenticatedAdmRouteWithChildren
   '/_authenticated/produtor': typeof AuthenticatedProdutorRouteWithChildren
+  '/checkout/$slug': typeof CheckoutSlugRoute
+  '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/_authenticated/adm/saques': typeof AuthenticatedAdmSaquesRoute
@@ -169,9 +241,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/contactos'
+    | '/faq'
+    | '/legends'
     | '/loja'
+    | '/privacidade'
+    | '/sobre'
+    | '/termos'
     | '/adm'
     | '/produtor'
+    | '/checkout/$slug'
+    | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/produtos'
     | '/adm/saques'
@@ -186,7 +266,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/contactos'
+    | '/faq'
+    | '/legends'
     | '/loja'
+    | '/privacidade'
+    | '/sobre'
+    | '/termos'
+    | '/checkout/$slug'
+    | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/produtos'
     | '/adm/saques'
@@ -202,9 +290,17 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/contactos'
+    | '/faq'
+    | '/legends'
     | '/loja'
+    | '/privacidade'
+    | '/sobre'
+    | '/termos'
     | '/_authenticated/adm'
     | '/_authenticated/produtor'
+    | '/checkout/$slug'
+    | '/pedido/$token'
     | '/produto/$slug'
     | '/_authenticated/adm/produtos'
     | '/_authenticated/adm/saques'
@@ -221,17 +317,67 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ContactosRoute: typeof ContactosRoute
+  FaqRoute: typeof FaqRoute
+  LegendsRoute: typeof LegendsRoute
   LojaRoute: typeof LojaRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
+  SobreRoute: typeof SobreRoute
+  TermosRoute: typeof TermosRoute
+  CheckoutSlugRoute: typeof CheckoutSlugRoute
+  PedidoTokenRoute: typeof PedidoTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/loja': {
       id: '/loja'
       path: '/loja'
       fullPath: '/loja'
       preLoaderRoute: typeof LojaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legends': {
+      id: '/legends'
+      path: '/legends'
+      fullPath: '/legends'
+      preLoaderRoute: typeof LegendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contactos': {
+      id: '/contactos'
+      path: '/contactos'
+      fullPath: '/contactos'
+      preLoaderRoute: typeof ContactosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -260,6 +406,20 @@ declare module '@tanstack/react-router' {
       path: '/produto/$slug'
       fullPath: '/produto/$slug'
       preLoaderRoute: typeof ProdutoSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/$token': {
+      id: '/pedido/$token'
+      path: '/pedido/$token'
+      fullPath: '/pedido/$token'
+      preLoaderRoute: typeof PedidoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/$slug': {
+      id: '/checkout/$slug'
+      path: '/checkout/$slug'
+      fullPath: '/checkout/$slug'
+      preLoaderRoute: typeof CheckoutSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/produtor': {
@@ -397,7 +557,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ContactosRoute: ContactosRoute,
+  FaqRoute: FaqRoute,
+  LegendsRoute: LegendsRoute,
   LojaRoute: LojaRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
+  SobreRoute: SobreRoute,
+  TermosRoute: TermosRoute,
+  CheckoutSlugRoute: CheckoutSlugRoute,
+  PedidoTokenRoute: PedidoTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
 }
 export const routeTree = rootRouteImport

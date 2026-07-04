@@ -98,12 +98,11 @@ function Produto() {
                 <div className="text-4xl font-bold">{fmt(p.price_cents, p.currency)}</div>
               )}
 
-              <Button size="lg" className="mt-6 w-full gradient-brand text-primary-foreground shadow-glow h-12 text-base">
-                Comprar agora
-              </Button>
-              <Button size="lg" variant="outline" className="mt-2 w-full h-11">
-                Adicionar ao carrinho
-              </Button>
+              <Link to="/checkout/$slug" params={{ slug }} className="mt-6 block">
+                <Button size="lg" className="w-full gradient-brand text-primary-foreground shadow-glow h-12 text-base">
+                  Comprar agora
+                </Button>
+              </Link>
 
               <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-success" /> Compra protegida</li>
