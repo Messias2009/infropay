@@ -1,20 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, GraduationCap, BookOpen, LayoutTemplate, Users, Code2, Package, Video, Headphones, Smartphone, Plug, Wrench, Repeat, Trophy, Rocket, Play, CheckCircle2, Quote } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
-import { listCategories, listPublishedProducts } from "@/lib/catalog.functions";
+import { listPublishedProducts } from "@/lib/catalog.functions";
 import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 
-const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  GraduationCap, BookOpen, LayoutTemplate, Users, Code2, Package, Video, Headphones, Smartphone, Plug, Wrench, Repeat, Sparkles,
-};
-
-const categoriesQuery = queryOptions({ queryKey: ["categories"], queryFn: () => listCategories() });
 const popularQuery = queryOptions({ queryKey: ["products", "popular"], queryFn: () => listPublishedProducts({ data: { limit: 8 } }) });
 
 export const Route = createFileRoute("/")({
@@ -29,16 +24,12 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(categoriesQuery),
-      context.queryClient.ensureQueryData(popularQuery),
-    ]);
+    await context.queryClient.ensureQueryData(popularQuery);
   },
   component: Home,
 });
 
 function Home() {
-  const { data: categories } = useSuspenseQuery(categoriesQuery);
   const { data: products } = useSuspenseQuery(popularQuery);
 
   return (
@@ -79,7 +70,7 @@ function Home() {
             <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg">
               <Stat value="2%" label="Comissão por venda" />
               <Stat value="8%" label="Taxa de saque" />
-              <Stat value="D+7" label="Liberação" />
+              <Stat value="0h" label="Liberação imediata" />
             </div>
           </div>
         </div>
@@ -117,32 +108,6 @@ function Home() {
         </div>
       </section>
 
-      {/* CATEGORIAS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-20">
-        <div className="flex items-end justify-between mb-8 gap-4">
-          <div className="min-w-0">
-            <div className="text-xs font-semibold uppercase tracking-widest text-gold">Categorias</div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-bold">Explore por formato</h2>
-          </div>
-          <Link to="/loja" className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0">
-            Ver tudo <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {categories.map((c) => {
-            const Icon = ICONS[c.icon ?? "Sparkles"] ?? Sparkles;
-            return (
-              <Link key={c.id} to="/loja" search={{ cat: c.slug }}
-                className="group rounded-xl border border-border/60 bg-card/60 p-4 hover:border-primary/60 hover:bg-card hover:shadow-glow transition-all">
-                <div className="h-10 w-10 rounded-lg gradient-brand grid place-items-center mb-3 group-hover:scale-110 transition">
-                  <Icon className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <div className="font-semibold text-sm">{c.name}</div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
 
       {/* PRODUTOS POPULARES */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
