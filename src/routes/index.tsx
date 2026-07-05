@@ -1,20 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, GraduationCap, BookOpen, LayoutTemplate, Users, Code2, Package, Video, Headphones, Smartphone, Plug, Wrench, Repeat, Trophy, Rocket, Play, CheckCircle2, Quote } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
-import { listCategories, listPublishedProducts } from "@/lib/catalog.functions";
+import { listPublishedProducts } from "@/lib/catalog.functions";
 import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 
-const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  GraduationCap, BookOpen, LayoutTemplate, Users, Code2, Package, Video, Headphones, Smartphone, Plug, Wrench, Repeat, Sparkles,
-};
-
-const categoriesQuery = queryOptions({ queryKey: ["categories"], queryFn: () => listCategories() });
 const popularQuery = queryOptions({ queryKey: ["products", "popular"], queryFn: () => listPublishedProducts({ data: { limit: 8 } }) });
 
 export const Route = createFileRoute("/")({
