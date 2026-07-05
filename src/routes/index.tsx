@@ -70,7 +70,7 @@ function Home() {
             <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg">
               <Stat value="2%" label="Comissão por venda" />
               <Stat value="8%" label="Taxa de saque" />
-              <Stat value="D+7" label="Liberação" />
+              <Stat value="0h" label="Liberação imediata" />
             </div>
           </div>
         </div>
