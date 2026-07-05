@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Wallet, Clock, ArrowUpRight } from "lucide-react";
+import { Wallet, TrendingUp, ArrowUpRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getMyWallet, listMyTransactions } from "@/lib/finance.functions";
+import { getMyFinanceOverview, getMyWallet, listMyTransactions } from "@/lib/finance.functions";
 import { FeeBanner, kz } from "@/components/finance/FeeBanner";
 
 export const Route = createFileRoute("/_authenticated/produtor/financeiro")({
@@ -20,8 +20,10 @@ const methodLabel: Record<string,string> = {
 function Page() {
   const walletFn = useServerFn(getMyWallet);
   const txFn = useServerFn(listMyTransactions);
+  const ovFn = useServerFn(getMyFinanceOverview);
   const { data: w } = useQuery({ queryKey: ["producer","wallet"], queryFn: () => walletFn() });
   const { data: tx } = useQuery({ queryKey: ["producer","tx"], queryFn: () => txFn() });
+  const { data: ov } = useQuery({ queryKey: ["producer","overview"], queryFn: () => ovFn() });
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
@@ -30,22 +32,30 @@ function Page() {
         <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Carteira & Transações</h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/15 via-card to-card p-6">
+          <div className="flex items-center justify-between">
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">Faturamento total</div>
+            <TrendingUp className="h-5 w-5 text-gold" />
+          </div>
+          <div className="font-display text-3xl font-bold mt-3 text-gradient-gold">{kz(ov?.totalGross ?? 0)}</div>
+          <div className="mt-2 text-xs text-muted-foreground">{ov?.salesCount ?? 0} vendas pagas · Líquido {kz(ov?.totalNet ?? 0)}</div>
+        </div>
         <div className="rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/15 via-card to-card p-6">
           <div className="flex items-center justify-between">
             <div className="text-xs uppercase tracking-widest text-muted-foreground">Disponível para saque</div>
             <Wallet className="h-5 w-5 text-primary-glow" />
           </div>
-          <div className="font-display text-4xl font-bold mt-3">{kz(w?.available_cents ?? 0)}</div>
-          <Link to="/produtor/saques" className="inline-block mt-4"><Button className="gradient-brand text-primary-foreground shadow-glow">Solicitar saque <ArrowUpRight className="h-4 w-4 ml-1" /></Button></Link>
+          <div className="font-display text-3xl font-bold mt-3">{kz(w?.available_cents ?? 0)}</div>
+          <Link to="/produtor/saques" className="inline-block mt-4"><Button size="sm" className="gradient-brand text-primary-foreground shadow-glow">Solicitar saque <ArrowUpRight className="h-4 w-4 ml-1" /></Button></Link>
         </div>
-        <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/15 via-card to-card p-6">
+        <div className="rounded-2xl border border-success/40 bg-gradient-to-br from-success/15 via-card to-card p-6">
           <div className="flex items-center justify-between">
-            <div className="text-xs uppercase tracking-widest text-muted-foreground">Bloqueado (liberação D+7)</div>
-            <Clock className="h-5 w-5 text-gold" />
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">Liberação imediata</div>
+            <Zap className="h-5 w-5 text-success" />
           </div>
-          <div className="font-display text-4xl font-bold mt-3">{kz(w?.pending_cents ?? 0)}</div>
-          <div className="mt-4 text-xs text-muted-foreground">Vendas pagas ficam bloqueadas por 7 dias para proteção contra reembolsos.</div>
+          <div className="font-display text-3xl font-bold mt-3">0h</div>
+          <div className="mt-2 text-xs text-muted-foreground">Assim que a venda é paga, o valor líquido entra direto no saldo disponível.</div>
         </div>
       </div>
 
