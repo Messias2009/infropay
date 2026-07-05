@@ -24,16 +24,12 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(categoriesQuery),
-      context.queryClient.ensureQueryData(popularQuery),
-    ]);
+    await context.queryClient.ensureQueryData(popularQuery);
   },
   component: Home,
 });
 
 function Home() {
-  const { data: categories } = useSuspenseQuery(categoriesQuery);
   const { data: products } = useSuspenseQuery(popularQuery);
 
   return (
