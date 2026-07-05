@@ -90,8 +90,11 @@ export type Database = {
           description: string | null
           external_url: string | null
           file_url: string | null
+          ga_measurement_id: string | null
+          google_ads_label: string | null
           guarantee_days: number | null
           id: string
+          meta_pixel_id: string | null
           price_cents: number
           producer_id: string
           product_type: Database["public"]["Enums"]["product_type"]
@@ -109,6 +112,7 @@ export type Database = {
           tags: string[] | null
           title: string
           updated_at: string
+          utmify_token: string | null
           views_count: number
         }
         Insert: {
@@ -120,8 +124,11 @@ export type Database = {
           description?: string | null
           external_url?: string | null
           file_url?: string | null
+          ga_measurement_id?: string | null
+          google_ads_label?: string | null
           guarantee_days?: number | null
           id?: string
+          meta_pixel_id?: string | null
           price_cents?: number
           producer_id: string
           product_type?: Database["public"]["Enums"]["product_type"]
@@ -139,6 +146,7 @@ export type Database = {
           tags?: string[] | null
           title: string
           updated_at?: string
+          utmify_token?: string | null
           views_count?: number
         }
         Update: {
@@ -150,8 +158,11 @@ export type Database = {
           description?: string | null
           external_url?: string | null
           file_url?: string | null
+          ga_measurement_id?: string | null
+          google_ads_label?: string | null
           guarantee_days?: number | null
           id?: string
+          meta_pixel_id?: string | null
           price_cents?: number
           producer_id?: string
           product_type?: Database["public"]["Enums"]["product_type"]
@@ -169,6 +180,7 @@ export type Database = {
           tags?: string[] | null
           title?: string
           updated_at?: string
+          utmify_token?: string | null
           views_count?: number
         }
         Relationships: [
@@ -185,27 +197,36 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          cover_url: string | null
           created_at: string
           full_name: string | null
           id: string
+          social_instagram: string | null
+          social_website: string | null
           updated_at: string
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          cover_url?: string | null
           created_at?: string
           full_name?: string | null
           id: string
+          social_instagram?: string | null
+          social_website?: string | null
           updated_at?: string
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          cover_url?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
+          social_instagram?: string | null
+          social_website?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -229,9 +250,11 @@ export type Database = {
           platform_fee_cents: number
           producer_id: string
           product_id: string
+          provider: string | null
           release_at: string | null
           released: boolean
           status: Database["public"]["Enums"]["sale_status"]
+          stripe_session_id: string | null
           updated_at: string
         }
         Insert: {
@@ -251,9 +274,11 @@ export type Database = {
           platform_fee_cents?: number
           producer_id: string
           product_id: string
+          provider?: string | null
           release_at?: string | null
           released?: boolean
           status?: Database["public"]["Enums"]["sale_status"]
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -273,9 +298,11 @@ export type Database = {
           platform_fee_cents?: number
           producer_id?: string
           product_id?: string
+          provider?: string | null
           release_at?: string | null
           released?: boolean
           status?: Database["public"]["Enums"]["sale_status"]
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -287,6 +314,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_integrations: {
+        Row: {
+          ga_measurement_id: string | null
+          google_ads_id: string | null
+          google_ads_label: string | null
+          meta_capi_token: string | null
+          meta_pixel_id: string | null
+          updated_at: string
+          user_id: string
+          utmify_token: string | null
+        }
+        Insert: {
+          ga_measurement_id?: string | null
+          google_ads_id?: string | null
+          google_ads_label?: string | null
+          meta_capi_token?: string | null
+          meta_pixel_id?: string | null
+          updated_at?: string
+          user_id: string
+          utmify_token?: string | null
+        }
+        Update: {
+          ga_measurement_id?: string | null
+          google_ads_id?: string | null
+          google_ads_label?: string | null
+          meta_capi_token?: string | null
+          meta_pixel_id?: string | null
+          updated_at?: string
+          user_id?: string
+          utmify_token?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -330,6 +390,30 @@ export type Database = {
           pending_cents?: number
           producer_id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          event_id: string
+          id: string
+          payload: Json
+          processed_at: string
+          provider: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          payload: Json
+          processed_at?: string
+          provider: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          payload?: Json
+          processed_at?: string
+          provider?: string
         }
         Relationships: []
       }
