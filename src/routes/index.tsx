@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
+import { CountUp } from "@/components/CountUp";
 import { listPublishedProducts } from "@/lib/catalog.functions";
 import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
+import dashboardImg from "@/assets/dashboard-preview.jpg";
 
 const popularQuery = queryOptions({ queryKey: ["products", "popular"], queryFn: () => listPublishedProducts({ data: { limit: 8 } }) });
 
