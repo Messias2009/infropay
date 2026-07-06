@@ -195,16 +195,22 @@
   animation: shimmer 3.5s linear infinite;
 }
 
-@utility badge-shine {
-  position: relative;
-  overflow: hidden;
+@layer utilities {
+  .badge-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .badge-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+    background-size: 220% 100%;
+    animation: shimmer 3.6s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
 }
-@utility badge-shine::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; height: 100%; width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-  animation: badge-shine 3.2s ease-in-out infinite;
-  pointer-events: none;
-}
+
 
