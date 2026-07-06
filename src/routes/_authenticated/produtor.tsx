@@ -80,26 +80,32 @@ function ProdutorLayout() {
       </aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
-        <div className="md:hidden sticky top-0 z-30 flex items-center justify-between gap-3 px-4 h-14 border-b border-border bg-background/85 backdrop-blur">
-          <Link to="/" className="flex items-center gap-2">
+        {/* Top bar with notifications (visible in both mobile and desktop) */}
+        <div className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 md:px-6 h-14 border-b border-border bg-background/85 backdrop-blur">
+          <Link to="/" className="flex items-center gap-2 md:hidden">
             <img src={logoMark} alt="InfroPay" className="h-7 w-7 rounded-md object-contain" />
             <div className="text-sm font-bold leading-none">Infro<span className="text-gradient-gold">Pay</span></div>
           </Link>
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <button aria-label="Abrir menu" className="h-10 w-10 grid place-items-center rounded-lg border border-border bg-card active:scale-95 transition">
-                <Menu className="h-5 w-5" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[86%] max-w-sm p-0 flex flex-col">
-              <div className="p-4 border-b border-border flex items-center gap-2">
-                <img src={logoMark} alt="" className="h-8 w-8 rounded-md" />
-                <div className="text-base font-bold">Menu do produtor</div>
-              </div>
-              <NavBody pathname={pathname} admin={admin} onNav={() => setOpen(false)} />
-            </SheetContent>
-          </Sheet>
+          <div className="hidden md:block text-xs uppercase tracking-widest text-muted-foreground">Painel do produtor</div>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <button aria-label="Abrir menu" className="md:hidden h-10 w-10 grid place-items-center rounded-lg border border-border bg-card active:scale-95 transition">
+                  <Menu className="h-5 w-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[86%] max-w-sm p-0 flex flex-col">
+                <div className="p-4 border-b border-border flex items-center gap-2">
+                  <img src={logoMark} alt="" className="h-8 w-8 rounded-md" />
+                  <div className="text-base font-bold">Menu do produtor</div>
+                </div>
+                <NavBody pathname={pathname} admin={admin} onNav={() => setOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
+
 
         <Outlet />
       </div>
