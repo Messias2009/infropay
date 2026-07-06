@@ -6,6 +6,7 @@ import { LayoutDashboard, Package, Plus, Wallet, Banknote, Settings, Shield, Arr
 import logoMark from "@/assets/infropay-mark.png";
 import { isAdmin } from "@/lib/admin.functions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export const Route = createFileRoute("/_authenticated/produtor")({
   head: () => ({ meta: [{ title: "Painel do produtor — InfroPay" }, { name: "robots", content: "noindex" }] }),
