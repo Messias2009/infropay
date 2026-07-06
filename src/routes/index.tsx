@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
+import { CountUp } from "@/components/CountUp";
 import { listPublishedProducts } from "@/lib/catalog.functions";
 import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
+import dashboardImg from "@/assets/dashboard-preview.jpg";
 
 const popularQuery = queryOptions({ queryKey: ["products", "popular"], queryFn: () => listPublishedProducts({ data: { limit: 8 } }) });
 
@@ -75,6 +77,107 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* DASHBOARD PREVIEW — animated */}
+      <section className="relative mx-auto max-w-7xl px-4 sm:px-6 -mt-8 md:-mt-16">
+        <div className="relative rounded-3xl border border-primary/25 overflow-hidden bg-card animate-fade-in">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full gradient-brand opacity-30 blur-3xl animate-glow-pulse" />
+            <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full gradient-gold opacity-20 blur-3xl animate-floaty" />
+          </div>
+          <div className="relative p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-3 px-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
+              <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+              <span className="h-2.5 w-2.5 rounded-full bg-success" />
+              <div className="ml-3 text-[11px] text-muted-foreground truncate">app.infropay.com / dashboard</div>
+            </div>
+            <img
+              src={dashboardImg}
+              alt="Prévia do painel financeiro InfroPay"
+              width={1600}
+              height={1024}
+              loading="lazy"
+              className="w-full h-auto rounded-xl object-cover animate-floaty"
+              style={{ animationDuration: "6s" }}
+            />
+          </div>
+        </div>
+
+        {/* PLATFORM LIVE STATS — animated numbers */}
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+          {[
+            { icon: TrendingUp, label: "Faturado na plataforma", value: 128_540_000, prefix: "", suffix: " Kz", accent: "text-gold", ring: "border-gold/30" },
+            { icon: Users,      label: "Produtores ativos",      value: 1284,        prefix: "+", suffix: "",    accent: "text-primary-glow", ring: "border-primary/30" },
+            { icon: ShieldCheck,label: "Vendas processadas",     value: 8720,        prefix: "+", suffix: "",    accent: "text-success",  ring: "border-success/30" },
+            { icon: Zap,        label: "Liberação média",        value: 0,           prefix: "", suffix: " h",   accent: "text-gold", ring: "border-gold/30" },
+          ].map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <div key={i} className={`relative rounded-2xl border ${s.ring} bg-card/70 backdrop-blur p-4 md:p-5 overflow-hidden`}>
+                <div className="absolute -top-8 -right-8 h-24 w-24 rounded-full gradient-brand opacity-10 blur-2xl animate-glow-pulse" />
+                <div className="relative flex items-center gap-3">
+                  <div className={`h-10 w-10 rounded-xl grid place-items-center bg-card border ${s.ring}`}>
+                    <Icon className={`h-5 w-5 ${s.accent}`} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground truncate">{s.label}</div>
+                    <div className={`font-display font-bold text-xl md:text-2xl ${s.accent}`}>
+                      <CountUp to={s.value} prefix={s.prefix} suffix={s.suffix} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* PLACAS / TIER PREVIEW — animated badges */}
+        <div className="mt-14">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <div className="text-xs font-semibold uppercase tracking-widest text-gold">Conquistas InfroPay</div>
+            <h2 className="mt-2 text-3xl md:text-4xl font-bold">
+              Ganhe <span className="text-shimmer">placas oficiais</span> a cada meta
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">Do Bronze ao Infinito — 10 níveis desbloqueáveis por faturamento.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { name: "Prata",    goal: "100k Kz",  Icon: Award,  grad: "linear-gradient(135deg,#7C7C7C,#E8E8E8)", color: "#C0C0C0" },
+              { name: "Ouro",     goal: "500k Kz",  Icon: Trophy, grad: "linear-gradient(135deg,#B8860B,#FFD700)", color: "#F9A825" },
+              { name: "Diamante", goal: "5M Kz",    Icon: Gem,    grad: "linear-gradient(135deg,#4FC3F7,#B9F2FF)", color: "#B9F2FF" },
+              { name: "Lenda",    goal: "50M Kz",   Icon: Crown,  grad: "linear-gradient(135deg,#006064,#4DD0E1)", color: "#00BCD4" },
+            ].map((b, i) => {
+              const Icon = b.Icon;
+              return (
+                <div
+                  key={b.name}
+                  className="badge-shine relative rounded-2xl border p-5 overflow-hidden"
+                  style={{ borderColor: b.color + "60", animationDelay: `${i * 0.2}s` }}
+                >
+                  <div className="absolute inset-0 opacity-25 animate-bg-pan" style={{ background: b.grad, backgroundSize: "200% 200%" }} />
+                  <div className="relative flex flex-col items-center text-center">
+                    <div
+                      className="h-16 w-16 rounded-2xl grid place-items-center mb-3 animate-floaty"
+                      style={{ background: b.grad, boxShadow: `0 8px 30px -8px ${b.color}` }}
+                    >
+                      <Icon className="h-8 w-8 text-white drop-shadow" />
+                    </div>
+                    <div className="font-display text-lg font-bold" style={{ color: b.color }}>{b.name}</div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">Meta: {b.goal}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 text-center">
+            <Link to="/legends" className="inline-flex items-center gap-1 text-sm text-gold hover:opacity-80">
+              Ver todas as placas <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
 
       {/* TRUST STRIP */}
       <section className="border-y border-border/60 bg-card/40">

@@ -153,3 +153,64 @@
 @utility shadow-gold {
   box-shadow: var(--shadow-gold);
 }
+
+/* -------- premium animations -------- */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-primary) 45%, transparent), 0 0 40px -5px color-mix(in oklab, var(--color-primary) 35%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in oklab, var(--color-primary) 0%, transparent), 0 0 60px -5px color-mix(in oklab, var(--color-primary) 55%, transparent); }
+}
+@keyframes tilt-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes badge-shine {
+  0% { transform: translateX(-120%) skewX(-20deg); }
+  60%, 100% { transform: translateX(220%) skewX(-20deg); }
+}
+@keyframes bg-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@utility animate-floaty { animation: floaty 4s ease-in-out infinite; }
+@utility animate-glow-pulse { animation: glow-pulse 2.6s ease-in-out infinite; }
+@utility animate-tilt-spin { animation: tilt-spin 22s linear infinite; }
+@utility animate-bg-pan { background-size: 200% 200%; animation: bg-pan 8s ease infinite; }
+
+@utility text-shimmer {
+  background: linear-gradient(90deg, var(--color-gold) 0%, oklch(0.95 0.15 90) 25%, var(--color-gold) 50%, oklch(0.95 0.15 90) 75%, var(--color-gold) 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shimmer 3.5s linear infinite;
+}
+
+@layer utilities {
+  .badge-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .badge-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+    background-size: 220% 100%;
+    animation: shimmer 3.6s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+}
+
+

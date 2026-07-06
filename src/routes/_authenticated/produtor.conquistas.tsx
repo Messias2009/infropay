@@ -37,10 +37,20 @@ function Page() {
         {LEVELS.map((l) => {
           const unlocked = revenue >= l.min_cents;
           return (
-            <div key={l.key} className={`relative rounded-2xl border p-5 overflow-hidden ${unlocked ? "" : "opacity-45"}`} style={{ borderColor: l.color + "50" }}>
-              <div className="absolute inset-0 opacity-25" style={{ background: l.gradient }} />
+            <div
+              key={l.key}
+              className={`relative rounded-2xl border p-5 overflow-hidden ${unlocked ? "badge-shine" : "opacity-45"}`}
+              style={{ borderColor: l.color + "50" }}
+            >
+              <div
+                className={`absolute inset-0 opacity-25 ${unlocked ? "animate-bg-pan" : ""}`}
+                style={{ background: l.gradient, backgroundSize: "200% 200%" }}
+              />
               <div className="relative">
-                <div className="h-14 w-14 rounded-2xl grid place-items-center mb-3" style={{ background: l.gradient }}>
+                <div
+                  className={`h-14 w-14 rounded-2xl grid place-items-center mb-3 ${unlocked ? "animate-floaty" : ""}`}
+                  style={{ background: l.gradient, boxShadow: unlocked ? `0 8px 30px -8px ${l.color}` : "none" }}
+                >
                   {unlocked ? <Trophy className="h-7 w-7 text-white drop-shadow" /> : <Lock className="h-6 w-6 text-white/80" />}
                 </div>
                 <div className="font-display text-lg font-bold" style={{ color: l.color }}>{l.name}</div>
