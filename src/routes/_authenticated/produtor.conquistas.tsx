@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Trophy, Lock, Flame, Rocket, Crown, Star, Medal, Zap } from "lucide-react";
+import { Trophy, Lock, Flame, Rocket, Crown, Star, Medal } from "lucide-react";
 import { getMyAchievements } from "@/lib/profile.functions";
 import { LEVELS, levelFor } from "@/lib/legends.functions";
 import { kz } from "@/components/finance/FeeBanner";
