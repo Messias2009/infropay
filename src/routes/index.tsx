@@ -180,15 +180,9 @@ function Home() {
       </section>
 
 
-      {/* TRUST STRIP */}
-      <section className="border-y border-border/60 bg-card/40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-          <Feature icon={ShieldCheck} title="Compra protegida" desc="Garantia em todas as ordens" />
-          <Feature icon={Zap} title="Entrega instantânea" desc="Download liberado após pagamento" />
-          <Feature icon={TrendingUp} title="Alta conversão" desc="Checkout otimizado" />
-          <Feature icon={Star} title="Curadoria premium" desc="Produtos verificados" />
-        </div>
-      </section>
+      {/* TRUST STRIP — carrossel infinito */}
+      <TrustMarquee />
+
 
       {/* BANNER — GANHE ONLINE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-20">
