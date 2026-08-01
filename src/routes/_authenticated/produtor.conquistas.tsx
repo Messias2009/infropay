@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Trophy, Lock } from "lucide-react";
+import { Trophy, Lock, Flame, Rocket, Crown, Star, Medal } from "lucide-react";
 import { getMyAchievements } from "@/lib/profile.functions";
 import { LEVELS, levelFor } from "@/lib/legends.functions";
 import { kz } from "@/components/finance/FeeBanner";
@@ -63,6 +63,45 @@ function Page() {
           );
         })}
       </div>
+
+      <div>
+        <h2 className="font-display text-2xl font-bold">Selos especiais</h2>
+        <p className="text-sm text-muted-foreground mt-1">Reconhecimentos extra pelo teu desempenho na plataforma.</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-5">
+          {SEALS.map((sl) => {
+            const unlocked = sl.check({ revenue, sales: data?.sales_count ?? 0 });
+            const Icon = sl.icon;
+            return (
+              <div
+                key={sl.key}
+                className={`relative rounded-2xl border p-4 text-center overflow-hidden ${unlocked ? "badge-shine" : "opacity-40"}`}
+                style={{ borderColor: sl.color + "55" }}
+              >
+                <div
+                  className={`h-12 w-12 mx-auto rounded-full grid place-items-center mb-3 ${unlocked ? "animate-floaty" : ""}`}
+                  style={{ background: sl.gradient, boxShadow: unlocked ? `0 8px 24px -8px ${sl.color}` : "none" }}
+                >
+                  {unlocked ? <Icon className="h-6 w-6 text-white drop-shadow" /> : <Lock className="h-5 w-5 text-white/80" />}
+                </div>
+                <div className="font-semibold text-sm" style={{ color: unlocked ? sl.color : undefined }}>{sl.name}</div>
+                <div className="text-[10px] text-muted-foreground mt-1 leading-snug">{sl.desc}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
+
+type SealCtx = { revenue: number; sales: number };
+
+const SEALS = [
+  { key: "first", name: "Primeira venda", desc: "A tua primeira venda paga", icon: Star, color: "#F9A825", gradient: "linear-gradient(135deg,#B8860B,#FFD700)", check: (c: SealCtx) => c.sales >= 1 },
+  { key: "ten", name: "10 vendas", desc: "10 vendas concluídas", icon: Medal, color: "#4FC3F7", gradient: "linear-gradient(135deg,#0277BD,#4FC3F7)", check: (c: SealCtx) => c.sales >= 10 },
+  { key: "hundred", name: "100 vendas", desc: "100 vendas concluídas", icon: Flame, color: "#FF7043", gradient: "linear-gradient(135deg,#BF360C,#FF8A65)", check: (c: SealCtx) => c.sales >= 100 },
+  { key: "million", name: "Milionário", desc: "1M Kz faturados", icon: Crown, color: "#00BCD4", gradient: "linear-gradient(135deg,#006064,#4DD0E1)", check: (c: SealCtx) => c.revenue >= 100_000_000 },
+  { key: "top", name: "Top vendedor", desc: "5M Kz faturados", icon: Trophy, color: "#AB47BC", gradient: "linear-gradient(135deg,#6A1B9A,#CE93D8)", check: (c: SealCtx) => c.revenue >= 500_000_000 },
+  { key: "rocket", name: "Escala", desc: "500 vendas concluídas", icon: Rocket, color: "#66BB6A", gradient: "linear-gradient(135deg,#1B5E20,#81C784)", check: (c: SealCtx) => c.sales >= 500 },
+] as const;
+

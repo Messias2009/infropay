@@ -1,11 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-type SB = any;
-
-async function ensureWalletRow(supabase: SB, uid: string) {
-  await (supabase as any).from("wallets").upsert({ producer_id: uid }, { onConflict: "producer_id" });
-}
+import { ensureWalletRow, sumBy, dailySeries, weeklySeries, monthlySeries, yearlySeries } from "./finance.helpers";
 
 export const getMyWallet = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -36,22 +31,14 @@ export const getMyFinanceOverview = createServerFn({ method: "GET" })
     const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - 7);
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const sum = (arr: any[], k: string) => arr.reduce((a, r) => a + (r[k] ?? 0), 0);
+    const sum = sumBy;
     const inRange = (from: Date) => paid.filter(r => new Date(r.created_at) >= from);
 
-    // last 14 days chart
-    const series: { date: string; gross: number; net: number; count: number }[] = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date(now); d.setDate(now.getDate() - i); d.setHours(0,0,0,0);
-      const next = new Date(d); next.setDate(d.getDate() + 1);
-      const dayRows = paid.filter(r => { const t = new Date(r.created_at); return t >= d && t < next; });
-      series.push({
-        date: d.toISOString().slice(5,10),
-        gross: sum(dayRows, "gross_cents") / 100,
-        net: sum(dayRows, "net_cents") / 100,
-        count: dayRows.length,
-      });
-    }
+    const series = dailySeries(paid, 14).map(b => ({ date: b.label, gross: b.gross, net: b.net, count: b.count }));
+    const seriesDaily = dailySeries(paid, 30);
+    const seriesWeekly = weeklySeries(paid, 8);
+    const seriesMonthly = monthlySeries(paid, 12);
+    const seriesYearly = yearlySeries(paid, 3);
 
     // top products
     const byProd: Record<string, { count: number; net: number }> = {};
@@ -74,13 +61,20 @@ export const getMyFinanceOverview = createServerFn({ method: "GET" })
     const totalFees = sum(paid, "platform_fee_cents");
     const salesCount = paid.length;
 
+    const { data: prodRows } = await (context.supabase as any)
+      .from("products").select("views_count").eq("producer_id", context.userId);
+    const totalViews = (prodRows ?? []).reduce((a: number, r: any) => a + (r.views_count ?? 0), 0);
+
     return {
       today: { count: inRange(startOfDay).length, gross: sum(inRange(startOfDay), "gross_cents") },
       week: { count: inRange(startOfWeek).length, gross: sum(inRange(startOfWeek), "gross_cents") },
       month: { count: inRange(startOfMonth).length, gross: sum(inRange(startOfMonth), "gross_cents") },
       totalGross, totalNet, totalFees, salesCount,
       avgTicket: salesCount ? Math.round(totalGross / salesCount) : 0,
+      totalViews,
+      conversion: totalViews ? salesCount / totalViews : 0,
       series,
+      seriesDaily, seriesWeekly, seriesMonthly, seriesYearly,
       topProducts,
       recent: rows.slice(0, 10),
     };

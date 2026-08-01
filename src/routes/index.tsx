@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { TrustMarquee } from "@/components/site/TrustMarquee";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
@@ -72,8 +73,9 @@ function Home() {
             <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg">
               <Stat value="2%" label="Comissão por venda" />
               <Stat value="8%" label="Taxa de saque" />
-              <Stat value="0h" label="Liberação imediata" />
+              <Stat value="1h" label="Liberação em no mínimo 1 hora após aprovação" />
             </div>
+
           </div>
         </div>
       </section>
@@ -110,7 +112,7 @@ function Home() {
             { icon: TrendingUp, label: "Faturado na plataforma", value: 128_540_000, prefix: "", suffix: " Kz", accent: "text-gold", ring: "border-gold/30" },
             { icon: Users,      label: "Produtores ativos",      value: 1284,        prefix: "+", suffix: "",    accent: "text-primary-glow", ring: "border-primary/30" },
             { icon: ShieldCheck,label: "Vendas processadas",     value: 8720,        prefix: "+", suffix: "",    accent: "text-success",  ring: "border-success/30" },
-            { icon: Zap,        label: "Liberação média",        value: 0,           prefix: "", suffix: " h",   accent: "text-gold", ring: "border-gold/30" },
+            { icon: Zap,        label: "Liberação mínima",       value: 1,           prefix: "", suffix: " h",   accent: "text-gold", ring: "border-gold/30" },
           ].map((s, i) => {
             const Icon = s.icon;
             return (
@@ -179,15 +181,9 @@ function Home() {
       </section>
 
 
-      {/* TRUST STRIP */}
-      <section className="border-y border-border/60 bg-card/40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-          <Feature icon={ShieldCheck} title="Compra protegida" desc="Garantia em todas as ordens" />
-          <Feature icon={Zap} title="Entrega instantânea" desc="Download liberado após pagamento" />
-          <Feature icon={TrendingUp} title="Alta conversão" desc="Checkout otimizado" />
-          <Feature icon={Star} title="Curadoria premium" desc="Produtos verificados" />
-        </div>
-      </section>
+      {/* TRUST STRIP — carrossel infinito */}
+      <TrustMarquee />
+
 
       {/* BANNER — GANHE ONLINE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-20">
@@ -358,20 +354,6 @@ function Stat({ value, label }: { value: string; label: string }) {
     <div>
       <div className="font-display text-3xl font-bold text-gradient-gold">{value}</div>
       <div className="text-xs text-muted-foreground mt-1">{label}</div>
-    </div>
-  );
-}
-
-function Feature({ icon: Icon, title, desc }: { icon: React.ComponentType<{ className?: string }>; title: string; desc: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 grid place-items-center shrink-0">
-        <Icon className="h-5 w-5 text-primary-glow" />
-      </div>
-      <div className="min-w-0">
-        <div className="font-semibold text-sm">{title}</div>
-        <div className="text-xs text-muted-foreground">{desc}</div>
-      </div>
     </div>
   );
 }

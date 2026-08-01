@@ -67,7 +67,7 @@ function Sobre() {
             <div className="grid grid-cols-2 gap-4">
               <Stat n="2%" l="Por venda" />
               <Stat n="8%" l="Por saque" />
-              <Stat n="D+7" l="Liberação" />
+              <Stat n="1h" l="Liberação mínima" />
               <Stat n="24/7" l="Suporte" />
             </div>
           </div>

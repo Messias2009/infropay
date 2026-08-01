@@ -30,7 +30,7 @@ function Termos() {
           <li>Taxa por venda: <strong>2%</strong> sobre o valor bruto.</li>
           <li>Taxa por saque: <strong>8%</strong> sobre o valor solicitado.</li>
           <li>Saque mínimo: <strong>5.000 Kz</strong>.</li>
-          <li>Liberação: <strong>D+7</strong> após confirmação do pagamento.</li>
+          <li>Liberação: <strong>mínimo de 1 hora</strong> após a aprovação do pagamento.</li>
         </ul>
 
         <h2>4. Produtos</h2>

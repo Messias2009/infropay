@@ -26,7 +26,7 @@ export const Route = createFileRoute("/faq")({
 
 const FAQS = [
   { q: "Quanto custa vender na InfroPay?", a: "Cobramos 2% por venda e 8% por saque. Sem mensalidade, sem taxa de setup." },
-  { q: "Quando recebo o dinheiro das vendas?", a: "O valor fica disponível 7 dias após a confirmação do pagamento (D+7)." },
+  { q: "Quando recebo o dinheiro das vendas?", a: "O valor fica disponível em no mínimo 1 hora após a aprovação do pagamento." },
   { q: "Qual é o saque mínimo?", a: "O saque mínimo é 5.000 Kz." },
   { q: "Quais métodos de pagamento aceitam?", a: "Multicaixa Express, Referência Multicaixa e Transferência Bancária." },
   { q: "Como funciona a garantia?", a: "Cada produtor define entre 0 e 60 dias. Dentro desse período, o comprador pode pedir reembolso." },
