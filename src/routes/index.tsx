@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Star, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { TrustMarquee } from "@/components/site/TrustMarquee";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
@@ -353,20 +354,6 @@ function Stat({ value, label }: { value: string; label: string }) {
     <div>
       <div className="font-display text-3xl font-bold text-gradient-gold">{value}</div>
       <div className="text-xs text-muted-foreground mt-1">{label}</div>
-    </div>
-  );
-}
-
-function Feature({ icon: Icon, title, desc }: { icon: React.ComponentType<{ className?: string }>; title: string; desc: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 grid place-items-center shrink-0">
-        <Icon className="h-5 w-5 text-primary-glow" />
-      </div>
-      <div className="min-w-0">
-        <div className="font-semibold text-sm">{title}</div>
-        <div className="text-xs text-muted-foreground">{desc}</div>
-      </div>
     </div>
   );
 }
