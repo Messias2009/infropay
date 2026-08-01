@@ -34,7 +34,7 @@ function Dashboard() {
       {/* Wallet strip */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <WalletCard tone="brand" icon={Wallet} label="Saldo disponível" value={kz(w?.available_cents ?? 0)} hint="Pronto para saque" />
-        <WalletCard tone="gold" icon={Clock} label="Saldo bloqueado" value={kz(w?.pending_cents ?? 0)} hint="Liberação em D+7" />
+        <WalletCard tone="gold" icon={Clock} label="Saldo bloqueado" value={kz(w?.pending_cents ?? 0)} hint="Liberação em no mínimo 1h" />
         <WalletCard tone="muted" icon={Receipt} label="Comissões pagas" value={kz(o?.totalFees ?? 0)} hint="2% por venda" />
       </div>
 
