@@ -111,7 +111,7 @@ function Home() {
             { icon: TrendingUp, label: "Faturado na plataforma", value: 128_540_000, prefix: "", suffix: " Kz", accent: "text-gold", ring: "border-gold/30" },
             { icon: Users,      label: "Produtores ativos",      value: 1284,        prefix: "+", suffix: "",    accent: "text-primary-glow", ring: "border-primary/30" },
             { icon: ShieldCheck,label: "Vendas processadas",     value: 8720,        prefix: "+", suffix: "",    accent: "text-success",  ring: "border-success/30" },
-            { icon: Zap,        label: "Liberação média",        value: 0,           prefix: "", suffix: " h",   accent: "text-gold", ring: "border-gold/30" },
+            { icon: Zap,        label: "Liberação mínima",       value: 1,           prefix: "", suffix: " h",   accent: "text-gold", ring: "border-gold/30" },
           ].map((s, i) => {
             const Icon = s.icon;
             return (
