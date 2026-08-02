@@ -65,6 +65,7 @@ function EditarProduto() {
         guarantee_days: product.guarantee_days ?? 7,
         status: product.status,
       });
+      setDelivery(deliveryFromRow(product));
     }
   }, [product]);
 
