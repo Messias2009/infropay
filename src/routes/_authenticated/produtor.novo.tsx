@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaUpload } from "@/components/MediaUpload";
+import { DeliveryFields, emptyDelivery, deliveryPayload, type DeliveryValues } from "@/components/products/DeliveryFields";
 import { createProduct } from "@/lib/products.functions";
 import { listCategories } from "@/lib/catalog.functions";
 
