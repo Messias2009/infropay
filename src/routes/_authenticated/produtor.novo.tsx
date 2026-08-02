@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MediaUpload } from "@/components/MediaUpload";
+import { DeliveryFields, emptyDelivery, deliveryPayload, type DeliveryValues } from "@/components/products/DeliveryFields";
 import { createProduct } from "@/lib/products.functions";
 import { listCategories } from "@/lib/catalog.functions";
 
@@ -44,6 +45,7 @@ function NovoProduto() {
     submit_for_review: false, tags: "",
     guarantee_days: 7,
   });
+  const [delivery, setDelivery] = useState<DeliveryValues>(emptyDelivery);
   const [loading, setLoading] = useState(false);
 
   function set<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
@@ -71,6 +73,7 @@ function NovoProduto() {
         status: form.submit_for_review ? ("publicado" as const) : ("rascunho" as const),
         tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
+        ...deliveryPayload(delivery),
       };
       const row = await createFn({ data: payload });
       toast.success(row.status === "em_analise" ? "Produto enviado para aprovação!" : "Produto criado como rascunho!");
@@ -138,6 +141,12 @@ function NovoProduto() {
             <Input value={form.external_url} onChange={(e) => set("external_url", e.target.value)} placeholder="https://…" />
           </Field>
         </Section>
+
+        <Section title="Tipo de entrega">
+          <DeliveryFields value={delivery} onChange={setDelivery} />
+        </Section>
+
+
 
         <Section title="Preço e garantia">
           <div className="grid sm:grid-cols-3 gap-4">

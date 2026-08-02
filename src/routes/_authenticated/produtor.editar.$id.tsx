@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { MediaUpload } from "@/components/MediaUpload";
+import { DeliveryFields, emptyDelivery, deliveryPayload, deliveryFromRow, type DeliveryValues } from "@/components/products/DeliveryFields";
 import { getMyProduct, updateProduct, deleteProduct, submitProductForApproval } from "@/lib/products.functions";
 import { listCategories } from "@/lib/catalog.functions";
 
@@ -41,6 +42,7 @@ function EditarProduto() {
   const { data: cats } = useQuery({ queryKey: ["categories"], queryFn: () => catsFn() });
 
   const [form, setForm] = useState<any>(null);
+  const [delivery, setDelivery] = useState<DeliveryValues>(emptyDelivery);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -63,6 +65,7 @@ function EditarProduto() {
         guarantee_days: product.guarantee_days ?? 7,
         status: product.status,
       });
+      setDelivery(deliveryFromRow(product));
     }
   }, [product]);
 
@@ -90,6 +93,7 @@ function EditarProduto() {
         currency: form.currency.toUpperCase(),
         tags: form.tags ? form.tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
+        ...deliveryPayload(delivery),
       } } });
       toast.success("Alterações guardadas");
       refetch();
@@ -195,6 +199,12 @@ function EditarProduto() {
           <MediaUpload kind="file" label="Ficheiro principal" value={form.file_url} onChange={(u) => set("file_url", u ?? "")} productKey={id} />
           <Field label="URL externa"><Input value={form.external_url} onChange={(e) => set("external_url", e.target.value)} /></Field>
         </Section>
+
+        <Section title="Tipo de entrega">
+          <DeliveryFields value={delivery} onChange={setDelivery} />
+        </Section>
+
+
 
         <Section title="Preço e garantia">
           <div className="grid sm:grid-cols-3 gap-4">

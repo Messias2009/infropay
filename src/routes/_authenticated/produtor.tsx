@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { LayoutDashboard, Package, Plus, Wallet, Banknote, Settings, Shield, ArrowUpRight, Trophy, Plug, UserCircle2, Menu } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Wallet, Banknote, Settings, Shield, ArrowUpRight, Trophy, Plug, UserCircle2, Menu, TrendingUp, GraduationCap } from "lucide-react";
 import logoMark from "@/assets/infropay-mark.png";
 import { isAdmin } from "@/lib/admin.functions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -17,6 +17,8 @@ const items = [
   { to: "/produtor", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/produtor/produtos", icon: Package, label: "Produtos" },
   { to: "/produtor/novo", icon: Plus, label: "Novo produto" },
+  { to: "/produtor/funil", icon: TrendingUp, label: "Funil de vendas" },
+  { to: "/membros", icon: GraduationCap, label: "Área de membros" },
   { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
   { to: "/produtor/saques", icon: Banknote, label: "Saques" },
   { to: "/produtor/conquistas", icon: Trophy, label: "Conquistas" },

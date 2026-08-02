@@ -19,6 +19,20 @@ const productSchema = z.object({
   tags: z.array(z.string().max(40)).max(20).default([]),
   external_url: z.string().url().optional().nullable().or(z.literal("")),
   guarantee_days: z.number().int().min(0).max(60).default(7),
+  // entrega avançada
+  delivery_kind: z.enum(["digital","fisico","apk","assinatura","membros","externo"]).default("digital"),
+  stock_quantity: z.number().int().min(0).max(1_000_000).optional().nullable(),
+  requires_shipping: z.boolean().default(false),
+  shipping_fee_cents: z.number().int().min(0).max(100_000_00).default(0),
+  weight_grams: z.number().int().min(0).max(200_000).optional().nullable(),
+  app_version: z.string().trim().max(40).optional().nullable(),
+  app_package: z.string().trim().max(120).optional().nullable(),
+  app_requirements: z.string().trim().max(500).optional().nullable(),
+  is_subscription: z.boolean().default(false),
+  billing_interval: z.enum(["mensal","trimestral","semestral","anual"]).optional().nullable(),
+  subscription_price_cents: z.number().int().min(0).max(100_000_00).optional().nullable(),
+  trial_days: z.number().int().min(0).max(90).default(0),
+  has_members_area: z.boolean().default(false),
 });
 
 export const listMyProducts = createServerFn({ method: "GET" })
