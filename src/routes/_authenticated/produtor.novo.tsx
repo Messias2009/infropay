@@ -45,6 +45,7 @@ function NovoProduto() {
     submit_for_review: false, tags: "",
     guarantee_days: 7,
   });
+  const [delivery, setDelivery] = useState<DeliveryValues>(emptyDelivery);
   const [loading, setLoading] = useState(false);
 
   function set<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
