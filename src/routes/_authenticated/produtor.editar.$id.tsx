@@ -200,6 +200,12 @@ function EditarProduto() {
           <Field label="URL externa"><Input value={form.external_url} onChange={(e) => set("external_url", e.target.value)} /></Field>
         </Section>
 
+        <Section title="Tipo de entrega">
+          <DeliveryFields value={delivery} onChange={setDelivery} />
+        </Section>
+
+
+
         <Section title="Preço e garantia">
           <div className="grid sm:grid-cols-3 gap-4">
             <Field label="Preço"><Input type="number" min={0} step="0.01" value={form.price} onChange={(e) => set("price", e.target.value)} required /></Field>
