@@ -31,6 +31,7 @@ import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authe
 import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
 import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
 import { Route as AuthenticatedProdutorIntegracoesRouteImport } from './routes/_authenticated/produtor.integracoes'
+import { Route as AuthenticatedProdutorFunilRouteImport } from './routes/_authenticated/produtor.funil'
 import { Route as AuthenticatedProdutorFinanceiroRouteImport } from './routes/_authenticated/produtor.financeiro'
 import { Route as AuthenticatedProdutorConquistasRouteImport } from './routes/_authenticated/produtor.conquistas'
 import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
@@ -153,6 +154,12 @@ const AuthenticatedProdutorIntegracoesRoute =
     path: '/integracoes',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
+const AuthenticatedProdutorFunilRoute =
+  AuthenticatedProdutorFunilRouteImport.update({
+    id: '/funil',
+    path: '/funil',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
 const AuthenticatedProdutorFinanceiroRoute =
   AuthenticatedProdutorFinanceiroRouteImport.update({
     id: '/financeiro',
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
   '/produtor/conquistas': typeof AuthenticatedProdutorConquistasRoute
   '/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
+  '/produtor/funil': typeof AuthenticatedProdutorFunilRoute
   '/produtor/integracoes': typeof AuthenticatedProdutorIntegracoesRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
@@ -242,6 +250,7 @@ export interface FileRoutesByTo {
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
   '/produtor/conquistas': typeof AuthenticatedProdutorConquistasRoute
   '/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
+  '/produtor/funil': typeof AuthenticatedProdutorFunilRoute
   '/produtor/integracoes': typeof AuthenticatedProdutorIntegracoesRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
@@ -274,6 +283,7 @@ export interface FileRoutesById {
   '/_authenticated/adm/saques': typeof AuthenticatedAdmSaquesRoute
   '/_authenticated/produtor/conquistas': typeof AuthenticatedProdutorConquistasRoute
   '/_authenticated/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
+  '/_authenticated/produtor/funil': typeof AuthenticatedProdutorFunilRoute
   '/_authenticated/produtor/integracoes': typeof AuthenticatedProdutorIntegracoesRoute
   '/_authenticated/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/adm/saques'
     | '/produtor/conquistas'
     | '/produtor/financeiro'
+    | '/produtor/funil'
     | '/produtor/integracoes'
     | '/produtor/novo'
     | '/produtor/produtos'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/adm/saques'
     | '/produtor/conquistas'
     | '/produtor/financeiro'
+    | '/produtor/funil'
     | '/produtor/integracoes'
     | '/produtor/novo'
     | '/produtor/produtos'
@@ -365,6 +377,7 @@ export interface FileRouteTypes {
     | '/_authenticated/adm/saques'
     | '/_authenticated/produtor/conquistas'
     | '/_authenticated/produtor/financeiro'
+    | '/_authenticated/produtor/funil'
     | '/_authenticated/produtor/integracoes'
     | '/_authenticated/produtor/novo'
     | '/_authenticated/produtor/produtos'
@@ -550,6 +563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutorIntegracoesRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
     }
+    '/_authenticated/produtor/funil': {
+      id: '/_authenticated/produtor/funil'
+      path: '/funil'
+      fullPath: '/produtor/funil'
+      preLoaderRoute: typeof AuthenticatedProdutorFunilRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
     '/_authenticated/produtor/financeiro': {
       id: '/_authenticated/produtor/financeiro'
       path: '/financeiro'
@@ -620,6 +640,7 @@ const AuthenticatedAdmRouteWithChildren =
 interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorConquistasRoute: typeof AuthenticatedProdutorConquistasRoute
   AuthenticatedProdutorFinanceiroRoute: typeof AuthenticatedProdutorFinanceiroRoute
+  AuthenticatedProdutorFunilRoute: typeof AuthenticatedProdutorFunilRoute
   AuthenticatedProdutorIntegracoesRoute: typeof AuthenticatedProdutorIntegracoesRoute
   AuthenticatedProdutorNovoRoute: typeof AuthenticatedProdutorNovoRoute
   AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
@@ -631,6 +652,7 @@ interface AuthenticatedProdutorRouteChildren {
 const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
   AuthenticatedProdutorConquistasRoute: AuthenticatedProdutorConquistasRoute,
   AuthenticatedProdutorFinanceiroRoute: AuthenticatedProdutorFinanceiroRoute,
+  AuthenticatedProdutorFunilRoute: AuthenticatedProdutorFunilRoute,
   AuthenticatedProdutorIntegracoesRoute: AuthenticatedProdutorIntegracoesRoute,
   AuthenticatedProdutorNovoRoute: AuthenticatedProdutorNovoRoute,
   AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
