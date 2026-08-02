@@ -93,6 +93,7 @@ function EditarProduto() {
         currency: form.currency.toUpperCase(),
         tags: form.tags ? form.tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
+        ...deliveryPayload(delivery),
       } } });
       toast.success("Alterações guardadas");
       refetch();
