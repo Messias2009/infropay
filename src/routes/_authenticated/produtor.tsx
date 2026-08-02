@@ -17,6 +17,8 @@ const items = [
   { to: "/produtor", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/produtor/produtos", icon: Package, label: "Produtos" },
   { to: "/produtor/novo", icon: Plus, label: "Novo produto" },
+  { to: "/produtor/funil", icon: TrendingUp, label: "Funil de vendas" },
+  { to: "/membros", icon: GraduationCap, label: "Área de membros" },
   { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
   { to: "/produtor/saques", icon: Banknote, label: "Saques" },
   { to: "/produtor/conquistas", icon: Trophy, label: "Conquistas" },
