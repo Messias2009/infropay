@@ -73,6 +73,7 @@ function NovoProduto() {
         status: form.submit_for_review ? ("publicado" as const) : ("rascunho" as const),
         tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
+        ...deliveryPayload(delivery),
       };
       const row = await createFn({ data: payload });
       toast.success(row.status === "em_analise" ? "Produto enviado para aprovação!" : "Produto criado como rascunho!");
