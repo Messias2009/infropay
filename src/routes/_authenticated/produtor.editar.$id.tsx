@@ -42,6 +42,7 @@ function EditarProduto() {
   const { data: cats } = useQuery({ queryKey: ["categories"], queryFn: () => catsFn() });
 
   const [form, setForm] = useState<any>(null);
+  const [delivery, setDelivery] = useState<DeliveryValues>(emptyDelivery);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
