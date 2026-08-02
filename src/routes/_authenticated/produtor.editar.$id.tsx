@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { MediaUpload } from "@/components/MediaUpload";
+import { DeliveryFields, emptyDelivery, deliveryPayload, deliveryFromRow, type DeliveryValues } from "@/components/products/DeliveryFields";
 import { getMyProduct, updateProduct, deleteProduct, submitProductForApproval } from "@/lib/products.functions";
 import { listCategories } from "@/lib/catalog.functions";
 
