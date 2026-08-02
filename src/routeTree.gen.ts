@@ -26,6 +26,7 @@ import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
 import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
+import { Route as AuthenticatedMembrosIndexRouteImport } from './routes/_authenticated/membros.index'
 import { Route as AuthenticatedAdmIndexRouteImport } from './routes/_authenticated/adm.index'
 import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authenticated/produtor.saques'
 import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
@@ -125,6 +126,12 @@ const AuthenticatedProdutorIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedMembrosIndexRoute =
+  AuthenticatedMembrosIndexRouteImport.update({
+    id: '/membros/',
+    path: '/membros/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdmIndexRoute = AuthenticatedAdmIndexRouteImport.update({
   id: '/',
@@ -234,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
   '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm/': typeof AuthenticatedAdmIndexRoute
+  '/membros/': typeof AuthenticatedMembrosIndexRoute
   '/produtor/': typeof AuthenticatedProdutorIndexRoute
   '/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
@@ -264,6 +272,7 @@ export interface FileRoutesByTo {
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
   '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm': typeof AuthenticatedAdmIndexRoute
+  '/membros': typeof AuthenticatedMembrosIndexRoute
   '/produtor': typeof AuthenticatedProdutorIndexRoute
   '/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
@@ -298,6 +307,7 @@ export interface FileRoutesById {
   '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
   '/_authenticated/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/_authenticated/adm/': typeof AuthenticatedAdmIndexRoute
+  '/_authenticated/membros/': typeof AuthenticatedMembrosIndexRoute
   '/_authenticated/produtor/': typeof AuthenticatedProdutorIndexRoute
   '/_authenticated/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/_authenticated/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/produtor/produtos'
     | '/produtor/saques'
     | '/adm/'
+    | '/membros/'
     | '/produtor/'
     | '/produtor/curso/$id'
     | '/produtor/editar/$id'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/produtor/produtos'
     | '/produtor/saques'
     | '/adm'
+    | '/membros'
     | '/produtor'
     | '/produtor/curso/$id'
     | '/produtor/editar/$id'
@@ -395,6 +407,7 @@ export interface FileRouteTypes {
     | '/_authenticated/produtor/produtos'
     | '/_authenticated/produtor/saques'
     | '/_authenticated/adm/'
+    | '/_authenticated/membros/'
     | '/_authenticated/produtor/'
     | '/_authenticated/produtor/curso/$id'
     | '/_authenticated/produtor/editar/$id'
@@ -540,6 +553,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/produtor/'
       preLoaderRoute: typeof AuthenticatedProdutorIndexRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/membros/': {
+      id: '/_authenticated/membros/'
+      path: '/membros'
+      fullPath: '/membros/'
+      preLoaderRoute: typeof AuthenticatedMembrosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/adm/': {
       id: '/_authenticated/adm/'
@@ -692,12 +712,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdmRoute: typeof AuthenticatedAdmRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedProdutorRoute: typeof AuthenticatedProdutorRouteWithChildren
+  AuthenticatedMembrosIndexRoute: typeof AuthenticatedMembrosIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdmRoute: AuthenticatedAdmRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedProdutorRoute: AuthenticatedProdutorRouteWithChildren,
+  AuthenticatedMembrosIndexRoute: AuthenticatedMembrosIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
