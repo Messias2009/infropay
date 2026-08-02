@@ -80,6 +80,242 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount_kind: Database["public"]["Enums"]["discount_kind"]
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          producer_id: string
+          product_id: string | null
+          updated_at: string
+          uses_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount_kind?: Database["public"]["Enums"]["discount_kind"]
+          discount_value: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          producer_id: string
+          product_id?: string | null
+          updated_at?: string
+          uses_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount_kind?: Database["public"]["Enums"]["discount_kind"]
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          producer_id?: string
+          product_id?: string | null
+          updated_at?: string
+          uses_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupons_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_lessons: {
+        Row: {
+          attachment_url: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          id: string
+          is_free: boolean
+          module_id: string
+          producer_id: string
+          sort_order: number
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          attachment_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          is_free?: boolean
+          module_id: string
+          producer_id: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          attachment_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          is_free?: boolean
+          module_id?: string
+          producer_id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          producer_id: string
+          product_id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          producer_id: string
+          product_id: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          producer_id?: string
+          product_id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_modules_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          certificate_issued: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          product_id: string
+          progress_percent: number
+          sale_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          certificate_issued?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          product_id: string
+          progress_percent?: number
+          sale_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          certificate_issued?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string
+          progress_percent?: number
+          sale_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_progress: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: string
+          lesson_id: string
+          seconds_watched: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          lesson_id: string
+          seconds_watched?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          seconds_watched?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "course_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -116,20 +352,89 @@ export type Database = {
         }
         Relationships: []
       }
+      product_offers: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          headline: string | null
+          id: string
+          kind: Database["public"]["Enums"]["offer_kind"]
+          offer_price_cents: number
+          offer_product_id: string
+          producer_id: string
+          product_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["offer_kind"]
+          offer_price_cents: number
+          offer_product_id: string
+          producer_id: string
+          product_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["offer_kind"]
+          offer_price_cents?: number
+          offer_product_id?: string
+          producer_id?: string
+          product_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_offers_offer_product_id_fkey"
+            columns: ["offer_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_offers_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
+          app_package: string | null
+          app_requirements: string | null
+          app_version: string | null
           banner_url: string | null
+          billing_interval:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
           category_id: string | null
           cover_url: string | null
           created_at: string
           currency: string
+          delivery_kind: Database["public"]["Enums"]["delivery_kind"]
           description: string | null
           external_url: string | null
           file_url: string | null
           ga_measurement_id: string | null
           google_ads_label: string | null
           guarantee_days: number | null
+          has_members_area: boolean
           id: string
+          is_subscription: boolean
           meta_pixel_id: string | null
           price_cents: number
           producer_id: string
@@ -137,33 +442,48 @@ export type Database = {
           promo_price_cents: number | null
           rating: number | null
           rejection_reason: string | null
+          requires_shipping: boolean
           reviews_count: number
           sales_count: number
           sales_video_url: string | null
           seo_description: string | null
           seo_title: string | null
+          shipping_fee_cents: number
           short_description: string | null
           slug: string
           status: Database["public"]["Enums"]["product_status"]
+          stock_quantity: number | null
+          subscription_price_cents: number | null
           tags: string[] | null
           title: string
+          trial_days: number
           updated_at: string
           utmify_token: string | null
           views_count: number
+          weight_grams: number | null
         }
         Insert: {
+          app_package?: string | null
+          app_requirements?: string | null
+          app_version?: string | null
           banner_url?: string | null
+          billing_interval?:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
           category_id?: string | null
           cover_url?: string | null
           created_at?: string
           currency?: string
+          delivery_kind?: Database["public"]["Enums"]["delivery_kind"]
           description?: string | null
           external_url?: string | null
           file_url?: string | null
           ga_measurement_id?: string | null
           google_ads_label?: string | null
           guarantee_days?: number | null
+          has_members_area?: boolean
           id?: string
+          is_subscription?: boolean
           meta_pixel_id?: string | null
           price_cents?: number
           producer_id: string
@@ -171,33 +491,48 @@ export type Database = {
           promo_price_cents?: number | null
           rating?: number | null
           rejection_reason?: string | null
+          requires_shipping?: boolean
           reviews_count?: number
           sales_count?: number
           sales_video_url?: string | null
           seo_description?: string | null
           seo_title?: string | null
+          shipping_fee_cents?: number
           short_description?: string | null
           slug: string
           status?: Database["public"]["Enums"]["product_status"]
+          stock_quantity?: number | null
+          subscription_price_cents?: number | null
           tags?: string[] | null
           title: string
+          trial_days?: number
           updated_at?: string
           utmify_token?: string | null
           views_count?: number
+          weight_grams?: number | null
         }
         Update: {
+          app_package?: string | null
+          app_requirements?: string | null
+          app_version?: string | null
           banner_url?: string | null
+          billing_interval?:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
           category_id?: string | null
           cover_url?: string | null
           created_at?: string
           currency?: string
+          delivery_kind?: Database["public"]["Enums"]["delivery_kind"]
           description?: string | null
           external_url?: string | null
           file_url?: string | null
           ga_measurement_id?: string | null
           google_ads_label?: string | null
           guarantee_days?: number | null
+          has_members_area?: boolean
           id?: string
+          is_subscription?: boolean
           meta_pixel_id?: string | null
           price_cents?: number
           producer_id?: string
@@ -205,19 +540,25 @@ export type Database = {
           promo_price_cents?: number | null
           rating?: number | null
           rejection_reason?: string | null
+          requires_shipping?: boolean
           reviews_count?: number
           sales_count?: number
           sales_video_url?: string | null
           seo_description?: string | null
           seo_title?: string | null
+          shipping_fee_cents?: number
           short_description?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["product_status"]
+          stock_quantity?: number | null
+          subscription_price_cents?: number | null
           tags?: string[] | null
           title?: string
+          trial_days?: number
           updated_at?: string
           utmify_token?: string | null
           views_count?: number
+          weight_grams?: number | null
         }
         Relationships: [
           {
@@ -275,11 +616,14 @@ export type Database = {
           buyer_name: string | null
           buyer_phone: string | null
           buyer_user_id: string | null
+          coupon_code: string | null
           created_at: string
           currency: string
+          discount_cents: number
           gross_cents: number
           id: string
           net_cents: number
+          origin: string
           paid_at: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           payment_ref: string | null
@@ -299,11 +643,14 @@ export type Database = {
           buyer_name?: string | null
           buyer_phone?: string | null
           buyer_user_id?: string | null
+          coupon_code?: string | null
           created_at?: string
           currency?: string
+          discount_cents?: number
           gross_cents: number
           id?: string
           net_cents: number
+          origin?: string
           paid_at?: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           payment_ref?: string | null
@@ -323,11 +670,14 @@ export type Database = {
           buyer_name?: string | null
           buyer_phone?: string | null
           buyer_user_id?: string | null
+          coupon_code?: string | null
           created_at?: string
           currency?: string
+          discount_cents?: number
           gross_cents?: number
           id?: string
           net_cents?: number
+          origin?: string
           paid_at?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"]
           payment_ref?: string | null
@@ -525,6 +875,16 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "producer" | "buyer"
+      billing_interval: "mensal" | "trimestral" | "semestral" | "anual"
+      delivery_kind:
+        | "digital"
+        | "fisico"
+        | "apk"
+        | "assinatura"
+        | "membros"
+        | "externo"
+      discount_kind: "percentagem" | "valor"
+      offer_kind: "order_bump" | "upsell" | "downsell"
       payment_method: "multicaixa_express" | "referencia" | "transferencia"
       product_status: "rascunho" | "publicado" | "pausado" | "em_analise"
       product_type:
@@ -670,6 +1030,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "producer", "buyer"],
+      billing_interval: ["mensal", "trimestral", "semestral", "anual"],
+      delivery_kind: [
+        "digital",
+        "fisico",
+        "apk",
+        "assinatura",
+        "membros",
+        "externo",
+      ],
+      discount_kind: ["percentagem", "valor"],
+      offer_kind: ["order_bump", "upsell", "downsell"],
       payment_method: ["multicaixa_express", "referencia", "transferencia"],
       product_status: ["rascunho", "publicado", "pausado", "em_analise"],
       product_type: [
