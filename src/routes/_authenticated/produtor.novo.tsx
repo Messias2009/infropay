@@ -142,6 +142,12 @@ function NovoProduto() {
           </Field>
         </Section>
 
+        <Section title="Tipo de entrega">
+          <DeliveryFields value={delivery} onChange={setDelivery} />
+        </Section>
+
+
+
         <Section title="Preço e garantia">
           <div className="grid sm:grid-cols-3 gap-4">
             <Field label="Preço" required><Input type="number" min={0} step="0.01" value={form.price} onChange={(e) => set("price", e.target.value)} required /></Field>
