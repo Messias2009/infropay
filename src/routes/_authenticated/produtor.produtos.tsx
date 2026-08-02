@@ -71,9 +71,12 @@ function MeusProdutos() {
                   </div>
                 </div>
               </Link>
-              <div className="px-4 pb-4 flex gap-2">
+              <div className="px-4 pb-4 flex gap-2 flex-wrap">
                 <Link to="/produtor/editar/$id" params={{ id: p.id }} className="flex-1">
                   <Button size="sm" variant="outline" className="w-full"><Pencil className="h-3.5 w-3.5 mr-1" />Editar</Button>
+                </Link>
+                <Link to="/produtor/curso/$id" params={{ id: p.id }}>
+                  <Button size="sm" variant="outline"><GraduationCap className="h-3.5 w-3.5 mr-1" />Aulas</Button>
                 </Link>
                 {(p.status === "rascunho" || p.status === "pausado") && (
                   <Button size="sm" onClick={() => submitOne(p.id)} className="gradient-brand text-primary-foreground">
