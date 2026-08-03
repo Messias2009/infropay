@@ -36,6 +36,7 @@ import { Route as AuthenticatedProdutorFunilRouteImport } from './routes/_authen
 import { Route as AuthenticatedProdutorFinanceiroRouteImport } from './routes/_authenticated/produtor.financeiro'
 import { Route as AuthenticatedProdutorConquistasRouteImport } from './routes/_authenticated/produtor.conquistas'
 import { Route as AuthenticatedMembrosSlugRouteImport } from './routes/_authenticated/membros.$slug'
+import { Route as AuthenticatedAdmUsuariosRouteImport } from './routes/_authenticated/adm.usuarios'
 import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
 import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
@@ -187,6 +188,12 @@ const AuthenticatedMembrosSlugRoute =
     path: '/membros/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdmUsuariosRoute =
+  AuthenticatedAdmUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdmRoute,
+  } as any)
 const AuthenticatedAdmSaquesRoute = AuthenticatedAdmSaquesRouteImport.update({
   id: '/saques',
   path: '/saques',
@@ -240,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
+  '/adm/usuarios': typeof AuthenticatedAdmUsuariosRoute
   '/membros/$slug': typeof AuthenticatedMembrosSlugRoute
   '/produtor/conquistas': typeof AuthenticatedProdutorConquistasRoute
   '/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
@@ -272,6 +280,7 @@ export interface FileRoutesByTo {
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
+  '/adm/usuarios': typeof AuthenticatedAdmUsuariosRoute
   '/membros/$slug': typeof AuthenticatedMembrosSlugRoute
   '/produtor/conquistas': typeof AuthenticatedProdutorConquistasRoute
   '/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
@@ -308,6 +317,7 @@ export interface FileRoutesById {
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/_authenticated/adm/saques': typeof AuthenticatedAdmSaquesRoute
+  '/_authenticated/adm/usuarios': typeof AuthenticatedAdmUsuariosRoute
   '/_authenticated/membros/$slug': typeof AuthenticatedMembrosSlugRoute
   '/_authenticated/produtor/conquistas': typeof AuthenticatedProdutorConquistasRoute
   '/_authenticated/produtor/financeiro': typeof AuthenticatedProdutorFinanceiroRoute
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/produto/$slug'
     | '/adm/produtos'
     | '/adm/saques'
+    | '/adm/usuarios'
     | '/membros/$slug'
     | '/produtor/conquistas'
     | '/produtor/financeiro'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/produto/$slug'
     | '/adm/produtos'
     | '/adm/saques'
+    | '/adm/usuarios'
     | '/membros/$slug'
     | '/produtor/conquistas'
     | '/produtor/financeiro'
@@ -411,6 +423,7 @@ export interface FileRouteTypes {
     | '/produto/$slug'
     | '/_authenticated/adm/produtos'
     | '/_authenticated/adm/saques'
+    | '/_authenticated/adm/usuarios'
     | '/_authenticated/membros/$slug'
     | '/_authenticated/produtor/conquistas'
     | '/_authenticated/produtor/financeiro'
@@ -637,6 +650,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMembrosSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/adm/usuarios': {
+      id: '/_authenticated/adm/usuarios'
+      path: '/usuarios'
+      fullPath: '/adm/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdmUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
+    }
     '/_authenticated/adm/saques': {
       id: '/_authenticated/adm/saques'
       path: '/saques'
@@ -685,12 +705,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdmRouteChildren {
   AuthenticatedAdmProdutosRoute: typeof AuthenticatedAdmProdutosRoute
   AuthenticatedAdmSaquesRoute: typeof AuthenticatedAdmSaquesRoute
+  AuthenticatedAdmUsuariosRoute: typeof AuthenticatedAdmUsuariosRoute
   AuthenticatedAdmIndexRoute: typeof AuthenticatedAdmIndexRoute
 }
 
 const AuthenticatedAdmRouteChildren: AuthenticatedAdmRouteChildren = {
   AuthenticatedAdmProdutosRoute: AuthenticatedAdmProdutosRoute,
   AuthenticatedAdmSaquesRoute: AuthenticatedAdmSaquesRoute,
+  AuthenticatedAdmUsuariosRoute: AuthenticatedAdmUsuariosRoute,
   AuthenticatedAdmIndexRoute: AuthenticatedAdmIndexRoute,
 }
 
