@@ -59,6 +59,7 @@ export const approveProduct = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("products")
       .update({ status: "publicado", rejection_reason: null }).eq("id", data.id);
     if (error) throw error;
+    await logAdminAction(context.supabase, context.userId, "product_approved", "product", data.id);
     return { ok: true };
   });
 
@@ -71,6 +72,7 @@ export const rejectProduct = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("products")
       .update({ status: "rascunho", rejection_reason: data.reason }).eq("id", data.id);
     if (error) throw error;
+    await logAdminAction(context.supabase, context.userId, "product_rejected", "product", data.id, { reason: data.reason });
     return { ok: true };
   });
 

@@ -119,5 +119,10 @@ export const updateWithdrawalStatus = createServerFn({ method: "POST" })
     if (data.status === "recusado") patch.rejection_reason = data.rejection_reason ?? "Sem motivo indicado";
     const { error } = await (context.supabase as any).from("withdrawals").update(patch).eq("id", data.id);
     if (error) throw error;
+    const { logAdminAction } = await import("./admin.functions");
+    await logAdminAction(context.supabase, context.userId, `withdrawal_${data.status}`, "withdrawal", data.id, {
+      status: data.status,
+      reason: data.rejection_reason ?? null,
+    });
     return { ok: true };
   });
