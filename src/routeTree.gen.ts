@@ -38,6 +38,7 @@ import { Route as AuthenticatedProdutorConquistasRouteImport } from './routes/_a
 import { Route as AuthenticatedMembrosSlugRouteImport } from './routes/_authenticated/membros.$slug'
 import { Route as AuthenticatedAdmUsuariosRouteImport } from './routes/_authenticated/adm.usuarios'
 import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
+import { Route as AuthenticatedAdmRelatoriosRouteImport } from './routes/_authenticated/adm.relatorios'
 import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 import { Route as ApiPublicWebhooksMulticaixaRouteImport } from './routes/api/public/webhooks/multicaixa'
@@ -199,6 +200,12 @@ const AuthenticatedAdmSaquesRoute = AuthenticatedAdmSaquesRouteImport.update({
   path: '/saques',
   getParentRoute: () => AuthenticatedAdmRoute,
 } as any)
+const AuthenticatedAdmRelatoriosRoute =
+  AuthenticatedAdmRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => AuthenticatedAdmRoute,
+  } as any)
 const AuthenticatedAdmProdutosRoute =
   AuthenticatedAdmProdutosRouteImport.update({
     id: '/produtos',
@@ -246,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
+  '/adm/relatorios': typeof AuthenticatedAdmRelatoriosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
   '/adm/usuarios': typeof AuthenticatedAdmUsuariosRoute
   '/membros/$slug': typeof AuthenticatedMembrosSlugRoute
@@ -279,6 +287,7 @@ export interface FileRoutesByTo {
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
+  '/adm/relatorios': typeof AuthenticatedAdmRelatoriosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
   '/adm/usuarios': typeof AuthenticatedAdmUsuariosRoute
   '/membros/$slug': typeof AuthenticatedMembrosSlugRoute
@@ -316,6 +325,7 @@ export interface FileRoutesById {
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
+  '/_authenticated/adm/relatorios': typeof AuthenticatedAdmRelatoriosRoute
   '/_authenticated/adm/saques': typeof AuthenticatedAdmSaquesRoute
   '/_authenticated/adm/usuarios': typeof AuthenticatedAdmUsuariosRoute
   '/_authenticated/membros/$slug': typeof AuthenticatedMembrosSlugRoute
@@ -353,6 +363,7 @@ export interface FileRouteTypes {
     | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/produtos'
+    | '/adm/relatorios'
     | '/adm/saques'
     | '/adm/usuarios'
     | '/membros/$slug'
@@ -386,6 +397,7 @@ export interface FileRouteTypes {
     | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/produtos'
+    | '/adm/relatorios'
     | '/adm/saques'
     | '/adm/usuarios'
     | '/membros/$slug'
@@ -422,6 +434,7 @@ export interface FileRouteTypes {
     | '/pedido/$token'
     | '/produto/$slug'
     | '/_authenticated/adm/produtos'
+    | '/_authenticated/adm/relatorios'
     | '/_authenticated/adm/saques'
     | '/_authenticated/adm/usuarios'
     | '/_authenticated/membros/$slug'
@@ -664,6 +677,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmSaquesRouteImport
       parentRoute: typeof AuthenticatedAdmRoute
     }
+    '/_authenticated/adm/relatorios': {
+      id: '/_authenticated/adm/relatorios'
+      path: '/relatorios'
+      fullPath: '/adm/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdmRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
+    }
     '/_authenticated/adm/produtos': {
       id: '/_authenticated/adm/produtos'
       path: '/produtos'
@@ -704,6 +724,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdmRouteChildren {
   AuthenticatedAdmProdutosRoute: typeof AuthenticatedAdmProdutosRoute
+  AuthenticatedAdmRelatoriosRoute: typeof AuthenticatedAdmRelatoriosRoute
   AuthenticatedAdmSaquesRoute: typeof AuthenticatedAdmSaquesRoute
   AuthenticatedAdmUsuariosRoute: typeof AuthenticatedAdmUsuariosRoute
   AuthenticatedAdmIndexRoute: typeof AuthenticatedAdmIndexRoute
@@ -711,6 +732,7 @@ interface AuthenticatedAdmRouteChildren {
 
 const AuthenticatedAdmRouteChildren: AuthenticatedAdmRouteChildren = {
   AuthenticatedAdmProdutosRoute: AuthenticatedAdmProdutosRoute,
+  AuthenticatedAdmRelatoriosRoute: AuthenticatedAdmRelatoriosRoute,
   AuthenticatedAdmSaquesRoute: AuthenticatedAdmSaquesRoute,
   AuthenticatedAdmUsuariosRoute: AuthenticatedAdmUsuariosRoute,
   AuthenticatedAdmIndexRoute: AuthenticatedAdmIndexRoute,
