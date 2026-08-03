@@ -55,17 +55,17 @@ function Home() {
               em renda.
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl">
-              A plataforma premium para vender infoprodutos em Angola. Checkout Multicaixa, saque em Kz e a menor comissão do mercado.
+              Venda cursos, ebooks e mentorias com checkout Multicaixa que converte, dinheiro liberado em 1 hora e apenas 2% de comissão — a menor de Angola.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link to="/loja">
                 <Button size="lg" className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90 h-12 px-6">
-                  Explorar loja <ArrowRight className="ml-1 h-4 w-4" />
+                  Comprar na loja <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </Link>
               <Link to="/auth" search={{ mode: "signup" }}>
                 <Button size="lg" variant="outline" className="h-12 px-6 border-gold/40 hover:bg-gold/10 hover:border-gold">
-                  <Rocket className="mr-2 h-4 w-4" /> Tornar-se produtor
+                  <Rocket className="mr-2 h-4 w-4" /> Começar a vender grátis
                 </Button>
               </Link>
             </div>
@@ -141,7 +141,7 @@ function Home() {
             <h2 className="mt-2 text-3xl md:text-4xl font-bold">
               Ganhe <span className="text-shimmer">placas oficiais</span> a cada meta
             </h2>
-            <p className="mt-3 text-sm text-muted-foreground">Do Bronze ao Infinito — 10 níveis desbloqueáveis por faturamento.</p>
+            <p className="mt-3 text-sm text-muted-foreground">Do Bronze ao Infinito: 10 níveis reais, conquistados por faturamento — e reconhecidos publicamente.</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -193,10 +193,10 @@ function Home() {
           <div className="relative p-8 md:p-14 max-w-xl">
             <div className="text-xs font-semibold uppercase tracking-widest text-gold">Ganhe online</div>
             <h2 className="mt-3 text-3xl md:text-5xl font-bold leading-tight">
-              O seu <span className="text-gradient-gold">primeiro Kz</span><br />pode ser hoje.
+              O seu <span className="text-gradient-gold">primeiro Kz</span><br />pode entrar hoje.
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Publique o seu curso, ebook ou template em minutos e comece a vender.
+              Publique o seu curso, ebook ou template em minutos. Sem mensalidade, sem burocracia — paga apenas quando vende.
             </p>
             <Link to="/auth" search={{ mode: "signup" }} className="mt-6 inline-block">
               <Button size="lg" className="gradient-brand text-primary-foreground shadow-glow">
@@ -213,7 +213,7 @@ function Home() {
         <div className="flex items-end justify-between mb-8 gap-4">
           <div className="min-w-0">
             <div className="text-xs font-semibold uppercase tracking-widest text-gold">Em destaque</div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-bold">Produtos populares</h2>
+            <h2 className="mt-2 text-3xl md:text-4xl font-bold">Os mais vendidos agora</h2>
           </div>
           <Link to="/loja" className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0">
             Ver loja <ArrowRight className="ml-1 h-4 w-4" />
@@ -241,13 +241,13 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="text-xs font-semibold uppercase tracking-widest text-gold">Como funciona</div>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold">3 passos para começar a vender</h2>
+          <h2 className="mt-2 text-3xl md:text-4xl font-bold">Da ideia à primeira venda em 3 passos</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { n: "01", t: "Crie a sua conta", d: "Cadastro grátis em menos de 60 segundos.", i: Users },
-            { n: "02", t: "Publique o produto", d: "Upload de capa, ficheiro e preço. Curadoria em 24h.", i: Play },
-            { n: "03", t: "Receba em Kz", d: "Saque via IBAN a partir de 5.000 Kz.", i: TrendingUp },
+            { n: "01", t: "Crie a sua conta grátis", d: "Menos de 60 segundos. Sem cartão, sem mensalidade.", i: Users },
+            { n: "02", t: "Publique o seu produto", d: "Capa, ficheiro e preço. A nossa curadoria aprova em até 24h.", i: Play },
+            { n: "03", t: "Receba em Kwanza", d: "Saldo liberado em 1 hora e saque por IBAN a partir de 5.000 Kz.", i: TrendingUp },
           ].map((s) => {
             const Icon = s.i;
             return (
@@ -279,7 +279,7 @@ function Home() {
             <h2 className="mt-4 text-3xl md:text-4xl font-bold leading-tight">
               InfroPay <span className="text-gradient-gold">Legends</span>
             </h2>
-            <p className="mt-3 text-muted-foreground">Ranking público dos maiores produtores. 10 níveis do Bronze ao Infinito.</p>
+            <p className="mt-3 text-muted-foreground">O ranking dos produtores que mais faturam em Angola. Suba de nível, ganhe placa oficial e prove o seu resultado.</p>
             <div className="mt-6 inline-flex items-center text-sm text-gold group-hover:translate-x-1 transition">
               Ver ranking <ArrowRight className="ml-1 h-4 w-4" />
             </div>
@@ -291,7 +291,7 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="text-xs font-semibold uppercase tracking-widest text-gold">Testemunhos</div>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold">Produtores que confiam</h2>
+          <h2 className="mt-2 text-3xl md:text-4xl font-bold">Quem já vende com a InfroPay</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           {[
@@ -324,13 +324,13 @@ function Home() {
           <div className="relative p-10 md:p-16 max-w-2xl">
             <div className="text-xs font-semibold uppercase tracking-widest text-gold">Para produtores</div>
             <h2 className="mt-3 text-3xl md:text-5xl font-bold leading-tight">
-              Venda mais com a <span className="text-gradient-gold">infraestrutura certa</span>.
+              Pare de perder vendas por <span className="text-gradient-gold">falta de estrutura</span>.
             </h2>
             <p className="mt-4 text-muted-foreground text-lg">
-              Painel completo, checkout de alta conversão, área de produtor, financeiro e saques — tudo numa só plataforma.
+              Checkout de alta conversão, área de membros, pixels integrados, financeiro e saques em Kz. Tudo pronto — só falta o seu produto.
             </p>
             <ul className="mt-6 space-y-2 text-sm">
-              {["Comissão de 2% por venda","Saque a partir de 5.000 Kz","Multicaixa Express + Referência + Transferência","Suporte em português 24/7"].map((x) => (
+              {["Apenas 2% por venda — sem mensalidade","Saldo liberado em 1 hora após aprovação","Multicaixa Express, Referência e Transferência","Suporte em português, feito em Angola"].map((x) => (
                 <li key={x} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success shrink-0" /> {x}</li>
               ))}
             </ul>
