@@ -5,6 +5,10 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getOrderByToken } from "@/lib/checkout.functions";
+import { getOrderTracking } from "@/lib/tracking.functions";
+import { TrackingScripts } from "@/components/TrackingScripts";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 const opt = (token: string) => queryOptions({
   queryKey: ["order", token],
@@ -37,12 +41,47 @@ const METHOD_LABEL: Record<string, string> = {
 function Pedido() {
   const { token } = Route.useParams();
   const { data: o } = useSuspenseQuery(opt(token));
+  const paid = o?.status === "pago";
+
+  // Purchase é disparado uma única vez por pedido (guardado em localStorage).
+  const [firedOnce, setFiredOnce] = useState(true);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setFiredOnce(window.localStorage.getItem(`ip_purchase_${token}`) === "1");
+  }, [token]);
+
+  const shouldTrack = paid && !firedOnce;
+  const { data: tracking } = useQuery({
+    queryKey: ["tracking", "order", token, shouldTrack],
+    queryFn: () => getOrderTracking({ data: { token, notify: shouldTrack } }),
+    enabled: paid,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    if (shouldTrack && tracking) {
+      window.localStorage.setItem(`ip_purchase_${token}`, "1");
+      setFiredOnce(true);
+    }
+  }, [shouldTrack, tracking, token]);
+
   if (!o) return null;
-  const paid = o.status === "pago";
   const prod = o.product as any;
 
   return (
     <SiteLayout>
+      {shouldTrack && tracking && (
+        <TrackingScripts
+          config={tracking}
+          event={{
+            type: "Purchase",
+            id: tracking.content_id,
+            name: tracking.content_name,
+            value: tracking.value,
+            currency: tracking.currency,
+          }}
+        />
+      )}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16">
         <div className={`rounded-2xl border p-8 text-center ${paid ? "border-success/40 bg-success/5" : "border-gold/40 bg-gold/5"}`}>
           <div className={`mx-auto h-16 w-16 rounded-full grid place-items-center ${paid ? "gradient-brand" : "gradient-gold"}`}>

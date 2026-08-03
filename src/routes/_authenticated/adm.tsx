@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ShieldCheck, Package, Banknote, ArrowUpRight, Sparkles } from "lucide-react";
+import { ShieldCheck, Package, Banknote, ArrowUpRight, Sparkles, Users, BarChart3, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isAdmin, bootstrapAdmin } from "@/lib/admin.functions";
 import logoMark from "@/assets/infropay-mark.png";
@@ -15,8 +15,12 @@ export const Route = createFileRoute("/_authenticated/adm")({
 const items = [
   { to: "/adm", icon: ShieldCheck, label: "Aprovações", exact: true },
   { to: "/adm/produtos", icon: Package, label: "Todos os produtos" },
+  { to: "/adm/usuarios", icon: Users, label: "Usuários" },
+  { to: "/adm/relatorios", icon: BarChart3, label: "Relatórios" },
+  { to: "/adm/logs", icon: ScrollText, label: "Logs" },
   { to: "/adm/saques", icon: Banknote, label: "Saques" },
 ];
+
 
 function AdmLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

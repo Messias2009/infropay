@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { createOrder } from "@/lib/checkout.functions";
+import { getProductTracking } from "@/lib/tracking.functions";
+import { TrackingScripts } from "@/components/TrackingScripts";
+import { useQuery } from "@tanstack/react-query";
 
 const opt = (slug: string) => queryOptions({
   queryKey: ["product-checkout", slug],
@@ -59,6 +62,11 @@ function Checkout() {
   const { slug } = Route.useParams();
   const router = useRouter();
   const { data: p } = useSuspenseQuery(opt(slug));
+  const { data: tracking } = useQuery({
+    queryKey: ["tracking", "product", slug],
+    queryFn: () => getProductTracking({ data: { slug } }),
+    staleTime: 5 * 60_000,
+  });
   const [method, setMethod] = useState<typeof METHODS[number]["id"]>("multicaixa_express");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -84,6 +92,10 @@ function Checkout() {
 
   return (
     <SiteLayout>
+      <TrackingScripts
+        config={tracking}
+        event={{ type: "InitiateCheckout", id: p.id, name: p.title, value: price / 100, currency: p.currency }}
+      />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
         <Link to="/produto/$slug" params={{ slug }} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="h-4 w-4 mr-1" /> Voltar ao produto

@@ -4,6 +4,9 @@ import { ShoppingBag, ShieldCheck, Zap, Star, ArrowLeft, Users } from "lucide-re
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { getProductBySlug } from "@/lib/catalog.functions";
+import { getProductTracking } from "@/lib/tracking.functions";
+import { TrackingScripts } from "@/components/TrackingScripts";
+import { useQuery } from "@tanstack/react-query";
 
 const opt = (slug: string) => queryOptions({
   queryKey: ["product", slug],
@@ -42,11 +45,20 @@ function fmt(cents: number, currency: string) {
 function Produto() {
   const { slug } = Route.useParams();
   const { data: p } = useSuspenseQuery(opt(slug));
+  const { data: tracking } = useQuery({
+    queryKey: ["tracking", "product", slug],
+    queryFn: () => getProductTracking({ data: { slug } }),
+    staleTime: 5 * 60_000,
+  });
   if (!p) return null;
   const hasPromo = p.promo_price_cents && p.promo_price_cents < p.price_cents;
 
   return (
     <SiteLayout>
+      <TrackingScripts
+        config={tracking}
+        event={{ type: "ViewContent", id: p.id, name: p.title, value: (p.promo_price_cents && p.promo_price_cents < p.price_cents ? p.promo_price_cents : p.price_cents) / 100, currency: p.currency }}
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
         <Link to="/loja" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="h-4 w-4 mr-1" /> Voltar à loja
