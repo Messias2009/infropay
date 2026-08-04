@@ -63,6 +63,8 @@ function EditarProduto() {
         currency: product.currency,
         tags: (product.tags ?? []).join(", "),
         guarantee_days: product.guarantee_days ?? 7,
+        allow_affiliates: (product as any).allow_affiliates ?? false,
+        affiliate_commission_percent: Number((product as any).affiliate_commission_percent ?? 30),
         status: product.status,
       });
       setDelivery(deliveryFromRow(product));
