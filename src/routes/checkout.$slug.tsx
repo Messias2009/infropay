@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { createOrder } from "@/lib/checkout.functions";
+import { getRef } from "@/lib/affiliate-ref";
 import { getProductTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
