@@ -33,6 +33,8 @@ const productSchema = z.object({
   subscription_price_cents: z.number().int().min(0).max(100_000_00).optional().nullable(),
   trial_days: z.number().int().min(0).max(90).default(0),
   has_members_area: z.boolean().default(false),
+  allow_affiliates: z.boolean().default(false),
+  affiliate_commission_percent: z.number().min(0).max(80).default(30),
 });
 
 export const listMyProducts = createServerFn({ method: "GET" })
