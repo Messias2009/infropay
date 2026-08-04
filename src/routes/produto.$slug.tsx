@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { ShoppingBag, ShieldCheck, Zap, Star, ArrowLeft, Users } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { getProductTracking } from "@/lib/tracking.functions";
+import { registerAffiliateClick } from "@/lib/affiliate.functions";
+import { saveRef } from "@/lib/affiliate-ref";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
 
