@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { Download, TrendingUp, Percent, Banknote, Wallet, Clock } from "lucide-react";
+import { Download, TrendingUp, Percent, Banknote, Wallet, Clock, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPlatformReport, exportCsv } from "@/lib/admin.functions";
 
