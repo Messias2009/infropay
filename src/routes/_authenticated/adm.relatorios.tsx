@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { Download, TrendingUp, Percent, Banknote, Wallet, Clock } from "lucide-react";
+import { Download, TrendingUp, Percent, Banknote, Wallet, Clock, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPlatformReport, exportCsv } from "@/lib/admin.functions";
 
@@ -47,6 +47,7 @@ function Page() {
   const cards = [
     { icon: TrendingUp, label: "Faturamento total", value: kz(t.gross_cents), accent: "text-gold" },
     { icon: Percent, label: "Comissões retidas (2%)", value: kz(t.commissions_cents), accent: "text-primary-glow" },
+    { icon: Handshake, label: "Comissões de afiliados", value: kz(t.affiliate_commissions_cents), accent: "text-gold" },
     { icon: Banknote, label: "Taxas de saque (8%)", value: kz(t.withdrawal_fees_cents), accent: "text-success" },
     { icon: Wallet, label: "Já sacado", value: kz(t.withdrawn_cents), accent: "text-foreground" },
     { icon: Clock, label: "Saques pendentes", value: kz(t.pending_withdrawals_cents), accent: "text-warning" },

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { createOrder } from "@/lib/checkout.functions";
+import { getRef } from "@/lib/affiliate-ref";
 import { getProductTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
@@ -80,7 +81,9 @@ function Checkout() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await createOrder({ data: { product_slug: slug, buyer_name: name, buyer_email: email, buyer_phone: phone, payment_method: method } });
+      const urlRef = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("ref") : null;
+      const ref = urlRef ?? getRef(slug);
+      const res = await createOrder({ data: { product_slug: slug, buyer_name: name, buyer_email: email, buyer_phone: phone, payment_method: method, ref } });
       toast.success("Pedido criado! A aguardar pagamento.");
       router.navigate({ to: "/pedido/$token", params: { token: res.token } });
     } catch (err) {

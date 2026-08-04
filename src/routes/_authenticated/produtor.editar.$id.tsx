@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { MediaUpload } from "@/components/MediaUpload";
@@ -63,6 +64,8 @@ function EditarProduto() {
         currency: product.currency,
         tags: (product.tags ?? []).join(", "),
         guarantee_days: product.guarantee_days ?? 7,
+        allow_affiliates: (product as any).allow_affiliates ?? false,
+        affiliate_commission_percent: Number((product as any).affiliate_commission_percent ?? 30),
         status: product.status,
       });
       setDelivery(deliveryFromRow(product));
@@ -93,6 +96,8 @@ function EditarProduto() {
         currency: form.currency.toUpperCase(),
         tags: form.tags ? form.tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
+        allow_affiliates: !!form.allow_affiliates,
+        affiliate_commission_percent: Number(form.affiliate_commission_percent || 0),
         ...deliveryPayload(delivery),
       } } });
       toast.success("Alterações guardadas");
@@ -222,6 +227,32 @@ function EditarProduto() {
           </div>
           <Field label="Dias de garantia"><Input type="number" min={0} max={60} value={form.guarantee_days} onChange={(e) => set("guarantee_days", Number(e.target.value))} /></Field>
         </Section>
+
+        <Section title="Programa de afiliados">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Label className="text-sm">Permitir afiliados</Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                Outros utilizadores podem gerar links e promover este produto em troca de comissão.
+              </p>
+            </div>
+            <Switch checked={!!form.allow_affiliates} onCheckedChange={(v) => set("allow_affiliates", v)} />
+          </div>
+          {form.allow_affiliates && (
+            <Field label="Comissão do afiliado (%)" hint="Descontada do valor que recebe por venda. Máximo 80%.">
+              <Input
+                type="number"
+                min={1}
+                max={80}
+                step="1"
+                value={form.affiliate_commission_percent}
+                onChange={(e) => set("affiliate_commission_percent", Number(e.target.value))}
+              />
+            </Field>
+          )}
+        </Section>
+
+
 
         <div className="flex gap-3 justify-end pt-4 border-t border-border">
           <Link to="/produtor/produtos"><Button type="button" variant="outline">Cancelar</Button></Link>

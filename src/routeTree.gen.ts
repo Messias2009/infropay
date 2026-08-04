@@ -24,6 +24,7 @@ import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
 import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
 import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
+import { Route as AuthenticatedAfiliadosRouteImport } from './routes/_authenticated/afiliados'
 import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
 import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
 import { Route as AuthenticatedMembrosIndexRouteImport } from './routes/_authenticated/membros.index'
@@ -118,6 +119,11 @@ const AuthenticatedProdutorRoute = AuthenticatedProdutorRouteImport.update({
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAfiliadosRoute = AuthenticatedAfiliadosRouteImport.update({
+  id: '/afiliados',
+  path: '/afiliados',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdmRoute = AuthenticatedAdmRouteImport.update({
@@ -253,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/adm': typeof AuthenticatedAdmRouteWithChildren
+  '/afiliados': typeof AuthenticatedAfiliadosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/checkout/$slug': typeof CheckoutSlugRoute
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/afiliados': typeof AuthenticatedAfiliadosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/checkout/$slug': typeof CheckoutSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/_authenticated/adm': typeof AuthenticatedAdmRouteWithChildren
+  '/_authenticated/afiliados': typeof AuthenticatedAfiliadosRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/checkout/$slug': typeof CheckoutSlugRoute
@@ -366,6 +375,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/adm'
+    | '/afiliados'
     | '/perfil'
     | '/produtor'
     | '/checkout/$slug'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/sobre'
     | '/termos'
+    | '/afiliados'
     | '/perfil'
     | '/checkout/$slug'
     | '/pedido/$token'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/_authenticated/adm'
+    | '/_authenticated/afiliados'
     | '/_authenticated/perfil'
     | '/_authenticated/produtor'
     | '/checkout/$slug'
@@ -589,6 +601,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/afiliados': {
+      id: '/_authenticated/afiliados'
+      path: '/afiliados'
+      fullPath: '/afiliados'
+      preLoaderRoute: typeof AuthenticatedAfiliadosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/adm': {
@@ -795,6 +814,7 @@ const AuthenticatedProdutorRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdmRoute: typeof AuthenticatedAdmRouteWithChildren
+  AuthenticatedAfiliadosRoute: typeof AuthenticatedAfiliadosRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedProdutorRoute: typeof AuthenticatedProdutorRouteWithChildren
   AuthenticatedMembrosSlugRoute: typeof AuthenticatedMembrosSlugRoute
@@ -803,6 +823,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdmRoute: AuthenticatedAdmRouteWithChildren,
+  AuthenticatedAfiliadosRoute: AuthenticatedAfiliadosRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedProdutorRoute: AuthenticatedProdutorRouteWithChildren,
   AuthenticatedMembrosSlugRoute: AuthenticatedMembrosSlugRoute,

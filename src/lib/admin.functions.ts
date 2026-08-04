@@ -213,7 +213,7 @@ export const getPlatformReport = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const [{ data: sales }, { data: withdrawals }, { data: products }, { data: profiles }] = await Promise.all([
-      supabaseAdmin.from("sales").select("gross_cents, platform_fee_cents, net_cents, status, created_at, paid_at, producer_id, product_id"),
+      supabaseAdmin.from("sales").select("gross_cents, platform_fee_cents, net_cents, affiliate_commission_cents, status, created_at, paid_at, producer_id, product_id"),
       supabaseAdmin.from("withdrawals").select("gross_cents, fee_cents, net_cents, status"),
       supabaseAdmin.from("products").select("id, title, slug, sales_count, producer_id"),
       supabaseAdmin.from("profiles").select("id, full_name, username"),
@@ -222,6 +222,7 @@ export const getPlatformReport = createServerFn({ method: "GET" })
     const paid = (sales ?? []).filter((s) => s.status === "pago");
     const gross = paid.reduce((a, s) => a + s.gross_cents, 0);
     const commissions = paid.reduce((a, s) => a + s.platform_fee_cents, 0);
+    const affiliateCommissions = paid.reduce((a, s) => a + (s.affiliate_commission_cents ?? 0), 0);
     const wd = withdrawals ?? [];
     const withdrawalFees = wd.filter((w) => w.status === "pago").reduce((a, w) => a + w.fee_cents, 0);
     const withdrawnNet = wd.filter((w) => w.status === "pago").reduce((a, w) => a + w.net_cents, 0);
@@ -256,6 +257,7 @@ export const getPlatformReport = createServerFn({ method: "GET" })
       totals: {
         gross_cents: gross,
         commissions_cents: commissions,
+        affiliate_commissions_cents: affiliateCommissions,
         withdrawal_fees_cents: withdrawalFees,
         withdrawn_cents: withdrawnNet,
         pending_withdrawals_cents: pendingWithdrawals,

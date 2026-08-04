@@ -1,10 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { ShoppingBag, ShieldCheck, Zap, Star, ArrowLeft, Users } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { getProductTracking } from "@/lib/tracking.functions";
+import { registerAffiliateClick } from "@/lib/affiliate.functions";
+import { saveRef } from "@/lib/affiliate-ref";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
 
@@ -50,6 +53,19 @@ function Produto() {
     queryFn: () => getProductTracking({ data: { slug } }),
     staleTime: 5 * 60_000,
   });
+
+  // Atribuição de afiliado: guarda o ?ref= e conta o clique uma vez por sessão.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (!ref) return;
+    saveRef(slug, ref);
+    const key = `infropay_ref_click_${slug}_${ref}`;
+    if (window.sessionStorage.getItem(key)) return;
+    window.sessionStorage.setItem(key, "1");
+    void registerAffiliateClick({ data: { code: ref } }).catch(() => {});
+  }, [slug]);
+
   if (!p) return null;
   const hasPromo = p.promo_price_cents && p.promo_price_cents < p.price_cents;
 
