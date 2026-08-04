@@ -227,6 +227,32 @@ function EditarProduto() {
           <Field label="Dias de garantia"><Input type="number" min={0} max={60} value={form.guarantee_days} onChange={(e) => set("guarantee_days", Number(e.target.value))} /></Field>
         </Section>
 
+        <Section title="Programa de afiliados">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Label className="text-sm">Permitir afiliados</Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                Outros utilizadores podem gerar links e promover este produto em troca de comissão.
+              </p>
+            </div>
+            <Switch checked={!!form.allow_affiliates} onCheckedChange={(v) => set("allow_affiliates", v)} />
+          </div>
+          {form.allow_affiliates && (
+            <Field label="Comissão do afiliado (%)" hint="Descontada do valor que recebe por venda. Máximo 80%.">
+              <Input
+                type="number"
+                min={1}
+                max={80}
+                step="1"
+                value={form.affiliate_commission_percent}
+                onChange={(e) => set("affiliate_commission_percent", Number(e.target.value))}
+              />
+            </Field>
+          )}
+        </Section>
+
+
+
         <div className="flex gap-3 justify-end pt-4 border-t border-border">
           <Link to="/produtor/produtos"><Button type="button" variant="outline">Cancelar</Button></Link>
           <Button type="submit" disabled={saving} className="gradient-brand text-primary-foreground shadow-glow">
