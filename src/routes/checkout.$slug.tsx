@@ -80,7 +80,9 @@ function Checkout() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await createOrder({ data: { product_slug: slug, buyer_name: name, buyer_email: email, buyer_phone: phone, payment_method: method } });
+      const urlRef = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("ref") : null;
+      const ref = urlRef ?? getRef(slug);
+      const res = await createOrder({ data: { product_slug: slug, buyer_name: name, buyer_email: email, buyer_phone: phone, payment_method: method, ref } });
       toast.success("Pedido criado! A aguardar pagamento.");
       router.navigate({ to: "/pedido/$token", params: { token: res.token } });
     } catch (err) {
