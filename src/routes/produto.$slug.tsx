@@ -53,6 +53,19 @@ function Produto() {
     queryFn: () => getProductTracking({ data: { slug } }),
     staleTime: 5 * 60_000,
   });
+
+  // Atribuição de afiliado: guarda o ?ref= e conta o clique uma vez por sessão.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (!ref) return;
+    saveRef(slug, ref);
+    const key = `infropay_ref_click_${slug}_${ref}`;
+    if (window.sessionStorage.getItem(key)) return;
+    window.sessionStorage.setItem(key, "1");
+    void registerAffiliateClick({ data: { code: ref } }).catch(() => {});
+  }, [slug]);
+
   if (!p) return null;
   const hasPromo = p.promo_price_cents && p.promo_price_cents < p.price_cents;
 
