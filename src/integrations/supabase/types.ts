@@ -47,6 +47,44 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_links: {
+        Row: {
+          affiliate_id: string
+          clicks: number
+          code: string
+          created_at: string
+          id: string
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id: string
+          clicks?: number
+          code: string
+          created_at?: string
+          id?: string
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string
+          clicks?: number
+          code?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_links_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bank_accounts: {
         Row: {
           bank_name: string
@@ -447,6 +485,8 @@ export type Database = {
       }
       products: {
         Row: {
+          affiliate_commission_percent: number
+          allow_affiliates: boolean
           app_package: string | null
           app_requirements: string | null
           app_version: string | null
@@ -496,6 +536,8 @@ export type Database = {
           weight_grams: number | null
         }
         Insert: {
+          affiliate_commission_percent?: number
+          allow_affiliates?: boolean
           app_package?: string | null
           app_requirements?: string | null
           app_version?: string | null
@@ -545,6 +587,8 @@ export type Database = {
           weight_grams?: number | null
         }
         Update: {
+          affiliate_commission_percent?: number
+          allow_affiliates?: boolean
           app_package?: string | null
           app_requirements?: string | null
           app_version?: string | null
@@ -654,6 +698,9 @@ export type Database = {
       sales: {
         Row: {
           access_token: string
+          affiliate_code: string | null
+          affiliate_commission_cents: number
+          affiliate_id: string | null
           buyer_email: string | null
           buyer_name: string | null
           buyer_phone: string | null
@@ -681,6 +728,9 @@ export type Database = {
         }
         Insert: {
           access_token?: string
+          affiliate_code?: string | null
+          affiliate_commission_cents?: number
+          affiliate_id?: string | null
           buyer_email?: string | null
           buyer_name?: string | null
           buyer_phone?: string | null
@@ -708,6 +758,9 @@ export type Database = {
         }
         Update: {
           access_token?: string
+          affiliate_code?: string | null
+          affiliate_commission_cents?: number
+          affiliate_id?: string | null
           buyer_email?: string | null
           buyer_name?: string | null
           buyer_phone?: string | null
@@ -914,6 +967,7 @@ export type Database = {
         Returns: boolean
       }
       is_user_banned: { Args: { _user_id: string }; Returns: boolean }
+      register_affiliate_click: { Args: { _code: string }; Returns: undefined }
       release_matured_sales: { Args: never; Returns: number }
     }
     Enums: {
