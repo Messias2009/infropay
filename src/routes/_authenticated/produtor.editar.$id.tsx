@@ -95,6 +95,8 @@ function EditarProduto() {
         currency: form.currency.toUpperCase(),
         tags: form.tags ? form.tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [],
         guarantee_days: Number(form.guarantee_days),
+        allow_affiliates: !!form.allow_affiliates,
+        affiliate_commission_percent: Number(form.affiliate_commission_percent || 0),
         ...deliveryPayload(delivery),
       } } });
       toast.success("Alterações guardadas");
