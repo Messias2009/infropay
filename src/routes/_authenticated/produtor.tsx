@@ -22,6 +22,7 @@ const items = [
   { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
   { to: "/produtor/saques", icon: Banknote, label: "Saques" },
   { to: "/produtor/conquistas", icon: Trophy, label: "Conquistas" },
+  { to: "/afiliados", icon: Handshake, label: "Afiliados" },
   { to: "/produtor/integracoes", icon: Plug, label: "Integrações" },
   { to: "/perfil", icon: UserCircle2, label: "Meu perfil" },
 ];
