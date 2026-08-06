@@ -186,3 +186,18 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
     </div>
   );
 }
+
+function RefBox({ label, value }: { label: string; value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() => { navigator.clipboard.writeText(value); toast.success(`${label} copiada`); }}
+      className="rounded-xl border border-border bg-card p-3 text-left hover:border-gold/50 transition"
+    >
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="mt-1 font-mono font-bold text-base flex items-center gap-2">
+        {value} <Copy className="h-3 w-3 opacity-60" />
+      </div>
+    </button>
+  );
+}
