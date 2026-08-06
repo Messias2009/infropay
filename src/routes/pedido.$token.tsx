@@ -142,6 +142,30 @@ function Pedido() {
           </div>
         </div>
 
+        {!paid && payRef && (
+          <div className="mt-6 rounded-2xl border border-gold/40 bg-gold/5 p-6">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="text-xs font-semibold uppercase tracking-widest text-gold">
+                Pagar por {payRef.provider}
+              </div>
+              {payRef.mode === "test" && (
+                <span className="rounded-full border border-warning/40 bg-warning/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-warning">
+                  Modo de teste
+                </span>
+              )}
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <RefBox label="Entidade" value={payRef.entity} />
+              <RefBox label="Referência" value={payRef.reference} />
+              <RefBox label="Valor" value={fmt(o.gross_cents, o.currency)} />
+            </div>
+            <ol className="mt-5 space-y-1.5 text-xs text-muted-foreground list-decimal list-inside">
+              {payRef.instructions.map((i) => <li key={i}>{i}</li>)}
+            </ol>
+          </div>
+        )}
+
+
         <div className="mt-8 text-center">
           <Link to="/loja"><Button variant="outline">Continuar a explorar</Button></Link>
         </div>
