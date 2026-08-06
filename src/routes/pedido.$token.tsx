@@ -5,6 +5,8 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getOrderByToken } from "@/lib/checkout.functions";
+import { referenceForMethod } from "@/lib/payments.config";
+
 import { getOrderTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
@@ -67,6 +69,8 @@ function Pedido() {
 
   if (!o) return null;
   const prod = o.product as any;
+  const payRef = referenceForMethod(o.payment_method);
+
 
   return (
     <SiteLayout>
