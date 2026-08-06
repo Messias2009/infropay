@@ -293,7 +293,7 @@ function Home() {
               <Link
                 key={c.slug}
                 to="/loja"
-                search={{ categoria: c.slug }}
+                search={{ cat: c.slug }}
                 className="group rounded-xl border border-border/70 bg-card/60 p-4 hover:border-primary/50 hover:bg-card transition"
               >
                 <div className="text-lg">{c.icon ?? "✨"}</div>
