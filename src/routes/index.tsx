@@ -278,31 +278,7 @@ function Home() {
         </section>
       )}
 
-      {/* CATEGORIAS */}
-      {categories && categories.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
-          <div className="flex items-end justify-between mb-8 gap-4">
-            <div className="min-w-0">
-              <div className="text-xs font-semibold uppercase tracking-widest text-gold">Explorar</div>
-              <h2 className="mt-2 text-3xl md:text-4xl font-bold">Escolha por categoria</h2>
-            </div>
-            <LayoutGrid className="h-6 w-6 text-muted-foreground shrink-0" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {categories.map((c) => (
-              <Link
-                key={c.slug}
-                to="/loja"
-                search={{ cat: c.slug }}
-                className="group rounded-xl border border-border/70 bg-card/60 p-4 hover:border-primary/50 hover:bg-card transition"
-              >
-                <div className="text-lg">{c.icon ?? "✨"}</div>
-                <div className="mt-2 text-sm font-semibold group-hover:text-primary transition">{c.name}</div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+
 
 
 
