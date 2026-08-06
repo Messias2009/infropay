@@ -73,7 +73,7 @@ export const createProduct = createServerFn({ method: "POST" })
 
     // Aprovação automática: valida o conteúdo e publica de imediato se estiver conforme.
     let status = data.status;
-    let rejection_reason: string | null = null;
+    const rejection_reason: string | null = null;
     if (status === "publicado" || status === "em_analise") {
       const verdict = moderateProduct(data);
       if (!verdict.ok) throw new Error(verdict.reason);
