@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { moderateProduct } from "@/lib/moderation";
 import { z } from "zod";
+
 
 const productSchema = z.object({
   title: z.string().trim().min(3).max(160),
@@ -68,10 +70,18 @@ export const createProduct = createServerFn({ method: "POST" })
       { user_id: context.userId, role: "producer" },
       { onConflict: "user_id,role", ignoreDuplicates: true },
     );
-    // If user tries to publish directly, force em_analise
-    const status = data.status === "publicado" ? "em_analise" : data.status;
+
+    // Aprovação automática: valida o conteúdo e publica de imediato se estiver conforme.
+    let status = data.status;
+    const rejection_reason: string | null = null;
+    if (status === "publicado" || status === "em_analise") {
+      const verdict = moderateProduct(data);
+      if (!verdict.ok) throw new Error(verdict.reason);
+      status = "publicado";
+    }
+
     const insert = {
-      ...data, status,
+      ...data, status, rejection_reason,
       cover_url: data.cover_url || null,
       banner_url: data.banner_url || null,
       file_url: data.file_url || null,
@@ -88,12 +98,28 @@ export const updateProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), patch: productSchema.partial() }).parse(d))
   .handler(async ({ data, context }) => {
-    // Producers cannot self-publish; publish requests always go to em_analise
     const patch = { ...data.patch } as any;
-    if (patch.status === "publicado") patch.status = "em_analise";
     for (const k of ["cover_url","banner_url","file_url","external_url"] as const) {
       if (patch[k] === "") patch[k] = null;
     }
+
+    // Se o produtor quer publicar, valida automaticamente com base no estado final.
+    if (patch.status === "publicado" || patch.status === "em_analise") {
+      const { data: current } = await context.supabase
+        .from("products")
+        .select("title, short_description, description, external_url, file_url, tags, price_cents")
+        .eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+      const verdict = moderateProduct({ ...(current ?? {}), ...patch });
+      if (!verdict.ok) {
+        await context.supabase.from("products")
+          .update({ status: "rascunho", rejection_reason: verdict.reason })
+          .eq("id", data.id).eq("producer_id", context.userId);
+        throw new Error(verdict.reason);
+      }
+      patch.status = "publicado";
+      patch.rejection_reason = null;
+    }
+
     const { data: row, error } = await context.supabase
       .from("products").update(patch).eq("id", data.id).eq("producer_id", context.userId)
       .select("id, slug, status").single();
@@ -110,16 +136,33 @@ export const deleteProduct = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** Publica o produto após validação automática de conteúdo. */
 export const submitProductForApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
+    const { data: current, error: gErr } = await context.supabase
+      .from("products")
+      .select("title, short_description, description, external_url, file_url, tags, price_cents")
+      .eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+    if (gErr) throw gErr;
+    if (!current) throw new Error("Produto não encontrado");
+
+    const verdict = moderateProduct(current as any);
+    if (!verdict.ok) {
+      await context.supabase.from("products")
+        .update({ status: "rascunho", rejection_reason: verdict.reason })
+        .eq("id", data.id).eq("producer_id", context.userId);
+      throw new Error(verdict.reason);
+    }
+
     const { error } = await context.supabase
-      .from("products").update({ status: "em_analise", rejection_reason: null })
+      .from("products").update({ status: "publicado", rejection_reason: null })
       .eq("id", data.id).eq("producer_id", context.userId);
     if (error) throw error;
-    return { ok: true };
+    return { ok: true, status: "publicado" as const };
   });
+
 
 export const getMyProducerStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

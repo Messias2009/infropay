@@ -5,6 +5,8 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getOrderByToken } from "@/lib/checkout.functions";
+import { referenceForMethod } from "@/lib/payments.config";
+
 import { getOrderTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
@@ -67,6 +69,8 @@ function Pedido() {
 
   if (!o) return null;
   const prod = o.product as any;
+  const payRef = referenceForMethod(o.payment_method);
+
 
   return (
     <SiteLayout>
@@ -142,6 +146,30 @@ function Pedido() {
           </div>
         </div>
 
+        {!paid && payRef && (
+          <div className="mt-6 rounded-2xl border border-gold/40 bg-gold/5 p-6">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="text-xs font-semibold uppercase tracking-widest text-gold">
+                Pagar por {payRef.provider}
+              </div>
+              {payRef.mode === "test" && (
+                <span className="rounded-full border border-warning/40 bg-warning/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-warning">
+                  Modo de teste
+                </span>
+              )}
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <RefBox label="Entidade" value={payRef.entity} />
+              <RefBox label="Referência" value={payRef.reference} />
+              <RefBox label="Valor" value={fmt(o.gross_cents, o.currency)} />
+            </div>
+            <ol className="mt-5 space-y-1.5 text-xs text-muted-foreground list-decimal list-inside">
+              {payRef.instructions.map((i) => <li key={i}>{i}</li>)}
+            </ol>
+          </div>
+        )}
+
+
         <div className="mt-8 text-center">
           <Link to="/loja"><Button variant="outline">Continuar a explorar</Button></Link>
         </div>
@@ -156,5 +184,20 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
       <dt className="text-muted-foreground">{k}</dt>
       <dd className="font-medium text-right min-w-0 truncate">{v}</dd>
     </div>
+  );
+}
+
+function RefBox({ label, value }: { label: string; value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() => { navigator.clipboard.writeText(value); toast.success(`${label} copiada`); }}
+      className="rounded-xl border border-border bg-card p-3 text-left hover:border-gold/50 transition"
+    >
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="mt-1 font-mono font-bold text-base flex items-center gap-2">
+        {value} <Copy className="h-3 w-3 opacity-60" />
+      </div>
+    </button>
   );
 }

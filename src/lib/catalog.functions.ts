@@ -19,14 +19,15 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const listPublishedProducts = createServerFn({ method: "GET" })
-  .inputValidator((d: { category?: string; limit?: number } | undefined) => d ?? {})
+  .inputValidator((d: { category?: string; limit?: number; sort?: "popular" | "recent" } | undefined) => d ?? {})
   .handler(async ({ data }) => {
     const supabase = publicClient();
+    const recent = data?.sort === "recent";
     let q = supabase
       .from("products")
-      .select("id, slug, title, short_description, cover_url, price_cents, promo_price_cents, currency, rating, reviews_count, sales_count, category:categories(name, slug)")
+      .select("id, slug, title, short_description, cover_url, price_cents, promo_price_cents, currency, rating, reviews_count, sales_count, created_at, category:categories(name, slug)")
       .eq("status", "publicado")
-      .order("sales_count", { ascending: false })
+      .order(recent ? "created_at" : "sales_count", { ascending: false })
       .limit(data?.limit ?? 24);
     if (data?.category) {
       const { data: cat } = await supabase.from("categories").select("id").eq("slug", data.category).maybeSingle();
@@ -36,6 +37,7 @@ export const listPublishedProducts = createServerFn({ method: "GET" })
     if (error) throw error;
     return rows ?? [];
   });
+
 
 export const getProductBySlug = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => d)

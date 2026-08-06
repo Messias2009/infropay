@@ -58,23 +58,49 @@ export type TrackEvent =
   | { type: "InitiateCheckout"; id: string; name: string; value: number; currency: string }
   | { type: "Purchase"; id: string; name: string; value: number; currency: string };
 
+/** Guarda global (sobrevive a re-renders, refetch e navegação SPA). */
+const firedKeys = new Set<string>();
+
+function alreadyFired(key: string, persist: boolean) {
+  if (firedKeys.has(key)) return true;
+  if (persist && typeof window !== "undefined") {
+    try {
+      if (window.sessionStorage.getItem(key) === "1") {
+        firedKeys.add(key);
+        return true;
+      }
+      window.sessionStorage.setItem(key, "1");
+    } catch { /* storage indisponível */ }
+  }
+  firedKeys.add(key);
+  return false;
+}
+
 /**
  * Injects the producer's Meta Pixel / GA4 / Google Ads tags and fires
- * PageView + the given event once per mount.
+ * PageView + the given event exactly once per user action.
  */
 export function TrackingScripts({ config, event }: { config: TrackingConfig | null | undefined; event?: TrackEvent }) {
   useEffect(() => {
     if (!config) return;
     const { meta_pixel_id, ga_measurement_id, google_ads_id, google_ads_label } = config;
 
+    const path = typeof window !== "undefined" ? window.location.pathname : "";
+
     if (meta_pixel_id) {
       ensureMeta(meta_pixel_id);
-      window.fbq?.("track", "PageView");
+      if (!alreadyFired(`ip_pv_${meta_pixel_id}_${path}`, false)) {
+        window.fbq?.("track", "PageView");
+      }
     }
     if (ga_measurement_id) ensureGtag(ga_measurement_id);
     if (google_ads_id) ensureGtag(google_ads_id);
 
     if (!event) return;
+
+    // Purchase é único por pedido (persistido); os restantes, únicos por sessão de página.
+    const persist = event.type === "Purchase";
+    if (alreadyFired(`ip_ev_${event.type}_${event.id}`, persist)) return;
 
     if (meta_pixel_id) {
       window.fbq?.("track", event.type, {
@@ -90,6 +116,7 @@ export function TrackingScripts({ config, event }: { config: TrackingConfig | nu
         event.type === "Purchase" ? "purchase" : event.type === "InitiateCheckout" ? "begin_checkout" : "view_item";
       window.gtag?.("event", gaEvent, {
         send_to: ga_measurement_id,
+        transaction_id: event.type === "Purchase" ? event.id : undefined,
         value: event.value,
         currency: event.currency,
         items: [{ item_id: event.id, item_name: event.name, price: event.value }],
@@ -108,3 +135,4 @@ export function TrackingScripts({ config, event }: { config: TrackingConfig | nu
 
   return null;
 }
+

@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery, queryOptions } from "@tanstack/react-query";
 import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { TrustMarquee } from "@/components/site/TrustMarquee";
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProductGridSkeleton } from "@/components/site/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
 import { listPublishedProducts } from "@/lib/catalog.functions";
@@ -13,8 +14,16 @@ import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 import dashboardImg from "@/assets/dashboard-preview.jpg";
 
-const popularQuery = queryOptions({ queryKey: ["products", "popular"], queryFn: () => listPublishedProducts({ data: { limit: 8 } }) });
-
+const popularQuery = queryOptions({
+  queryKey: ["products", "popular"],
+  queryFn: () => listPublishedProducts({ data: { limit: 8 } }),
+  staleTime: 5 * 60_000,
+});
+const recentQuery = queryOptions({
+  queryKey: ["products", "recent"],
+  queryFn: () => listPublishedProducts({ data: { limit: 4, sort: "recent" } }),
+  staleTime: 5 * 60_000,
+});
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -23,6 +32,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "InfroPay — Transformando conhecimento em renda" },
       { property: "og:description", content: "A plataforma premium para produtores digitais angolanos." },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
@@ -34,6 +44,8 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { data: products } = useSuspenseQuery(popularQuery);
+  const { data: recent, isPending: recentPending } = useQuery(recentQuery);
+
 
   return (
     <SiteLayout>
@@ -236,6 +248,32 @@ function Home() {
           </div>
         )}
       </section>
+
+      {/* LANÇAMENTOS */}
+      {(recentPending || (recent && recent.length > 0)) && (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
+          <div className="flex items-end justify-between mb-8 gap-4">
+            <div className="min-w-0">
+              <div className="text-xs font-semibold uppercase tracking-widest text-primary">Acabou de chegar</div>
+              <h2 className="mt-2 text-3xl md:text-4xl font-bold">Lançamentos da semana</h2>
+            </div>
+            <Link to="/loja" className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0">
+              Ver tudo <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </div>
+          {recentPending ? (
+            <ProductGridSkeleton count={4} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {recent!.map((p) => <ProductCard key={p.slug} product={p as any} />)}
+            </div>
+          )}
+        </section>
+      )}
+
+
+
+
 
       {/* COMO FUNCIONA */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
