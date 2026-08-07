@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdmLogsRouteImport } from './routes/_authenticated/adm.logs'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 import { Route as ApiPublicWebhooksMulticaixaRouteImport } from './routes/api/public/webhooks/multicaixa'
+import { Route as AuthenticatedProdutorSucessoIdRouteImport } from './routes/_authenticated/produtor.sucesso.$id'
 import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
 import { Route as AuthenticatedProdutorCursoIdRouteImport } from './routes/_authenticated/produtor.curso.$id'
 
@@ -235,6 +236,12 @@ const ApiPublicWebhooksMulticaixaRoute =
     path: '/api/public/webhooks/multicaixa',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedProdutorSucessoIdRoute =
+  AuthenticatedProdutorSucessoIdRouteImport.update({
+    id: '/sucesso/$id',
+    path: '/sucesso/$id',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
 const AuthenticatedProdutorEditarIdRoute =
   AuthenticatedProdutorEditarIdRouteImport.update({
     id: '/editar/$id',
@@ -283,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/produtor/': typeof AuthenticatedProdutorIndexRoute
   '/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
+  '/produtor/sucesso/$id': typeof AuthenticatedProdutorSucessoIdRoute
   '/api/public/webhooks/multicaixa': typeof ApiPublicWebhooksMulticaixaRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
@@ -319,6 +327,7 @@ export interface FileRoutesByTo {
   '/produtor': typeof AuthenticatedProdutorIndexRoute
   '/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
+  '/produtor/sucesso/$id': typeof AuthenticatedProdutorSucessoIdRoute
   '/api/public/webhooks/multicaixa': typeof ApiPublicWebhooksMulticaixaRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
@@ -359,6 +368,7 @@ export interface FileRoutesById {
   '/_authenticated/produtor/': typeof AuthenticatedProdutorIndexRoute
   '/_authenticated/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/_authenticated/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
+  '/_authenticated/produtor/sucesso/$id': typeof AuthenticatedProdutorSucessoIdRoute
   '/api/public/webhooks/multicaixa': typeof ApiPublicWebhooksMulticaixaRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
@@ -399,6 +409,7 @@ export interface FileRouteTypes {
     | '/produtor/'
     | '/produtor/curso/$id'
     | '/produtor/editar/$id'
+    | '/produtor/sucesso/$id'
     | '/api/public/webhooks/multicaixa'
     | '/api/public/webhooks/stripe'
   fileRoutesByTo: FileRoutesByTo
@@ -435,6 +446,7 @@ export interface FileRouteTypes {
     | '/produtor'
     | '/produtor/curso/$id'
     | '/produtor/editar/$id'
+    | '/produtor/sucesso/$id'
     | '/api/public/webhooks/multicaixa'
     | '/api/public/webhooks/stripe'
   id:
@@ -474,6 +486,7 @@ export interface FileRouteTypes {
     | '/_authenticated/produtor/'
     | '/_authenticated/produtor/curso/$id'
     | '/_authenticated/produtor/editar/$id'
+    | '/_authenticated/produtor/sucesso/$id'
     | '/api/public/webhooks/multicaixa'
     | '/api/public/webhooks/stripe'
   fileRoutesById: FileRoutesById
@@ -743,6 +756,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksMulticaixaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/produtor/sucesso/$id': {
+      id: '/_authenticated/produtor/sucesso/$id'
+      path: '/sucesso/$id'
+      fullPath: '/produtor/sucesso/$id'
+      preLoaderRoute: typeof AuthenticatedProdutorSucessoIdRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
     '/_authenticated/produtor/editar/$id': {
       id: '/_authenticated/produtor/editar/$id'
       path: '/editar/$id'
@@ -792,6 +812,7 @@ interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
   AuthenticatedProdutorCursoIdRoute: typeof AuthenticatedProdutorCursoIdRoute
   AuthenticatedProdutorEditarIdRoute: typeof AuthenticatedProdutorEditarIdRoute
+  AuthenticatedProdutorSucessoIdRoute: typeof AuthenticatedProdutorSucessoIdRoute
 }
 
 const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
@@ -805,6 +826,7 @@ const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
   AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,
   AuthenticatedProdutorCursoIdRoute: AuthenticatedProdutorCursoIdRoute,
   AuthenticatedProdutorEditarIdRoute: AuthenticatedProdutorEditarIdRoute,
+  AuthenticatedProdutorSucessoIdRoute: AuthenticatedProdutorSucessoIdRoute,
 }
 
 const AuthenticatedProdutorRouteWithChildren =
@@ -853,13 +875,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
