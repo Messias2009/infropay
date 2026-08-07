@@ -171,8 +171,8 @@ function NovoProduto() {
           <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border p-4 hover:border-primary/60 transition">
             <input type="checkbox" checked={form.submit_for_review} onChange={(e) => set("submit_for_review", e.target.checked)} className="mt-1 h-4 w-4 accent-primary" />
             <div>
-              <div className="font-medium">Enviar para aprovação agora</div>
-              <div className="text-xs text-muted-foreground">Se ativado, o produto vai para a fila de análise do administrador. Caso contrário, será guardado como rascunho.</div>
+              <div className="font-medium">Publicar agora</div>
+              <div className="text-xs text-muted-foreground">A validação de conteúdo é automática e instantânea: se estiver conforme as políticas, o produto fica publicado e pronto para vender. Caso contrário, será guardado como rascunho.</div>
             </div>
           </label>
         </Section>
