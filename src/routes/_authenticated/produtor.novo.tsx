@@ -90,7 +90,7 @@ function NovoProduto() {
       </Link>
       <div className="text-xs uppercase tracking-widest text-gold font-semibold">Novo produto</div>
       <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Criar produto</h1>
-      <p className="text-muted-foreground mt-2">Preencha os detalhes. Ao enviar para aprovação, o produto ficará em análise por um administrador.</p>
+      <p className="text-muted-foreground mt-2">Preencha os detalhes. Ao publicar, o conteúdo é validado automaticamente e o produto fica disponível de imediato.</p>
 
       <form onSubmit={submit} className="mt-8 grid gap-6">
         <Section title="Informação principal">
