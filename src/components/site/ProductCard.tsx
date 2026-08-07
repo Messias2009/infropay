@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Star, ShoppingBag } from "lucide-react";
+import { Star, ShoppingBag, Flame } from "lucide-react";
 
 export interface ProductCardData {
   slug: string;
