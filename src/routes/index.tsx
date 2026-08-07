@@ -324,7 +324,7 @@ function Home() {
         <div className="grid md:grid-cols-3 gap-6">
           {[
             { n: "01", t: "Crie a sua conta grátis", d: "Menos de 60 segundos. Sem cartão, sem mensalidade.", i: Users },
-            { n: "02", t: "Publique o seu produto", d: "Capa, ficheiro e preço. A nossa curadoria aprova em até 24h.", i: Play },
+            { n: "02", t: "Publique o seu produto", d: "Capa, ficheiro e preço. Validação automática: fica publicado na hora.", i: Play },
             { n: "03", t: "Receba em Kwanza", d: "Saldo liberado em 1 hora e saque por IBAN a partir de 5.000 Kz.", i: TrendingUp },
           ].map((s) => {
             const Icon = s.i;
