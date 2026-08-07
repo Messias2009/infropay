@@ -24,6 +24,11 @@ const recentQuery = queryOptions({
   queryFn: () => listPublishedProducts({ data: { limit: 4, sort: "recent" } }),
   staleTime: 5 * 60_000,
 });
+const categoriesQuery = queryOptions({
+  queryKey: ["categories"],
+  queryFn: () => listCategories(),
+  staleTime: 10 * 60_000,
+});
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
