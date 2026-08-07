@@ -21,6 +21,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
 import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
@@ -105,6 +106,11 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 const PedidoTokenRoute = PedidoTokenRouteImport.update({
   id: '/pedido/$token',
   path: '/pedido/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutSlugRoute = CheckoutSlugRouteImport.update({
@@ -270,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/checkout/$slug': typeof CheckoutSlugRoute
+  '/p/$slug': typeof PSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/logs': typeof AuthenticatedAdmLogsRoute
@@ -307,6 +314,7 @@ export interface FileRoutesByTo {
   '/afiliados': typeof AuthenticatedAfiliadosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/checkout/$slug': typeof CheckoutSlugRoute
+  '/p/$slug': typeof PSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/logs': typeof AuthenticatedAdmLogsRoute
@@ -348,6 +356,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/produtor': typeof AuthenticatedProdutorRouteWithChildren
   '/checkout/$slug': typeof CheckoutSlugRoute
+  '/p/$slug': typeof PSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/adm/logs': typeof AuthenticatedAdmLogsRoute
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/produtor'
     | '/checkout/$slug'
+    | '/p/$slug'
     | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/logs'
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/afiliados'
     | '/perfil'
     | '/checkout/$slug'
+    | '/p/$slug'
     | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/logs'
@@ -466,6 +477,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/produtor'
     | '/checkout/$slug'
+    | '/p/$slug'
     | '/pedido/$token'
     | '/produto/$slug'
     | '/_authenticated/adm/logs'
@@ -503,6 +515,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   CheckoutSlugRoute: typeof CheckoutSlugRoute
+  PSlugRoute: typeof PSlugRoute
   PedidoTokenRoute: typeof PedidoTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   ApiPublicWebhooksMulticaixaRoute: typeof ApiPublicWebhooksMulticaixaRoute
@@ -593,6 +606,13 @@ declare module '@tanstack/react-router' {
       path: '/pedido/$token'
       fullPath: '/pedido/$token'
       preLoaderRoute: typeof PedidoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/$slug': {
@@ -867,6 +887,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   CheckoutSlugRoute: CheckoutSlugRoute,
+  PSlugRoute: PSlugRoute,
   PedidoTokenRoute: PedidoTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   ApiPublicWebhooksMulticaixaRoute: ApiPublicWebhooksMulticaixaRoute,
