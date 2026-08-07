@@ -5,6 +5,7 @@ import { Plus, TrendingUp, Wallet, Clock, ArrowUpRight, Package, DollarSign, Rec
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, BarChart, Bar, CartesianGrid } from "recharts";
 import { Button } from "@/components/ui/button";
 import { getMyFinanceOverview, getMyWallet } from "@/lib/finance.functions";
+import { getMyProductMetrics } from "@/lib/products.functions";
 import { FeeBanner, kz } from "@/components/finance/FeeBanner";
 
 export const Route = createFileRoute("/_authenticated/produtor/")({
