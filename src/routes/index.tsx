@@ -45,6 +45,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: products } = useSuspenseQuery(popularQuery);
   const { data: recent, isPending: recentPending } = useQuery(recentQuery);
+  const { data: cats, isPending: catsPending } = useQuery(categoriesQuery);
+
 
 
   return (
