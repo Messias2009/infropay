@@ -44,11 +44,75 @@ export const listMyProducts = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("products")
-      .select("id, slug, title, status, price_cents, promo_price_cents, currency, sales_count, views_count, cover_url, rejection_reason, created_at, category:categories(name)")
+      .select("id, slug, title, status, price_cents, promo_price_cents, currency, sales_count, views_count, cover_url, rejection_reason, created_at, allow_affiliates, affiliate_commission_percent, has_members_area, category:categories(name)")
       .eq("producer_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
     return data ?? [];
+  });
+
+/** Métricas por produto: vendas, receita, conversão, afiliados e comissões. */
+export const getMyProductMetrics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const [{ data: products }, { data: sales }, { data: links }] = await Promise.all([
+      context.supabase.from("products").select("id, title, slug, views_count, cover_url, price_cents, currency, status")
+        .eq("producer_id", context.userId).order("created_at", { ascending: false }),
+      context.supabase.from("sales").select("product_id, gross_cents, net_cents, affiliate_commission_cents, status, released")
+        .eq("producer_id", context.userId),
+      context.supabase.from("affiliate_links").select("product_id, affiliate_id, clicks")
+        .in("product_id", []),
+    ]);
+    const ids = (products ?? []).map((p) => p.id);
+    const { data: allLinks } = ids.length
+      ? await context.supabase.from("affiliate_links").select("product_id, affiliate_id, clicks").in("product_id", ids)
+      : { data: links ?? [] };
+
+    return (products ?? []).map((p) => {
+      const s = (sales ?? []).filter((x) => x.product_id === p.id);
+      const paid = s.filter((x) => x.status === "pago");
+      const l = (allLinks ?? []).filter((x) => x.product_id === p.id);
+      const clicks = l.reduce((a, x) => a + (x.clicks ?? 0), 0);
+      const views = p.views_count ?? 0;
+      const base = views + clicks;
+      const commissionPaid = paid.filter((x) => x.released).reduce((a, x) => a + (x.affiliate_commission_cents ?? 0), 0);
+      const commissionPending = paid.filter((x) => !x.released).reduce((a, x) => a + (x.affiliate_commission_cents ?? 0), 0);
+      return {
+        id: p.id, title: p.title, slug: p.slug, cover_url: p.cover_url,
+        currency: p.currency, status: p.status,
+        views, clicks,
+        sales: paid.length,
+        revenue: paid.reduce((a, x) => a + (x.gross_cents ?? 0), 0),
+        net: paid.reduce((a, x) => a + (x.net_cents ?? 0), 0),
+        conversion: base > 0 ? (paid.length / base) * 100 : 0,
+        activeAffiliates: new Set(l.map((x) => x.affiliate_id)).size,
+        commissionPaid, commissionPending,
+      };
+    });
+  });
+
+/** Duplica um produto do próprio produtor como rascunho. */
+export const duplicateProduct = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("products").select("*").eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+    if (error) throw error;
+    if (!row) throw new Error("Produto não encontrado");
+
+    const {
+      id: _id, created_at: _c, updated_at: _u, sales_count: _s, views_count: _v,
+      reviews_count: _r, rating: _rt, rejection_reason: _rr, slug, title, ...rest
+    } = row as Record<string, unknown> & { slug: string; title: string };
+
+    const suffix = Date.now().toString(36).slice(-4);
+    const { data: created, error: iErr } = await context.supabase
+      .from("products")
+      .insert({ ...rest, producer_id: context.userId, title: `${title} (cópia)`, slug: `${slug}-copia-${suffix}`.slice(0, 160), status: "rascunho" } as never)
+      .select("id, slug").single();
+    if (iErr) throw iErr;
+    return created;
   });
 
 export const getMyProduct = createServerFn({ method: "GET" })
