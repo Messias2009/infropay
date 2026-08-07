@@ -55,18 +55,16 @@ export const listMyProducts = createServerFn({ method: "GET" })
 export const getMyProductMetrics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const [{ data: products }, { data: sales }, { data: links }] = await Promise.all([
+    const [{ data: products }, { data: sales }] = await Promise.all([
       context.supabase.from("products").select("id, title, slug, views_count, cover_url, price_cents, currency, status")
         .eq("producer_id", context.userId).order("created_at", { ascending: false }),
       context.supabase.from("sales").select("product_id, gross_cents, net_cents, affiliate_commission_cents, status, released")
         .eq("producer_id", context.userId),
-      context.supabase.from("affiliate_links").select("product_id, affiliate_id, clicks")
-        .in("product_id", []),
     ]);
     const ids = (products ?? []).map((p) => p.id);
     const { data: allLinks } = ids.length
       ? await context.supabase.from("affiliate_links").select("product_id, affiliate_id, clicks").in("product_id", ids)
-      : { data: links ?? [] };
+      : { data: [] as { product_id: string; affiliate_id: string; clicks: number }[] };
 
     return (products ?? []).map((p) => {
       const s = (sales ?? []).filter((x) => x.product_id === p.id);
