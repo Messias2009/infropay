@@ -181,7 +181,7 @@ function NovoProduto() {
           <Link to="/produtor/produtos"><Button type="button" variant="outline">Cancelar</Button></Link>
           <Button type="submit" disabled={loading} className="gradient-brand text-primary-foreground shadow-glow">
             <Save className="h-4 w-4 mr-1" />
-            {loading ? "A guardar..." : (form.submit_for_review ? "Enviar para aprovação" : "Guardar rascunho")}
+            {loading ? "A publicar..." : (form.submit_for_review ? "Publicar agora" : "Guardar rascunho")}
           </Button>
         </div>
       </form>
