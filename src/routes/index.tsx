@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { ProductGridSkeleton } from "@/components/site/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
-import { listPublishedProducts } from "@/lib/catalog.functions";
+import { listPublishedProducts, listCategories } from "@/lib/catalog.functions";
 import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
