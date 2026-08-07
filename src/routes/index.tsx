@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { ProductGridSkeleton } from "@/components/site/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
-import { listPublishedProducts } from "@/lib/catalog.functions";
+import { listPublishedProducts, listCategories } from "@/lib/catalog.functions";
 import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
@@ -23,6 +23,11 @@ const recentQuery = queryOptions({
   queryKey: ["products", "recent"],
   queryFn: () => listPublishedProducts({ data: { limit: 4, sort: "recent" } }),
   staleTime: 5 * 60_000,
+});
+const categoriesQuery = queryOptions({
+  queryKey: ["categories"],
+  queryFn: () => listCategories(),
+  staleTime: 10 * 60_000,
 });
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,6 +50,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: products } = useSuspenseQuery(popularQuery);
   const { data: recent, isPending: recentPending } = useQuery(recentQuery);
+  const { data: cats, isPending: catsPending } = useQuery(categoriesQuery);
+
 
 
   return (
@@ -220,6 +227,39 @@ function Home() {
       </section>
 
 
+      {/* CATEGORIAS ORGANIZADAS */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-20">
+        <div className="flex items-end justify-between gap-4 mb-8">
+          <div className="min-w-0">
+            <div className="text-xs font-semibold uppercase tracking-widest text-gold">Explore por área</div>
+            <h2 className="mt-2 text-3xl md:text-4xl font-bold">Categorias organizadas</h2>
+          </div>
+          <Link to="/loja" className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0">
+            Ver loja <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </div>
+        {catsPending ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {Array.from({ length: 12 }).map((_, i) => <div key={i} className="h-24 rounded-2xl bg-muted animate-pulse" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {(cats ?? []).map((c) => (
+              <Link
+                key={c.id}
+                to="/loja"
+                search={{ cat: c.slug }}
+                className="group relative flex flex-col items-start justify-between overflow-hidden rounded-2xl border border-border/60 bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-glow"
+              >
+                <div className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full gradient-brand opacity-10 blur-2xl transition group-hover:opacity-30" />
+                <span className="text-xl">{c.icon ?? "✨"}</span>
+                <span className="relative mt-3 text-sm font-semibold leading-tight line-clamp-2">{c.name}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
       {/* PRODUTOS POPULARES */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
         <div className="flex items-end justify-between mb-8 gap-4">
@@ -284,7 +324,7 @@ function Home() {
         <div className="grid md:grid-cols-3 gap-6">
           {[
             { n: "01", t: "Crie a sua conta grátis", d: "Menos de 60 segundos. Sem cartão, sem mensalidade.", i: Users },
-            { n: "02", t: "Publique o seu produto", d: "Capa, ficheiro e preço. A nossa curadoria aprova em até 24h.", i: Play },
+            { n: "02", t: "Publique o seu produto", d: "Capa, ficheiro e preço. Validação automática: fica publicado na hora.", i: Play },
             { n: "03", t: "Receba em Kwanza", d: "Saldo liberado em 1 hora e saque por IBAN a partir de 5.000 Kz.", i: TrendingUp },
           ].map((s) => {
             const Icon = s.i;

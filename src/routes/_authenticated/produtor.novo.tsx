@@ -76,8 +76,8 @@ function NovoProduto() {
         ...deliveryPayload(delivery),
       };
       const row = await createFn({ data: payload });
-      toast.success(row.status === "em_analise" ? "Produto enviado para aprovação!" : "Produto criado como rascunho!");
-      router.navigate({ to: "/produtor/produtos" });
+      toast.success(row.status === "publicado" ? "Produto publicado com sucesso!" : "Produto guardado como rascunho!");
+      router.navigate({ to: "/produtor/sucesso/$id", params: { id: row.id } });
     } catch (err) {
       toast.error((err as Error).message);
     } finally { setLoading(false); }
@@ -90,7 +90,7 @@ function NovoProduto() {
       </Link>
       <div className="text-xs uppercase tracking-widest text-gold font-semibold">Novo produto</div>
       <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Criar produto</h1>
-      <p className="text-muted-foreground mt-2">Preencha os detalhes. Ao enviar para aprovação, o produto ficará em análise por um administrador.</p>
+      <p className="text-muted-foreground mt-2">Preencha os detalhes. Ao publicar, o conteúdo é validado automaticamente e o produto fica disponível de imediato.</p>
 
       <form onSubmit={submit} className="mt-8 grid gap-6">
         <Section title="Informação principal">
@@ -171,8 +171,8 @@ function NovoProduto() {
           <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border p-4 hover:border-primary/60 transition">
             <input type="checkbox" checked={form.submit_for_review} onChange={(e) => set("submit_for_review", e.target.checked)} className="mt-1 h-4 w-4 accent-primary" />
             <div>
-              <div className="font-medium">Enviar para aprovação agora</div>
-              <div className="text-xs text-muted-foreground">Se ativado, o produto vai para a fila de análise do administrador. Caso contrário, será guardado como rascunho.</div>
+              <div className="font-medium">Publicar agora</div>
+              <div className="text-xs text-muted-foreground">A validação de conteúdo é automática e instantânea: se estiver conforme as políticas, o produto fica publicado e pronto para vender. Caso contrário, será guardado como rascunho.</div>
             </div>
           </label>
         </Section>
@@ -181,7 +181,7 @@ function NovoProduto() {
           <Link to="/produtor/produtos"><Button type="button" variant="outline">Cancelar</Button></Link>
           <Button type="submit" disabled={loading} className="gradient-brand text-primary-foreground shadow-glow">
             <Save className="h-4 w-4 mr-1" />
-            {loading ? "A guardar..." : (form.submit_for_review ? "Enviar para aprovação" : "Guardar rascunho")}
+            {loading ? "A publicar..." : (form.submit_for_review ? "Publicar agora" : "Guardar rascunho")}
           </Button>
         </div>
       </form>

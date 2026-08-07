@@ -5,6 +5,7 @@ import { Plus, TrendingUp, Wallet, Clock, ArrowUpRight, Package, DollarSign, Rec
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, BarChart, Bar, CartesianGrid } from "recharts";
 import { Button } from "@/components/ui/button";
 import { getMyFinanceOverview, getMyWallet } from "@/lib/finance.functions";
+import { getMyProductMetrics } from "@/lib/products.functions";
 import { FeeBanner, kz } from "@/components/finance/FeeBanner";
 
 export const Route = createFileRoute("/_authenticated/produtor/")({
@@ -123,6 +124,63 @@ function Dashboard() {
             ))}
           </div>
         )}
+      </div>
+
+      <ProductMetrics />
+    </div>
+  );
+}
+
+function ProductMetrics() {
+  const metricsFn = useServerFn(getMyProductMetrics);
+  const { data: rows } = useQuery({ queryKey: ["producer", "product-metrics"], queryFn: () => metricsFn() });
+
+  if (!rows?.length) return null;
+
+  return (
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="px-6 py-4 border-b border-border">
+        <div className="text-xs uppercase tracking-widest text-muted-foreground">Desempenho por produto</div>
+        <h2 className="font-display font-semibold text-lg">Métricas detalhadas</h2>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">Produto</th>
+              <th className="px-4 py-3 text-right font-medium">Views</th>
+              <th className="px-4 py-3 text-right font-medium">Cliques</th>
+              <th className="px-4 py-3 text-right font-medium">Conversão</th>
+              <th className="px-4 py-3 text-right font-medium">Vendas</th>
+              <th className="px-4 py-3 text-right font-medium">Receita</th>
+              <th className="px-4 py-3 text-right font-medium">Afiliados</th>
+              <th className="px-4 py-3 text-right font-medium">Com. paga</th>
+              <th className="px-4 py-3 text-right font-medium">Com. pendente</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.map((r) => (
+              <tr key={r.id} className="hover:bg-muted/20">
+                <td className="px-4 py-3">
+                  <Link to="/produtor/editar/$id" params={{ id: r.id }} className="flex items-center gap-3 min-w-0 hover:text-primary-glow">
+                    <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-primary/20 to-gold/10">
+                      {r.cover_url && <img src={r.cover_url} alt="" loading="lazy" className="h-full w-full object-cover" />}
+                    </div>
+                    <span className="max-w-52 truncate font-medium">{r.title}</span>
+                  </Link>
+                </td>
+                <td className="px-4 py-3 text-right">{r.views}</td>
+                <td className="px-4 py-3 text-right">{r.clicks}</td>
+                <td className="px-4 py-3 text-right">{r.conversion.toFixed(1)}%</td>
+                <td className="px-4 py-3 text-right font-semibold">{r.sales}</td>
+                <td className="px-4 py-3 text-right">{kz(r.revenue)}</td>
+                <td className="px-4 py-3 text-right">{r.activeAffiliates}</td>
+                <td className="px-4 py-3 text-right">{kz(r.commissionPaid)}</td>
+                <td className="px-4 py-3 text-right text-gold">{kz(r.commissionPending)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
