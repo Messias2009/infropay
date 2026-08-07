@@ -76,8 +76,8 @@ function NovoProduto() {
         ...deliveryPayload(delivery),
       };
       const row = await createFn({ data: payload });
-      toast.success(row.status === "em_analise" ? "Produto enviado para aprovação!" : "Produto criado como rascunho!");
-      router.navigate({ to: "/produtor/produtos" });
+      toast.success(row.status === "publicado" ? "Produto publicado com sucesso!" : "Produto guardado como rascunho!");
+      router.navigate({ to: "/produtor/sucesso/$id", params: { id: row.id } });
     } catch (err) {
       toast.error((err as Error).message);
     } finally { setLoading(false); }
