@@ -33,7 +33,8 @@ export function ProductActions({
   const links = productLinks(product.slug);
 
   async function doCopy(url: string, label: string) {
-    toast[(await copy(url)) ? "success" : "error"]((await copy(url)) ? `${label} copiado` : "Não foi possível copiar");
+    if (await copy(url)) toast.success(`${label} copiado`);
+    else toast.error("Não foi possível copiar");
   }
 
   return (
