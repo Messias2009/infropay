@@ -5,6 +5,13 @@ import type { Database } from "@/integrations/supabase/types";
 function publicClient() {
   return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    global: { fetch: (input, init) => {
+      const headers = new Headers(init?.headers);
+      const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+      if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) headers.delete("Authorization");
+      headers.set("apikey", key);
+      return fetch(input, { ...init, headers });
+    } },
   });
 }
 
@@ -26,6 +33,7 @@ export const listPublishedProducts = createServerFn({ method: "GET" })
     let q = supabase
       .from("products")
       .select("id, slug, title, short_description, cover_url, price_cents, promo_price_cents, currency, rating, reviews_count, sales_count, created_at, category:categories(name, slug)")
+      .eq("store_visible", true)
       .eq("status", "publicado")
       .order(recent ? "created_at" : "sales_count", { ascending: false })
       .limit(data?.limit ?? 24);

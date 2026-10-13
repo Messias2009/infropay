@@ -1,4 +1,5 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter, Navigate } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { useState } from "react";
 import { Mail, Lock, ArrowRight } from "lucide-react";
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const router = useRouter();
+  const { user, loading: sessionLoading } = useAuth();
   const { mode: initial } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">(initial ?? "signin");
   const [email, setEmail] = useState("");
@@ -33,18 +35,22 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email, password,
           options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
         });
         if (error) throw error;
-        toast.success("Conta criada com sucesso!");
-        router.navigate({ to: "/produtor" });
+        if (data.session) {
+          toast.success("Conta criada com sucesso!");
+          await router.navigate({ to: "/produtor", replace: true });
+        } else {
+          toast.success("Confirme o email para aceder ao painel.");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
-        router.navigate({ to: "/produtor" });
+        router.navigate({ to: "/produtor", replace: true });
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -60,9 +66,12 @@ function AuthPage() {
       if (result.error) { toast.error(result.error.message); return; }
       if (result.redirected) return;
       toast.success("Bem-vindo!");
-      router.navigate({ to: "/produtor" });
+      router.navigate({ to: "/produtor", replace: true });
     } finally { setLoading(false); }
   }
+
+  if (sessionLoading) return <div className="min-h-screen grid place-items-center text-muted-foreground">A preparar o seu acesso…</div>;
+  if (user) return <Navigate to="/produtor" replace />;
 
   return (
     <div className="min-h-screen relative grid lg:grid-cols-2">

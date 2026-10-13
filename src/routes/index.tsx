@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, queryOptions } from "@tanstack/react-query";
 import { ArrowRight, Sparkles, ShieldCheck, Zap, TrendingUp, Users, Trophy, Rocket, Play, CheckCircle2, Quote, Crown, Award, Gem } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { TrustMarquee } from "@/components/site/TrustMarquee";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -48,11 +49,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { user, loading } = useAuth();
   const { data: products } = useSuspenseQuery(popularQuery);
   const { data: recent, isPending: recentPending } = useQuery(recentQuery);
-  const { data: cats, isPending: catsPending } = useQuery(categoriesQuery);
+  
 
 
+
+  if (loading) return <div className="min-h-screen grid place-items-center text-muted-foreground">A preparar a InfroPay…</div>;
+  if (user) return <Navigate to="/produtor" replace />;
 
   return (
     <SiteLayout>
@@ -66,7 +71,7 @@ function Home() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-muted-foreground animate-fade-in">
               <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-              Feito em Angola · Pagamento em Kwanza
+              InfroPay · Pagamento em Kwanza
             </div>
             <h1 className="mt-6 text-5xl md:text-7xl font-bold tracking-tight leading-[1.02] animate-fade-in">
               Transformando<br />
@@ -227,37 +232,16 @@ function Home() {
       </section>
 
 
-      {/* CATEGORIAS ORGANIZADAS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-20">
-        <div className="flex items-end justify-between gap-4 mb-8">
+      <section className="relative mt-12 mb-16 overflow-hidden border-y border-border bg-card">
+        <img src={bannerProdutores} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-20" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-8 grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] items-center">
           <div className="min-w-0">
-            <div className="text-xs font-semibold uppercase tracking-widest text-gold">Explore por área</div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-bold">Categorias organizadas</h2>
+            <p className="text-xs uppercase text-gold font-semibold">O que pode vender</p>
+            <h2 className="mt-2 text-2xl font-bold">O seu talento. Muitos formatos.</h2>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Cursos · Ebooks · Mentorias · Templates · Software · Assinaturas · Comunidades</p>
           </div>
-          <Link to="/loja" className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0">
-            Ver loja <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
+          <Button asChild className="gradient-brand"><Link to="/auth" search={{ mode: "signup" }}>Começar a vender <ArrowRight className="h-4 w-4" /></Link></Button>
         </div>
-        {catsPending ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {Array.from({ length: 12 }).map((_, i) => <div key={i} className="h-24 rounded-2xl bg-muted animate-pulse" />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {(cats ?? []).map((c) => (
-              <Link
-                key={c.id}
-                to="/loja"
-                search={{ cat: c.slug }}
-                className="group relative flex flex-col items-start justify-between overflow-hidden rounded-2xl border border-border/60 bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-glow"
-              >
-                <div className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full gradient-brand opacity-10 blur-2xl transition group-hover:opacity-30" />
-                <span className="text-xl">{c.icon ?? "✨"}</span>
-                <span className="relative mt-3 text-sm font-semibold leading-tight line-clamp-2">{c.name}</span>
-              </Link>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* PRODUTOS POPULARES */}
@@ -305,7 +289,7 @@ function Home() {
             <ProductGridSkeleton count={4} />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {recent!.map((p) => <ProductCard key={p.slug} product={p as any} />)}
+              {(recent ?? []).map((p) => <ProductCard key={p.slug} product={p as any} />)}
             </div>
           )}
         </section>

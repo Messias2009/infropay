@@ -1,10 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { Mail, MessageCircle, MapPin } from "lucide-react";
+import { Mail, MessageCircle, MapPin, ArrowRight, Headphones } from "lucide-react";
 import logoMark from "@/assets/infropay-mark.png";
 
 export function Footer() {
   return (
     <footer className="mt-32 border-t border-border/60 bg-card/30">
+      <div className="border-b border-border bg-primary/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] items-center">
+          <div className="flex min-w-0 items-center gap-4"><Headphones className="h-8 w-8 shrink-0 text-primary-glow" /><div className="min-w-0"><h2 className="text-lg font-semibold">Estamos ao seu lado</h2><p className="mt-1 text-sm text-muted-foreground">Suporte, pagamentos e a sua próxima venda.</p></div></div>
+          <Link to="/contactos" className="inline-flex items-center gap-2 text-sm text-primary-glow">Falar com a equipa <ArrowRight className="h-4 w-4" /></Link>
+        </div>
+      </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-10 md:grid-cols-5">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center gap-2">
@@ -52,7 +58,7 @@ export function Footer() {
       <div className="border-t border-border/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <div>© {new Date().getFullYear()} InfroPay. Todos os direitos reservados.</div>
-          <div>Feito em Angola 🇦🇴 com foco em produtores.</div>
+
         </div>
       </div>
     </footer>

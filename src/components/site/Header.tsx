@@ -17,8 +17,10 @@ export function Header() {
   const router = useRouter();
 
   async function signOut() {
+    await router.options.context.queryClient.cancelQueries();
+    router.options.context.queryClient.clear();
     await supabase.auth.signOut();
-    router.navigate({ to: "/" });
+    await router.navigate({ to: "/", replace: true });
   }
 
   return (

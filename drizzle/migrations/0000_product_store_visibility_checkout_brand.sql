@@ -1,0 +1,4 @@
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS store_visible boolean NOT NULL DEFAULT true, ADD COLUMN IF NOT EXISTS checkout_brand_name text, ADD COLUMN IF NOT EXISTS checkout_logo_url text, ADD COLUMN IF NOT EXISTS checkout_banner_url text, ADD COLUMN IF NOT EXISTS checkout_theme text NOT NULL DEFAULT 'azul' CHECK (checkout_theme IN ('azul','dourado','verde'));
+COMMENT ON COLUMN public.products.store_visible IS 'Discovery in store only; published products remain purchasable via direct links.';
+CREATE INDEX IF NOT EXISTS products_store_public_idx ON public.products (store_visible, status, created_at);
+CREATE POLICY "Owners can read hidden store products" ON public.products FOR SELECT TO authenticated USING (producer_id = auth.uid());

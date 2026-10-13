@@ -84,8 +84,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "InfroPay — Transformando conhecimento em renda" },
       { name: "twitter:description", content: "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/dc44a9ae-646e-4098-8754-70086d332e5c" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/dc44a9ae-646e-4098-8754-70086d332e5c" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -117,7 +115,10 @@ function RootComponent() {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event !== "SIGNED_OUT") {
+        queryClient.invalidateQueries();
+        if (router.state.location.pathname === "/" || router.state.location.pathname === "/auth") void router.navigate({ to: "/produtor", replace: true });
+      }
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
