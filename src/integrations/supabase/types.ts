@@ -549,6 +549,10 @@ export type Database = {
             | Database["public"]["Enums"]["billing_interval"]
             | null
           category_id: string | null
+          checkout_banner_url: string | null
+          checkout_brand_name: string | null
+          checkout_logo_url: string | null
+          checkout_theme: string
           cover_url: string | null
           created_at: string
           currency: string
@@ -580,6 +584,7 @@ export type Database = {
           slug: string
           status: Database["public"]["Enums"]["product_status"]
           stock_quantity: number | null
+          store_visible: boolean
           subscription_price_cents: number | null
           tags: string[] | null
           title: string
@@ -600,6 +605,10 @@ export type Database = {
             | Database["public"]["Enums"]["billing_interval"]
             | null
           category_id?: string | null
+          checkout_banner_url?: string | null
+          checkout_brand_name?: string | null
+          checkout_logo_url?: string | null
+          checkout_theme?: string
           cover_url?: string | null
           created_at?: string
           currency?: string
@@ -631,6 +640,7 @@ export type Database = {
           slug: string
           status?: Database["public"]["Enums"]["product_status"]
           stock_quantity?: number | null
+          store_visible?: boolean
           subscription_price_cents?: number | null
           tags?: string[] | null
           title: string
@@ -651,6 +661,10 @@ export type Database = {
             | Database["public"]["Enums"]["billing_interval"]
             | null
           category_id?: string | null
+          checkout_banner_url?: string | null
+          checkout_brand_name?: string | null
+          checkout_logo_url?: string | null
+          checkout_theme?: string
           cover_url?: string | null
           created_at?: string
           currency?: string
@@ -682,6 +696,7 @@ export type Database = {
           slug?: string
           status?: Database["public"]["Enums"]["product_status"]
           stock_quantity?: number | null
+          store_visible?: boolean
           subscription_price_cents?: number | null
           tags?: string[] | null
           title?: string
