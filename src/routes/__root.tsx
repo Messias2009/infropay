@@ -57,12 +57,20 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">Tente novamente em alguns segundos.</p>
         <div className="mt-6 flex justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="inline-flex items-center rounded-md gradient-brand px-4 py-2 text-sm font-medium text-primary-foreground"
           >
             Tentar novamente
           </button>
-          <a href="/" className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm">Início</a>
+          <a
+            href="/"
+            className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm"
+          >
+            Início
+          </a>
         </div>
       </div>
     </div>
@@ -75,15 +83,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "InfroPay — Transformando conhecimento em renda" },
-      { name: "description", content: "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais." },
+      {
+        name: "description",
+        content:
+          "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais.",
+      },
       { name: "author", content: "InfroPay" },
       { name: "theme-color", content: "#0F172A" },
       { property: "og:title", content: "InfroPay — Transformando conhecimento em renda" },
-      { property: "og:description", content: "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais." },
+      {
+        property: "og:description",
+        content:
+          "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "InfroPay — Transformando conhecimento em renda" },
-      { name: "twitter:description", content: "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais." },
+      {
+        name: "twitter:description",
+        content:
+          "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais.",
+      },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -117,7 +137,8 @@ function RootComponent() {
       router.invalidate();
       if (event !== "SIGNED_OUT") {
         queryClient.invalidateQueries();
-        if (router.state.location.pathname === "/" || router.state.location.pathname === "/auth") void router.navigate({ to: "/produtor", replace: true });
+        if (router.state.location.pathname === "/" || router.state.location.pathname === "/auth")
+          void router.navigate({ to: "/produtor", replace: true });
       }
     });
     return () => sub.subscription.unsubscribe();

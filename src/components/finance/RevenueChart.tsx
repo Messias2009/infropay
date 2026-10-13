@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { kz } from "@/components/finance/FeeBanner";
 
 type Bucket = { label: string; gross: number; net: number; count: number };
@@ -38,9 +46,12 @@ export function RevenueChart({
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
       <div className="px-5 md:px-6 py-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="font-display font-semibold text-lg leading-tight">Evolução do faturamento</h2>
+          <h2 className="font-display font-semibold text-lg leading-tight">
+            Evolução do faturamento
+          </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Total no período: <span className="text-gold font-semibold">{kz(Math.round(total * 100))}</span>
+            Total no período:{" "}
+            <span className="text-gold font-semibold">{kz(Math.round(total * 100))}</span>
           </p>
         </div>
         <div className="flex rounded-xl border border-border bg-muted/30 p-1">
@@ -50,7 +61,9 @@ export function RevenueChart({
               type="button"
               onClick={() => setRange(r.key)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                range === r.key ? "gradient-brand text-primary-foreground shadow-glow" : "text-muted-foreground hover:text-foreground"
+                range === r.key
+                  ? "gradient-brand text-primary-foreground shadow-glow"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {r.label}
@@ -68,8 +81,16 @@ export function RevenueChart({
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-            <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} stroke="var(--color-border)" />
-            <YAxis tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} stroke="var(--color-border)" width={48} />
+            <XAxis
+              dataKey="label"
+              tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+              stroke="var(--color-border)"
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+              stroke="var(--color-border)"
+              width={48}
+            />
             <Tooltip
               contentStyle={{
                 background: "var(--color-card)",
@@ -77,10 +98,25 @@ export function RevenueChart({
                 borderRadius: 12,
                 fontSize: 12,
               }}
-              formatter={(v: any, n: any) => [kz(Math.round(Number(v) * 100)), n === "gross" ? "Bruto" : "Líquido"]}
+              formatter={(v: any, n: any) => [
+                kz(Math.round(Number(v) * 100)),
+                n === "gross" ? "Bruto" : "Líquido",
+              ]}
             />
-            <Area type="monotone" dataKey="gross" stroke="var(--color-gold)" strokeWidth={2} fill="url(#revFill)" />
-            <Area type="monotone" dataKey="net" stroke="var(--color-primary)" strokeWidth={2} fillOpacity={0} />
+            <Area
+              type="monotone"
+              dataKey="gross"
+              stroke="var(--color-gold)"
+              strokeWidth={2}
+              fill="url(#revFill)"
+            />
+            <Area
+              type="monotone"
+              dataKey="net"
+              stroke="var(--color-primary)"
+              strokeWidth={2}
+              fillOpacity={0}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>

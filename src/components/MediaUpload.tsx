@@ -16,7 +16,15 @@ type Props = {
 
 const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
 
-export function MediaUpload({ value, onChange, kind = "image", label, hint, accept, productKey }: Props) {
+export function MediaUpload({
+  value,
+  onChange,
+  kind = "image",
+  label,
+  hint,
+  accept,
+  productKey,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -40,11 +48,15 @@ export function MediaUpload({ value, onChange, kind = "image", label, hint, acce
       const path = `${uid}/${productKey ?? "misc"}/${kind}-${Date.now()}.${ext}`;
       setProgress(30);
       const { error: upErr } = await supabase.storage.from("product-media").upload(path, file, {
-        upsert: true, cacheControl: "3600", contentType: file.type || undefined,
+        upsert: true,
+        cacheControl: "3600",
+        contentType: file.type || undefined,
       });
       if (upErr) throw upErr;
       setProgress(70);
-      const { data: signed, error: sErr } = await supabase.storage.from("product-media").createSignedUrl(path, TEN_YEARS);
+      const { data: signed, error: sErr } = await supabase.storage
+        .from("product-media")
+        .createSignedUrl(path, TEN_YEARS);
       if (sErr) throw sErr;
       setProgress(100);
       onChange(signed.signedUrl);
@@ -77,12 +89,20 @@ export function MediaUpload({ value, onChange, kind = "image", label, hint, acce
             <img src={value} alt="" className="w-full h-48 object-cover" />
           ) : (
             <div className="flex items-center gap-3 p-4">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center"><FileText className="h-5 w-5 text-primary-glow" /></div>
+              <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center">
+                <FileText className="h-5 w-5 text-primary-glow" />
+              </div>
               <div className="text-sm truncate flex-1">Ficheiro carregado</div>
             </div>
           )}
           <div className="absolute top-2 right-2 flex gap-2">
-            <Button type="button" size="sm" variant="secondary" onClick={() => inputRef.current?.click()} disabled={uploading}>
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+            >
               Substituir
             </Button>
             <Button type="button" size="icon" variant="destructive" onClick={() => onChange(null)}>
@@ -104,9 +124,15 @@ export function MediaUpload({ value, onChange, kind = "image", label, hint, acce
             </>
           ) : (
             <>
-              <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center"><Icon className="h-5 w-5 text-primary-glow" /></div>
-              <span className="font-medium text-foreground">{isImage ? "Clique para enviar imagem" : "Clique para enviar ficheiro"}</span>
-              <span className="text-xs">{isImage ? "PNG, JPG, WEBP · até 8MB" : "Qualquer formato · até 200MB"}</span>
+              <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center">
+                <Icon className="h-5 w-5 text-primary-glow" />
+              </div>
+              <span className="font-medium text-foreground">
+                {isImage ? "Clique para enviar imagem" : "Clique para enviar ficheiro"}
+              </span>
+              <span className="text-xs">
+                {isImage ? "PNG, JPG, WEBP · até 8MB" : "Qualquer formato · até 200MB"}
+              </span>
             </>
           )}
         </button>

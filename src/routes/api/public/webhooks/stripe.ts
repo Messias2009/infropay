@@ -15,7 +15,8 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
         // Enquanto Stripe não está ativado, aceitamos apenas quando o secret existe.
         if (!secret) {
           return new Response(JSON.stringify({ ok: false, reason: "stripe_not_configured" }), {
-            status: 202, headers: { "content-type": "application/json" },
+            status: 202,
+            headers: { "content-type": "application/json" },
           });
         }
         if (!sig) return new Response("missing signature", { status: 400 });
@@ -24,7 +25,9 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
         try {
           // Verificação leve — quando Stripe SDK for instalado, trocar por stripe.webhooks.constructEvent
           event = JSON.parse(raw);
-        } catch { return new Response("invalid json", { status: 400 }); }
+        } catch {
+          return new Response("invalid json", { status: 400 });
+        }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -39,7 +42,10 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
           if (dupErr) return new Response("ok (duplicate)", { status: 200 });
         }
 
-        if (event.type === "checkout.session.completed" || event.type === "payment_intent.succeeded") {
+        if (
+          event.type === "checkout.session.completed" ||
+          event.type === "payment_intent.succeeded"
+        ) {
           const session = event.data?.object ?? {};
           const token = session.metadata?.access_token as string | undefined;
           const stripeSessionId = session.id as string | undefined;

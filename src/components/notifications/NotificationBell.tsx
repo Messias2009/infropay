@@ -69,17 +69,22 @@ export function NotificationBell() {
         .channel(`notifications:${uid}`)
         .on(
           "postgres_changes",
-          { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${uid}` },
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${uid}`,
+          },
           (payload) => {
             const n = payload.new as N;
             toast(n.title, { description: n.body ?? undefined });
             qc.invalidateQueries({ queryKey: ["notifications"] });
-          }
+          },
         )
         .on(
           "postgres_changes",
           { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${uid}` },
-          () => qc.invalidateQueries({ queryKey: ["notifications"] })
+          () => qc.invalidateQueries({ queryKey: ["notifications"] }),
         )
         .subscribe();
       (window as any).__notifChan = channel;
@@ -128,10 +133,17 @@ export function NotificationBell() {
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="font-semibold text-sm flex items-center gap-2">
             <Bell className="h-4 w-4 text-primary-glow" /> Notificações
-            {unread > 0 && <span className="text-[10px] text-primary-glow">({unread} nova{unread > 1 ? "s" : ""})</span>}
+            {unread > 0 && (
+              <span className="text-[10px] text-primary-glow">
+                ({unread} nova{unread > 1 ? "s" : ""})
+              </span>
+            )}
           </div>
           {unread > 0 && (
-            <button onClick={handleMarkAll} className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
+            <button
+              onClick={handleMarkAll}
+              className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+            >
               <Check className="h-3 w-3" /> Marcar tudo lido
             </button>
           )}
@@ -147,8 +159,12 @@ export function NotificationBell() {
               {notifs.map((n) => {
                 const Icon = iconFor(n.type);
                 const inner = (
-                  <div className={`flex items-start gap-3 px-4 py-3 hover:bg-accent/30 transition ${!n.read ? "bg-primary/5" : ""}`}>
-                    <div className={`h-9 w-9 shrink-0 rounded-lg grid place-items-center ${n.type === "sale" ? "bg-success/15 text-success" : n.type === "withdrawal" ? "bg-gold/15 text-gold" : "bg-primary/15 text-primary-glow"}`}>
+                  <div
+                    className={`flex items-start gap-3 px-4 py-3 hover:bg-accent/30 transition ${!n.read ? "bg-primary/5" : ""}`}
+                  >
+                    <div
+                      className={`h-9 w-9 shrink-0 rounded-lg grid place-items-center ${n.type === "sale" ? "bg-success/15 text-success" : n.type === "withdrawal" ? "bg-gold/15 text-gold" : "bg-primary/15 text-primary-glow"}`}
+                    >
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -156,8 +172,14 @@ export function NotificationBell() {
                         <div className="font-semibold text-sm truncate">{n.title}</div>
                         {!n.read && <span className="h-2 w-2 rounded-full bg-primary shrink-0" />}
                       </div>
-                      {n.body && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.body}</div>}
-                      <div className="text-[10px] text-muted-foreground mt-1">{timeAgo(n.created_at)}</div>
+                      {n.body && (
+                        <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                          {n.body}
+                        </div>
+                      )}
+                      <div className="text-[10px] text-muted-foreground mt-1">
+                        {timeAgo(n.created_at)}
+                      </div>
                     </div>
                     <button
                       onClick={(e) => handleDelete(n.id, e)}
@@ -171,9 +193,13 @@ export function NotificationBell() {
                 return (
                   <li key={n.id}>
                     {n.link ? (
-                      <Link to={n.link} onClick={() => handleClick(n)}>{inner}</Link>
+                      <Link to={n.link} onClick={() => handleClick(n)}>
+                        {inner}
+                      </Link>
                     ) : (
-                      <button className="w-full text-left" onClick={() => handleClick(n)}>{inner}</button>
+                      <button className="w-full text-left" onClick={() => handleClick(n)}>
+                        {inner}
+                      </button>
                     )}
                   </li>
                 );

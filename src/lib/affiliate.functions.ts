@@ -27,7 +27,9 @@ export const listAffiliateOffers = createServerFn({ method: "GET" }).handler(asy
 
 /** Regista um clique num link de afiliado (idempotência é do lado do cliente). */
 export const registerAffiliateClick = createServerFn({ method: "POST" })
-  .inputValidator((d: { code: string }) => z.object({ code: z.string().trim().min(4).max(40) }).parse(d))
+  .inputValidator((d: { code: string }) =>
+    z.object({ code: z.string().trim().min(4).max(40) }).parse(d),
+  )
   .handler(async ({ data }) => {
     await pub().rpc("register_affiliate_click", { _code: data.code });
     return { ok: true };
@@ -43,7 +45,9 @@ function randomCode() {
 /** Gera (ou devolve) o link de afiliado do utilizador para um produto. */
 export const createAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { product_id: string }) => z.object({ product_id: z.string().uuid() }).parse(d))
+  .inputValidator((d: { product_id: string }) =>
+    z.object({ product_id: z.string().uuid() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { data: product, error: pErr } = await context.supabase
       .from("products")
@@ -53,7 +57,8 @@ export const createAffiliateLink = createServerFn({ method: "POST" })
     if (pErr) throw pErr;
     if (!product || !product.allow_affiliates || product.status !== "publicado")
       throw new Error("Este produto não aceita afiliados");
-    if (product.producer_id === context.userId) throw new Error("Não pode afiliar-se ao seu próprio produto");
+    if (product.producer_id === context.userId)
+      throw new Error("Não pode afiliar-se ao seu próprio produto");
 
     const { data: existing } = await context.supabase
       .from("affiliate_links")
@@ -84,12 +89,16 @@ export const getAffiliateOverview = createServerFn({ method: "GET" })
     const [{ data: links }, { data: sales }] = await Promise.all([
       context.supabase
         .from("affiliate_links")
-        .select("id, code, clicks, created_at, product:products(id, slug, title, cover_url, currency, affiliate_commission_percent, price_cents, promo_price_cents)")
+        .select(
+          "id, code, clicks, created_at, product:products(id, slug, title, cover_url, currency, affiliate_commission_percent, price_cents, promo_price_cents)",
+        )
         .eq("affiliate_id", context.userId)
         .order("created_at", { ascending: false }),
       context.supabase
         .from("sales")
-        .select("id, status, gross_cents, affiliate_commission_cents, currency, created_at, product:products(title, slug)")
+        .select(
+          "id, status, gross_cents, affiliate_commission_cents, currency, created_at, product:products(title, slug)",
+        )
         .eq("affiliate_id", context.userId)
         .order("created_at", { ascending: false })
         .limit(200),
@@ -102,7 +111,10 @@ export const getAffiliateOverview = createServerFn({ method: "GET" })
     for (const s of paid) {
       const key = (s.product as any)?.slug ?? "";
       const cur = byLink.get(key) ?? { sales: 0, earned: 0 };
-      byLink.set(key, { sales: cur.sales + 1, earned: cur.earned + (s.affiliate_commission_cents ?? 0) });
+      byLink.set(key, {
+        sales: cur.sales + 1,
+        earned: cur.earned + (s.affiliate_commission_cents ?? 0),
+      });
     }
 
     const clicks = (links ?? []).reduce((a, l: any) => a + (l.clicks ?? 0), 0);

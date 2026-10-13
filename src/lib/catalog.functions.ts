@@ -5,13 +5,16 @@ import type { Database } from "@/integrations/supabase/types";
 function publicClient() {
   return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
-    global: { fetch: (input, init) => {
-      const headers = new Headers(init?.headers);
-      const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-      if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) headers.delete("Authorization");
-      headers.set("apikey", key);
-      return fetch(input, { ...init, headers });
-    } },
+    global: {
+      fetch: (input, init) => {
+        const headers = new Headers(init?.headers);
+        const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+        if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`)
+          headers.delete("Authorization");
+        headers.set("apikey", key);
+        return fetch(input, { ...init, headers });
+      },
+    },
   });
 }
 
@@ -26,19 +29,27 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const listPublishedProducts = createServerFn({ method: "GET" })
-  .inputValidator((d: { category?: string; limit?: number; sort?: "popular" | "recent" } | undefined) => d ?? {})
+  .inputValidator(
+    (d: { category?: string; limit?: number; sort?: "popular" | "recent" } | undefined) => d ?? {},
+  )
   .handler(async ({ data }) => {
     const supabase = publicClient();
     const recent = data?.sort === "recent";
     let q = supabase
       .from("products")
-      .select("id, slug, title, short_description, cover_url, price_cents, promo_price_cents, currency, rating, reviews_count, sales_count, created_at, category:categories(name, slug)")
+      .select(
+        "id, slug, title, short_description, cover_url, price_cents, promo_price_cents, currency, rating, reviews_count, sales_count, created_at, category:categories(name, slug)",
+      )
       .eq("store_visible", true)
       .eq("status", "publicado")
       .order(recent ? "created_at" : "sales_count", { ascending: false })
       .limit(data?.limit ?? 24);
     if (data?.category) {
-      const { data: cat } = await supabase.from("categories").select("id").eq("slug", data.category).maybeSingle();
+      const { data: cat } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("slug", data.category)
+        .maybeSingle();
       if (cat?.id) q = q.eq("category_id", cat.id);
     }
     const { data: rows, error } = await q;
@@ -46,14 +57,15 @@ export const listPublishedProducts = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
-
 export const getProductBySlug = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => d)
   .handler(async ({ data }) => {
     const supabase = publicClient();
     const { data: row, error } = await supabase
       .from("products")
-      .select("*, category:categories(name, slug), producer:profiles!products_producer_id_fkey(full_name, username, avatar_url)")
+      .select(
+        "*, category:categories(name, slug), producer:profiles!products_producer_id_fkey(full_name, username, avatar_url)",
+      )
       .eq("slug", data.slug)
       .eq("status", "publicado")
       .maybeSingle();

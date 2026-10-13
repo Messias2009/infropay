@@ -25,7 +25,11 @@ export const Route = createFileRoute("/api/public/webhooks/multicaixa")({
         }
 
         let event: any;
-        try { event = JSON.parse(raw); } catch { return new Response("invalid json", { status: 400 }); }
+        try {
+          event = JSON.parse(raw);
+        } catch {
+          return new Response("invalid json", { status: 400 });
+        }
 
         const eventId = String(event.event_id ?? event.reference ?? crypto.randomUUID());
         const reference = String(event.reference ?? "");
@@ -44,16 +48,22 @@ export const Route = createFileRoute("/api/public/webhooks/multicaixa")({
         if (dupErr) return new Response("ok (duplicate)", { status: 200 });
 
         if (status === "paid" || status === "success") {
-          await supabaseAdmin.from("sales").update({
-            status: "pago",
-            paid_at: new Date().toISOString(),
-            provider: "multicaixa",
-          }).eq("access_token", reference);
+          await supabaseAdmin
+            .from("sales")
+            .update({
+              status: "pago",
+              paid_at: new Date().toISOString(),
+              provider: "multicaixa",
+            })
+            .eq("access_token", reference);
         } else if (status === "failed" || status === "cancelled") {
-          await supabaseAdmin.from("sales").update({
-            status: "cancelado",
-            provider: "multicaixa",
-          }).eq("access_token", reference);
+          await supabaseAdmin
+            .from("sales")
+            .update({
+              status: "cancelado",
+              provider: "multicaixa",
+            })
+            .eq("access_token", reference);
         }
 
         return new Response("ok", { status: 200 });

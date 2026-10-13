@@ -34,7 +34,9 @@ export function useAuth() {
         }
       })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user?.id]);
 
   return { session, user, loading };

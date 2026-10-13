@@ -24,15 +24,18 @@ export const createOrder = createServerFn({ method: "POST" })
     const supabase = pub();
     const { data: product, error: pErr } = await supabase
       .from("products")
-      .select("id, producer_id, price_cents, promo_price_cents, currency, status, allow_affiliates, affiliate_commission_percent")
+      .select(
+        "id, producer_id, price_cents, promo_price_cents, currency, status, allow_affiliates, affiliate_commission_percent",
+      )
       .eq("slug", data.product_slug)
       .maybeSingle();
     if (pErr) throw pErr;
     if (!product || product.status !== "publicado") throw new Error("Produto indisponível");
 
-    const gross = product.promo_price_cents && product.promo_price_cents < product.price_cents
-      ? product.promo_price_cents
-      : product.price_cents;
+    const gross =
+      product.promo_price_cents && product.promo_price_cents < product.price_cents
+        ? product.promo_price_cents
+        : product.price_cents;
     const fee = Math.round(gross * 0.02);
 
     // Atribuição de afiliado (se o link for válido para este produto)
@@ -48,7 +51,9 @@ export const createOrder = createServerFn({ method: "POST" })
       if (link && link.product_id === product.id && link.affiliate_id !== product.producer_id) {
         affiliateId = link.affiliate_id;
         affiliateCode = link.code;
-        affiliateCommission = Math.round((gross * Number(product.affiliate_commission_percent ?? 0)) / 100);
+        affiliateCommission = Math.round(
+          (gross * Number(product.affiliate_commission_percent ?? 0)) / 100,
+        );
       }
     }
 
@@ -84,10 +89,11 @@ export const getOrderByToken = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: sale, error } = await supabaseAdmin
       .from("sales")
-      .select("id, status, gross_cents, currency, payment_method, buyer_name, buyer_email, created_at, paid_at, product:products(title, slug, cover_url, file_url, external_url)")
+      .select(
+        "id, status, gross_cents, currency, payment_method, buyer_name, buyer_email, created_at, paid_at, product:products(title, slug, cover_url, file_url, external_url)",
+      )
       .eq("access_token", data.token)
       .maybeSingle();
     if (error) throw error;
     return sale;
   });
-

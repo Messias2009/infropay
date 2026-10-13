@@ -22,20 +22,32 @@ function MembrosIndex() {
   const claimFn = useServerFn(claimMyEnrollments);
   const { data, refetch } = useQuery({ queryKey: ["my-enrollments"], queryFn: () => listFn() });
 
-  useEffect(() => { claimFn().then(() => refetch()).catch(() => {}); }, []);
+  useEffect(() => {
+    claimFn()
+      .then(() => refetch())
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen p-6 md:p-10 max-w-6xl mx-auto">
       <div className="text-xs uppercase tracking-widest text-gold font-semibold">Aluno</div>
       <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Minha área de membros</h1>
-      <p className="text-muted-foreground mt-2">Todos os cursos e conteúdos que você comprou, num só lugar.</p>
+      <p className="text-muted-foreground mt-2">
+        Todos os cursos e conteúdos que você comprou, num só lugar.
+      </p>
 
       {!data?.length ? (
         <div className="mt-10 rounded-2xl border border-dashed border-border bg-card/40 p-16 text-center">
           <GraduationCap className="h-12 w-12 text-gold mx-auto mb-3" />
           <h3 className="font-display text-xl font-semibold">Nenhum curso ainda</h3>
-          <p className="text-sm text-muted-foreground mt-1">Compre um produto com área de membros para começar a estudar.</p>
-          <Link to="/loja"><Button className="mt-5 gradient-brand text-primary-foreground shadow-glow">Explorar a loja</Button></Link>
+          <p className="text-sm text-muted-foreground mt-1">
+            Compre um produto com área de membros para começar a estudar.
+          </p>
+          <Link to="/loja">
+            <Button className="mt-5 gradient-brand text-primary-foreground shadow-glow">
+              Explorar a loja
+            </Button>
+          </Link>
         </div>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,16 +59,36 @@ function MembrosIndex() {
               className="group rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/50 transition"
             >
               <div className="aspect-video bg-gradient-to-br from-primary/20 to-gold/10">
-                {e.product.cover_url && <img src={e.product.cover_url} alt={e.product.title} loading="lazy" className="h-full w-full object-cover" />}
+                {e.product.cover_url && (
+                  <img
+                    src={e.product.cover_url}
+                    alt={e.product.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                )}
               </div>
               <div className="p-4">
-                <h3 className="font-display font-semibold group-hover:text-primary-glow transition">{e.product.title}</h3>
+                <h3 className="font-display font-semibold group-hover:text-primary-glow transition">
+                  {e.product.title}
+                </h3>
                 <div className="mt-3 h-2 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full gradient-brand" style={{ width: `${e.progress_percent ?? 0}%` }} />
+                  <div
+                    className="h-full gradient-brand"
+                    style={{ width: `${e.progress_percent ?? 0}%` }}
+                  />
                 </div>
                 <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" />{e.progress_percent ?? 0}% concluído</span>
-                  {e.certificate_issued && <span className="inline-flex items-center gap-1 text-gold"><Award className="h-3.5 w-3.5" />Certificado</span>}
+                  <span className="inline-flex items-center gap-1">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    {e.progress_percent ?? 0}% concluído
+                  </span>
+                  {e.certificate_issued && (
+                    <span className="inline-flex items-center gap-1 text-gold">
+                      <Award className="h-3.5 w-3.5" />
+                      Certificado
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>

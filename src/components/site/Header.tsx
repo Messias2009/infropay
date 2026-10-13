@@ -29,7 +29,13 @@ export function Header() {
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="relative h-9 w-9">
             <div className="absolute inset-0 rounded-lg blur-md gradient-brand opacity-50 group-hover:opacity-100 transition" />
-            <img src={logoMark} alt="InfroPay" width={512} height={512} className="relative h-9 w-9 rounded-lg object-contain" />
+            <img
+              src={logoMark}
+              alt="InfroPay"
+              width={512}
+              height={512}
+              className="relative h-9 w-9 rounded-lg object-contain"
+            />
           </div>
           <div className="leading-tight">
             <div className="text-lg font-bold tracking-tight">
@@ -40,11 +46,36 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-1 text-sm">
-          <Link to="/loja" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Loja</Link>
-          <Link to="/legends" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Legends</Link>
-          <Link to="/sobre" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Sobre</Link>
-          <Link to="/faq" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">FAQ</Link>
-          <Link to="/contactos" className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition">Contactos</Link>
+          <Link
+            to="/loja"
+            className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition"
+          >
+            Loja
+          </Link>
+          <Link
+            to="/legends"
+            className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition"
+          >
+            Legends
+          </Link>
+          <Link
+            to="/sobre"
+            className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition"
+          >
+            Sobre
+          </Link>
+          <Link
+            to="/faq"
+            className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition"
+          >
+            FAQ
+          </Link>
+          <Link
+            to="/contactos"
+            className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition"
+          >
+            Contactos
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -54,26 +85,49 @@ export function Header() {
           {user ? (
             <>
               <Link to="/produtor">
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">Painel</Button>
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+                  Painel
+                </Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon"><UserIcon className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon">
+                    <UserIcon className="h-4 w-4" />
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
-                  <DropdownMenuItem disabled className="text-xs">{user.email}</DropdownMenuItem>
+                  <DropdownMenuItem disabled className="text-xs">
+                    {user.email}
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild><Link to="/produtor"><ShoppingBag className="h-4 w-4 mr-2" />Painel do produtor</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/produtor">
+                      <ShoppingBag className="h-4 w-4 mr-2" />
+                      Painel do produtor
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut}><LogOut className="h-4 w-4 mr-2" />Sair</DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sair
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
           ) : (
             <>
-              <Link to="/auth"><Button variant="ghost" size="sm">Entrar</Button></Link>
+              <Link to="/auth">
+                <Button variant="ghost" size="sm">
+                  Entrar
+                </Button>
+              </Link>
               <Link to="/auth" search={{ mode: "signup" }}>
-                <Button size="sm" className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90">Começar agora</Button>
+                <Button
+                  size="sm"
+                  className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90"
+                >
+                  Começar agora
+                </Button>
               </Link>
             </>
           )}

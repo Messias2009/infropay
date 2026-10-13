@@ -22,9 +22,11 @@ export function FeeBanner({ variant = "default" }: { variant?: "default" | "comp
         <div>
           <div className="font-display font-semibold text-lg">Transparência total</div>
           <p className="text-sm text-muted-foreground mt-1">
-            A InfroPay cobra apenas <b className="text-foreground">2% por cada venda</b> concluída e
-            {" "}<b className="text-foreground">8% em cada saque</b>. Sem mensalidades, sem taxas escondidas.
-            Saque mínimo de <b className="text-foreground">5.000 Kz</b> · <b className="text-foreground">liberação em no mínimo 1 hora</b> após a aprovação do pagamento.
+            A InfroPay cobra apenas <b className="text-foreground">2% por cada venda</b> concluída e{" "}
+            <b className="text-foreground">8% em cada saque</b>. Sem mensalidades, sem taxas
+            escondidas. Saque mínimo de <b className="text-foreground">5.000 Kz</b> ·{" "}
+            <b className="text-foreground">liberação em no mínimo 1 hora</b> após a aprovação do
+            pagamento.
           </p>
           <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
             <Info className="h-3 w-3" /> Valores exibidos já em Kwanzas (AOA).
@@ -37,5 +39,9 @@ export function FeeBanner({ variant = "default" }: { variant?: "default" | "comp
 
 export function kz(cents: number | null | undefined) {
   const v = (cents ?? 0) / 100;
-  return new Intl.NumberFormat("pt-AO", { style: "currency", currency: "AOA", maximumFractionDigits: 0 }).format(v);
+  return new Intl.NumberFormat("pt-AO", {
+    style: "currency",
+    currency: "AOA",
+    maximumFractionDigits: 0,
+  }).format(v);
 }

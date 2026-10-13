@@ -6,15 +6,25 @@ import { qrDataUrl, copy, downloadDataUrl } from "@/lib/product-links";
 import { toast } from "sonner";
 
 export function QrDialog({
-  open, onOpenChange, url, title,
-}: { open: boolean; onOpenChange: (v: boolean) => void; url: string; title: string }) {
+  open,
+  onOpenChange,
+  url,
+  title,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  url: string;
+  title: string;
+}) {
   const [src, setSrc] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (!open || !url) return;
     setSrc(null);
-    qrDataUrl(url).then(setSrc).catch(() => toast.error("Não foi possível gerar o QR Code"));
+    qrDataUrl(url)
+      .then(setSrc)
+      .catch(() => toast.error("Não foi possível gerar o QR Code"));
   }, [open, url]);
 
   return (
@@ -36,10 +46,15 @@ export function QrDialog({
             variant="outline"
             className="flex-1"
             onClick={async () => {
-              if (await copy(url)) { setDone(true); toast.success("Link copiado"); setTimeout(() => setDone(false), 1500); }
+              if (await copy(url)) {
+                setDone(true);
+                toast.success("Link copiado");
+                setTimeout(() => setDone(false), 1500);
+              }
             }}
           >
-            {done ? <Check className="mr-1 h-4 w-4" /> : <Copy className="mr-1 h-4 w-4" />} Copiar link
+            {done ? <Check className="mr-1 h-4 w-4" /> : <Copy className="mr-1 h-4 w-4" />} Copiar
+            link
           </Button>
           <Button
             className="flex-1 gradient-brand text-primary-foreground"

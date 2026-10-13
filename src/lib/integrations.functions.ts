@@ -15,13 +15,21 @@ export const getMyIntegrations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data } = await (context.supabase as any)
-      .from("user_integrations").select("*").eq("user_id", context.userId).maybeSingle();
-    return data ?? {
-      user_id: context.userId,
-      meta_pixel_id: null, meta_capi_token: null,
-      google_ads_id: null, google_ads_label: null,
-      ga_measurement_id: null, utmify_token: null,
-    };
+      .from("user_integrations")
+      .select("*")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    return (
+      data ?? {
+        user_id: context.userId,
+        meta_pixel_id: null,
+        meta_capi_token: null,
+        google_ads_id: null,
+        google_ads_label: null,
+        ga_measurement_id: null,
+        utmify_token: null,
+      }
+    );
   });
 
 export const upsertMyIntegrations = createServerFn({ method: "POST" })
@@ -30,8 +38,10 @@ export const upsertMyIntegrations = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const payload = { user_id: context.userId, ...data, updated_at: new Date().toISOString() };
     const { data: row, error } = await (context.supabase as any)
-      .from("user_integrations").upsert(payload, { onConflict: "user_id" })
-      .select("*").maybeSingle();
+      .from("user_integrations")
+      .upsert(payload, { onConflict: "user_id" })
+      .select("*")
+      .maybeSingle();
     if (error) throw error;
     return row;
   });

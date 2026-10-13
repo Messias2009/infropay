@@ -67,7 +67,9 @@ export const getOrderTracking = createServerFn({ method: "GET" })
     const product = sale.product as any;
     const { data: integ } = await supabaseAdmin
       .from("user_integrations")
-      .select("meta_pixel_id, meta_capi_token, ga_measurement_id, google_ads_id, google_ads_label, utmify_token")
+      .select(
+        "meta_pixel_id, meta_capi_token, ga_measurement_id, google_ads_id, google_ads_label, utmify_token",
+      )
       .eq("user_id", sale.producer_id)
       .maybeSingle();
 
@@ -117,21 +119,24 @@ export const getOrderTracking = createServerFn({ method: "GET" })
             }).catch(() => null)
           : null,
         capiToken && cfg.meta_pixel_id
-          ? fetch(`https://graph.facebook.com/v19.0/${cfg.meta_pixel_id}/events?access_token=${capiToken}`, {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({
-                data: [
-                  {
-                    event_name: "Purchase",
-                    event_time: Math.floor(Date.now() / 1000),
-                    event_id: sale.id,
-                    action_source: "website",
-                    custom_data: { value: cfg.value, currency: cfg.currency },
-                  },
-                ],
-              }),
-            }).catch(() => null)
+          ? fetch(
+              `https://graph.facebook.com/v19.0/${cfg.meta_pixel_id}/events?access_token=${capiToken}`,
+              {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({
+                  data: [
+                    {
+                      event_name: "Purchase",
+                      event_time: Math.floor(Date.now() / 1000),
+                      event_id: sale.id,
+                      action_source: "website",
+                      custom_data: { value: cfg.value, currency: cfg.currency },
+                    },
+                  ],
+                }),
+              },
+            ).catch(() => null)
           : null,
       ]);
     }

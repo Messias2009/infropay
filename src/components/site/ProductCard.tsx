@@ -66,7 +66,9 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="font-display font-semibold leading-tight line-clamp-2 transition group-hover:text-primary-glow">{product.title}</h3>
+        <h3 className="font-display font-semibold leading-tight line-clamp-2 transition group-hover:text-primary-glow">
+          {product.title}
+        </h3>
         {product.short_description && (
           <p className="line-clamp-2 text-xs text-muted-foreground">{product.short_description}</p>
         )}
@@ -74,11 +76,17 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           <div className="min-w-0">
             {hasPromo ? (
               <>
-                <div className="text-xs text-muted-foreground line-through">{formatPrice(product.price_cents, product.currency)}</div>
-                <div className="text-lg font-bold text-gradient-gold">{formatPrice(product.promo_price_cents!, product.currency)}</div>
+                <div className="text-xs text-muted-foreground line-through">
+                  {formatPrice(product.price_cents, product.currency)}
+                </div>
+                <div className="text-lg font-bold text-gradient-gold">
+                  {formatPrice(product.promo_price_cents!, product.currency)}
+                </div>
               </>
             ) : (
-              <div className="text-lg font-bold">{formatPrice(product.price_cents, product.currency)}</div>
+              <div className="text-lg font-bold">
+                {formatPrice(product.price_cents, product.currency)}
+              </div>
             )}
           </div>
           {(product.rating ?? 0) > 0 ? (

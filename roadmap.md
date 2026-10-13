@@ -1,4 +1,5 @@
 # Actualização InfroPay
+
 - [ ] Acesso com sessão encaminha para painel; saída limpa a sessão.
 - [ ] Painel móvel compacto com menu à esquerda.
 - [ ] Rodapé e suporte organizados; banner compacto de tipos de produto.

@@ -1,0 +1,6 @@
+{
+  "name": "InfroPay",
+  "description": "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -9,7 +9,10 @@ export const Route = createFileRoute("/_authenticated/adm/logs")({
   head: () => ({
     meta: [
       { title: "Logs de auditoria — Admin InfroPay" },
-      { name: "description", content: "Histórico cronológico das ações administrativas da plataforma." },
+      {
+        name: "description",
+        content: "Histórico cronológico das ações administrativas da plataforma.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -28,25 +31,41 @@ const FILTERS = [
 ];
 
 function meta(action: string) {
-  if (action === "product_approved") return { Icon: CheckCircle2, color: "text-success", label: "Produto aprovado" };
-  if (action === "product_rejected") return { Icon: XCircle, color: "text-destructive", label: "Produto rejeitado" };
-  if (action === "user_banned") return { Icon: Ban, color: "text-destructive", label: "Conta bloqueada" };
-  if (action === "user_unbanned") return { Icon: ShieldCheck, color: "text-success", label: "Conta desbloqueada" };
-  if (action.startsWith("withdrawal_")) return { Icon: Banknote, color: "text-gold", label: `Saque · ${action.replace("withdrawal_", "")}` };
+  if (action === "product_approved")
+    return { Icon: CheckCircle2, color: "text-success", label: "Produto aprovado" };
+  if (action === "product_rejected")
+    return { Icon: XCircle, color: "text-destructive", label: "Produto rejeitado" };
+  if (action === "user_banned")
+    return { Icon: Ban, color: "text-destructive", label: "Conta bloqueada" };
+  if (action === "user_unbanned")
+    return { Icon: ShieldCheck, color: "text-success", label: "Conta desbloqueada" };
+  if (action.startsWith("withdrawal_"))
+    return {
+      Icon: Banknote,
+      color: "text-gold",
+      label: `Saque · ${action.replace("withdrawal_", "")}`,
+    };
   return { Icon: ScrollText, color: "text-muted-foreground", label: action };
 }
 
 function Page() {
   const listFn = useServerFn(listAdminLogs);
   const [action, setAction] = useState("");
-  const { data, isLoading } = useQuery({ queryKey: ["adm", "logs", action], queryFn: () => listFn({ data: { action: action || undefined } }) });
+  const { data, isLoading } = useQuery({
+    queryKey: ["adm", "logs", action],
+    queryFn: () => listFn({ data: { action: action || undefined } }),
+  });
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto space-y-6">
       <div>
-        <div className="text-xs uppercase tracking-widest text-gold font-semibold">Administração</div>
+        <div className="text-xs uppercase tracking-widest text-gold font-semibold">
+          Administração
+        </div>
         <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Logs de auditoria</h1>
-        <p className="text-sm text-muted-foreground mt-2">Registo automático de todas as decisões administrativas.</p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Registo automático de todas as decisões administrativas.
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -75,19 +94,26 @@ function Page() {
                 <div className="rounded-xl border border-border bg-card p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="font-medium text-sm">{m.label}</div>
-                    <div className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleString("pt-PT")}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(l.created_at).toLocaleString("pt-PT")}
+                    </div>
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    por {l.admin_name ?? "admin"} · {l.target_type} <span className="font-mono">{String(l.target_id ?? "").slice(0, 8)}</span>
+                    por {l.admin_name ?? "admin"} · {l.target_type}{" "}
+                    <span className="font-mono">{String(l.target_id ?? "").slice(0, 8)}</span>
                   </div>
                   {l.details && Object.keys(l.details).length > 0 && (
-                    <pre className="mt-2 text-[11px] text-muted-foreground bg-secondary/50 rounded-lg p-2 overflow-x-auto">{JSON.stringify(l.details)}</pre>
+                    <pre className="mt-2 text-[11px] text-muted-foreground bg-secondary/50 rounded-lg p-2 overflow-x-auto">
+                      {JSON.stringify(l.details)}
+                    </pre>
                   )}
                 </div>
               </li>
             );
           })}
-          {!(data ?? []).length && <li className="ml-6 text-sm text-muted-foreground">Nenhum registo ainda.</li>}
+          {!(data ?? []).length && (
+            <li className="ml-6 text-sm text-muted-foreground">Nenhum registo ainda.</li>
+          )}
         </ol>
       )}
     </div>

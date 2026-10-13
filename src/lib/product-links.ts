@@ -60,7 +60,10 @@ export async function qrDataUrl(text: string): Promise<string> {
 }
 
 /** Partilha nativa quando disponível; caso contrário copia o link. */
-export async function shareLink(title: string, url: string): Promise<"shared" | "copied" | "failed"> {
+export async function shareLink(
+  title: string,
+  url: string,
+): Promise<"shared" | "copied" | "failed"> {
   const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> };
   if (nav.share) {
     try {

@@ -3,7 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { moderateProduct } from "@/lib/moderation";
 import { z } from "zod";
 
-
 const productSchema = z.object({
   store_visible: z.boolean().default(true),
   checkout_brand_name: z.string().trim().max(80).optional().nullable(),
@@ -11,10 +10,28 @@ const productSchema = z.object({
   checkout_banner_url: z.string().url().optional().nullable().or(z.literal("")),
   checkout_theme: z.enum(["azul", "dourado", "verde"]).default("azul"),
   title: z.string().trim().min(3).max(160),
-  slug: z.string().trim().min(3).max(160).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .trim()
+    .min(3)
+    .max(160)
+    .regex(/^[a-z0-9-]+$/),
   short_description: z.string().trim().max(280).optional().nullable(),
   description: z.string().trim().max(20000).optional().nullable(),
-  product_type: z.enum(["ebook","curso","pdf","video","software","link_externo","streaming","assinatura","template","ia","comunidade","download"]),
+  product_type: z.enum([
+    "ebook",
+    "curso",
+    "pdf",
+    "video",
+    "software",
+    "link_externo",
+    "streaming",
+    "assinatura",
+    "template",
+    "ia",
+    "comunidade",
+    "download",
+  ]),
   category_id: z.string().uuid().optional().nullable(),
   cover_url: z.string().url().optional().nullable().or(z.literal("")),
   banner_url: z.string().url().optional().nullable().or(z.literal("")),
@@ -22,12 +39,14 @@ const productSchema = z.object({
   price_cents: z.number().int().min(0).max(100_000_00),
   promo_price_cents: z.number().int().min(0).max(100_000_00).optional().nullable(),
   currency: z.string().length(3).default("AOA"),
-  status: z.enum(["rascunho","publicado","pausado","em_analise"]).default("rascunho"),
+  status: z.enum(["rascunho", "publicado", "pausado", "em_analise"]).default("rascunho"),
   tags: z.array(z.string().max(40)).max(20).default([]),
   external_url: z.string().url().optional().nullable().or(z.literal("")),
   guarantee_days: z.number().int().min(0).max(60).default(7),
   // entrega avançada
-  delivery_kind: z.enum(["digital","fisico","apk","assinatura","membros","externo"]).default("digital"),
+  delivery_kind: z
+    .enum(["digital", "fisico", "apk", "assinatura", "membros", "externo"])
+    .default("digital"),
   stock_quantity: z.number().int().min(0).max(1_000_000).optional().nullable(),
   requires_shipping: z.boolean().default(false),
   shipping_fee_cents: z.number().int().min(0).max(100_000_00).default(0),
@@ -36,7 +55,7 @@ const productSchema = z.object({
   app_package: z.string().trim().max(120).optional().nullable(),
   app_requirements: z.string().trim().max(500).optional().nullable(),
   is_subscription: z.boolean().default(false),
-  billing_interval: z.enum(["mensal","trimestral","semestral","anual"]).optional().nullable(),
+  billing_interval: z.enum(["mensal", "trimestral", "semestral", "anual"]).optional().nullable(),
   subscription_price_cents: z.number().int().min(0).max(100_000_00).optional().nullable(),
   trial_days: z.number().int().min(0).max(90).default(0),
   has_members_area: z.boolean().default(false),
@@ -49,7 +68,9 @@ export const listMyProducts = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("products")
-      .select("id, slug, title, status, store_visible, price_cents, promo_price_cents, currency, sales_count, views_count, cover_url, rejection_reason, created_at, allow_affiliates, affiliate_commission_percent, has_members_area, category:categories(name)")
+      .select(
+        "id, slug, title, status, store_visible, price_cents, promo_price_cents, currency, sales_count, views_count, cover_url, rejection_reason, created_at, allow_affiliates, affiliate_commission_percent, has_members_area, category:categories(name)",
+      )
       .eq("producer_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
@@ -61,14 +82,22 @@ export const getMyProductMetrics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const [{ data: products }, { data: sales }] = await Promise.all([
-      context.supabase.from("products").select("id, title, slug, views_count, cover_url, price_cents, currency, status")
-        .eq("producer_id", context.userId).order("created_at", { ascending: false }),
-      context.supabase.from("sales").select("product_id, gross_cents, net_cents, affiliate_commission_cents, status, released")
+      context.supabase
+        .from("products")
+        .select("id, title, slug, views_count, cover_url, price_cents, currency, status")
+        .eq("producer_id", context.userId)
+        .order("created_at", { ascending: false }),
+      context.supabase
+        .from("sales")
+        .select("product_id, gross_cents, net_cents, affiliate_commission_cents, status, released")
         .eq("producer_id", context.userId),
     ]);
     const ids = (products ?? []).map((p) => p.id);
     const { data: allLinks } = ids.length
-      ? await context.supabase.from("affiliate_links").select("product_id, affiliate_id, clicks").in("product_id", ids)
+      ? await context.supabase
+          .from("affiliate_links")
+          .select("product_id, affiliate_id, clicks")
+          .in("product_id", ids)
       : { data: [] as { product_id: string; affiliate_id: string; clicks: number }[] };
 
     return (products ?? []).map((p) => {
@@ -78,18 +107,28 @@ export const getMyProductMetrics = createServerFn({ method: "GET" })
       const clicks = l.reduce((a, x) => a + (x.clicks ?? 0), 0);
       const views = p.views_count ?? 0;
       const base = views + clicks;
-      const commissionPaid = paid.filter((x) => x.released).reduce((a, x) => a + (x.affiliate_commission_cents ?? 0), 0);
-      const commissionPending = paid.filter((x) => !x.released).reduce((a, x) => a + (x.affiliate_commission_cents ?? 0), 0);
+      const commissionPaid = paid
+        .filter((x) => x.released)
+        .reduce((a, x) => a + (x.affiliate_commission_cents ?? 0), 0);
+      const commissionPending = paid
+        .filter((x) => !x.released)
+        .reduce((a, x) => a + (x.affiliate_commission_cents ?? 0), 0);
       return {
-        id: p.id, title: p.title, slug: p.slug, cover_url: p.cover_url,
-        currency: p.currency, status: p.status,
-        views, clicks,
+        id: p.id,
+        title: p.title,
+        slug: p.slug,
+        cover_url: p.cover_url,
+        currency: p.currency,
+        status: p.status,
+        views,
+        clicks,
         sales: paid.length,
         revenue: paid.reduce((a, x) => a + (x.gross_cents ?? 0), 0),
         net: paid.reduce((a, x) => a + (x.net_cents ?? 0), 0),
         conversion: base > 0 ? (paid.length / base) * 100 : 0,
         activeAffiliates: new Set(l.map((x) => x.affiliate_id)).size,
-        commissionPaid, commissionPending,
+        commissionPaid,
+        commissionPending,
       };
     });
   });
@@ -100,20 +139,40 @@ export const duplicateProduct = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
-      .from("products").select("*").eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+      .from("products")
+      .select("*")
+      .eq("id", data.id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
     if (error) throw error;
     if (!row) throw new Error("Produto não encontrado");
 
     const {
-      id: _id, created_at: _c, updated_at: _u, sales_count: _s, views_count: _v,
-      reviews_count: _r, rating: _rt, rejection_reason: _rr, slug, title, ...rest
+      id: _id,
+      created_at: _c,
+      updated_at: _u,
+      sales_count: _s,
+      views_count: _v,
+      reviews_count: _r,
+      rating: _rt,
+      rejection_reason: _rr,
+      slug,
+      title,
+      ...rest
     } = row as Record<string, unknown> & { slug: string; title: string };
 
     const suffix = Date.now().toString(36).slice(-4);
     const { data: created, error: iErr } = await context.supabase
       .from("products")
-      .insert({ ...rest, producer_id: context.userId, title: `${title} (cópia)`, slug: `${slug}-copia-${suffix}`.slice(0, 160), status: "rascunho" } as never)
-      .select("id, slug").single();
+      .insert({
+        ...rest,
+        producer_id: context.userId,
+        title: `${title} (cópia)`,
+        slug: `${slug}-copia-${suffix}`.slice(0, 160),
+        status: "rascunho",
+      } as never)
+      .select("id, slug")
+      .single();
     if (iErr) throw iErr;
     return created;
   });
@@ -123,7 +182,11 @@ export const getMyProduct = createServerFn({ method: "GET" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
-      .from("products").select("*").eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+      .from("products")
+      .select("*")
+      .eq("id", data.id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
     if (error) throw error;
     if (!row) throw new Error("Produto não encontrado");
     return row;
@@ -133,10 +196,12 @@ export const createProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => productSchema.parse(d))
   .handler(async ({ data, context }) => {
-    await context.supabase.from("user_roles").upsert(
-      { user_id: context.userId, role: "producer" },
-      { onConflict: "user_id,role", ignoreDuplicates: true },
-    );
+    await context.supabase
+      .from("user_roles")
+      .upsert(
+        { user_id: context.userId, role: "producer" },
+        { onConflict: "user_id,role", ignoreDuplicates: true },
+      );
 
     // Aprovação automática: valida o conteúdo e publica de imediato se estiver conforme.
     let status = data.status;
@@ -148,7 +213,9 @@ export const createProduct = createServerFn({ method: "POST" })
     }
 
     const insert = {
-      ...data, status, rejection_reason,
+      ...data,
+      status,
+      rejection_reason,
       cover_url: data.cover_url || null,
       banner_url: data.banner_url || null,
       file_url: data.file_url || null,
@@ -156,17 +223,22 @@ export const createProduct = createServerFn({ method: "POST" })
       producer_id: context.userId,
     };
     const { data: row, error } = await context.supabase
-      .from("products").insert(insert).select("id, slug, status").single();
+      .from("products")
+      .insert(insert)
+      .select("id, slug, status")
+      .single();
     if (error) throw error;
     return row;
   });
 
 export const updateProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), patch: productSchema.partial() }).parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), patch: productSchema.partial() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const patch = { ...data.patch } as any;
-    for (const k of ["cover_url","banner_url","file_url","external_url"] as const) {
+    for (const k of ["cover_url", "banner_url", "file_url", "external_url"] as const) {
       if (patch[k] === "") patch[k] = null;
     }
 
@@ -175,12 +247,16 @@ export const updateProduct = createServerFn({ method: "POST" })
       const { data: current } = await context.supabase
         .from("products")
         .select("title, short_description, description, external_url, file_url, tags, price_cents")
-        .eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+        .eq("id", data.id)
+        .eq("producer_id", context.userId)
+        .maybeSingle();
       const verdict = moderateProduct({ ...(current ?? {}), ...patch });
       if (!verdict.ok) {
-        await context.supabase.from("products")
+        await context.supabase
+          .from("products")
           .update({ status: "rascunho", rejection_reason: verdict.reason })
-          .eq("id", data.id).eq("producer_id", context.userId);
+          .eq("id", data.id)
+          .eq("producer_id", context.userId);
         throw new Error(verdict.reason);
       }
       patch.status = "publicado";
@@ -188,8 +264,12 @@ export const updateProduct = createServerFn({ method: "POST" })
     }
 
     const { data: row, error } = await context.supabase
-      .from("products").update(patch).eq("id", data.id).eq("producer_id", context.userId)
-      .select("id, slug, status").single();
+      .from("products")
+      .update(patch)
+      .eq("id", data.id)
+      .eq("producer_id", context.userId)
+      .select("id, slug, status")
+      .single();
     if (error) throw error;
     return row;
   });
@@ -198,7 +278,11 @@ export const deleteProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("products").delete().eq("id", data.id).eq("producer_id", context.userId);
+    const { error } = await context.supabase
+      .from("products")
+      .delete()
+      .eq("id", data.id)
+      .eq("producer_id", context.userId);
     if (error) throw error;
     return { ok: true };
   });
@@ -211,31 +295,37 @@ export const submitProductForApproval = createServerFn({ method: "POST" })
     const { data: current, error: gErr } = await context.supabase
       .from("products")
       .select("title, short_description, description, external_url, file_url, tags, price_cents")
-      .eq("id", data.id).eq("producer_id", context.userId).maybeSingle();
+      .eq("id", data.id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
     if (gErr) throw gErr;
     if (!current) throw new Error("Produto não encontrado");
 
     const verdict = moderateProduct(current as any);
     if (!verdict.ok) {
-      await context.supabase.from("products")
+      await context.supabase
+        .from("products")
         .update({ status: "rascunho", rejection_reason: verdict.reason })
-        .eq("id", data.id).eq("producer_id", context.userId);
+        .eq("id", data.id)
+        .eq("producer_id", context.userId);
       throw new Error(verdict.reason);
     }
 
     const { error } = await context.supabase
-      .from("products").update({ status: "publicado", rejection_reason: null })
-      .eq("id", data.id).eq("producer_id", context.userId);
+      .from("products")
+      .update({ status: "publicado", rejection_reason: null })
+      .eq("id", data.id)
+      .eq("producer_id", context.userId);
     if (error) throw error;
     return { ok: true, status: "publicado" as const };
   });
-
 
 export const getMyProducerStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data } = await context.supabase
-      .from("products").select("status, sales_count, views_count, price_cents")
+      .from("products")
+      .select("status, sales_count, views_count, price_cents")
       .eq("producer_id", context.userId);
     const rows = data ?? [];
     return {

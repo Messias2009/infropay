@@ -55,18 +55,18 @@
   --radius: 0.75rem;
 
   /* Dark theme as default — InfroPay is premium dark */
-  --background: oklch(0.18 0.03 265);          /* #0F172A vibe */
+  --background: oklch(0.18 0.03 265); /* #0F172A vibe */
   --foreground: oklch(0.97 0.01 250);
   --card: oklch(0.22 0.035 265);
   --card-foreground: oklch(0.97 0.01 250);
   --popover: oklch(0.22 0.035 265);
   --popover-foreground: oklch(0.97 0.01 250);
 
-  --primary: oklch(0.55 0.19 255);              /* #1565C0 */
+  --primary: oklch(0.55 0.19 255); /* #1565C0 */
   --primary-foreground: oklch(0.99 0.005 250);
   --primary-glow: oklch(0.68 0.18 250);
 
-  --gold: oklch(0.82 0.16 82);                  /* #F9A825 */
+  --gold: oklch(0.82 0.16 82); /* #F9A825 */
   --gold-foreground: oklch(0.18 0.03 265);
 
   --secondary: oklch(0.28 0.04 265);
@@ -113,13 +113,17 @@
   * {
     border-color: var(--color-border);
   }
-  html, body {
+  html,
+  body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: 0;
   }
@@ -156,49 +160,103 @@
 
 /* -------- premium animations -------- */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 @keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-primary) 45%, transparent), 0 0 40px -5px color-mix(in oklab, var(--color-primary) 35%, transparent); }
-  50% { box-shadow: 0 0 0 8px color-mix(in oklab, var(--color-primary) 0%, transparent), 0 0 60px -5px color-mix(in oklab, var(--color-primary) 55%, transparent); }
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in oklab, var(--color-primary) 45%, transparent),
+      0 0 40px -5px color-mix(in oklab, var(--color-primary) 35%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px color-mix(in oklab, var(--color-primary) 0%, transparent),
+      0 0 60px -5px color-mix(in oklab, var(--color-primary) 55%, transparent);
+  }
 }
 @keyframes tilt-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 @keyframes badge-shine {
-  0% { transform: translateX(-120%) skewX(-20deg); }
-  60%, 100% { transform: translateX(220%) skewX(-20deg); }
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  60%,
+  100% {
+    transform: translateX(220%) skewX(-20deg);
+  }
 }
 @keyframes bg-pan {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 @keyframes marquee-x {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-@utility animate-floaty { animation: floaty 4s ease-in-out infinite; }
-@utility animate-glow-pulse { animation: glow-pulse 2.6s ease-in-out infinite; }
-@utility animate-tilt-spin { animation: tilt-spin 22s linear infinite; }
-@utility animate-bg-pan { background-size: 200% 200%; animation: bg-pan 8s ease infinite; }
-@utility animate-marquee { animation: marquee-x 32s linear infinite; }
+@utility animate-floaty {
+  animation: floaty 4s ease-in-out infinite;
+}
+@utility animate-glow-pulse {
+  animation: glow-pulse 2.6s ease-in-out infinite;
+}
+@utility animate-tilt-spin {
+  animation: tilt-spin 22s linear infinite;
+}
+@utility animate-bg-pan {
+  background-size: 200% 200%;
+  animation: bg-pan 8s ease infinite;
+}
+@utility animate-marquee {
+  animation: marquee-x 32s linear infinite;
+}
 
 @utility marquee-mask {
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
-
 @utility text-shimmer {
-  background: linear-gradient(90deg, var(--color-gold) 0%, oklch(0.95 0.15 90) 25%, var(--color-gold) 50%, oklch(0.95 0.15 90) 75%, var(--color-gold) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-gold) 0%,
+    oklch(0.95 0.15 90) 25%,
+    var(--color-gold) 50%,
+    oklch(0.95 0.15 90) 75%,
+    var(--color-gold) 100%
+  );
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
@@ -216,7 +274,12 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 70%
+    );
     background-size: 220% 100%;
     animation: shimmer 3.6s linear infinite;
     pointer-events: none;
@@ -224,15 +287,32 @@
   }
 }
 
-
-
 /* Branded checkout palettes stay within semantic tokens. */
-.checkout-theme-dourado { --primary: var(--gold); --primary-glow: var(--gold); --primary-foreground: var(--gold-foreground); }
-.checkout-theme-verde { --primary: var(--success); --primary-glow: var(--success); --primary-foreground: var(--gold-foreground); }
+.checkout-theme-dourado {
+  --primary: var(--gold);
+  --primary-glow: var(--gold);
+  --primary-foreground: var(--gold-foreground);
+}
+.checkout-theme-verde {
+  --primary: var(--success);
+  --primary-glow: var(--success);
+  --primary-foreground: var(--gold-foreground);
+}
 @media (max-width: 639px) {
-  .producer-shell main > div { max-width: 100%; min-width: 0; }
-  .producer-shell main h1 { overflow-wrap: anywhere; }
+  .producer-shell main > div {
+    max-width: 100%;
+    min-width: 0;
+  }
+  .producer-shell main h1 {
+    overflow-wrap: anywhere;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

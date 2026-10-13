@@ -23,7 +23,11 @@ function loadScript(src: string, id: string) {
 function ensureMeta(pixelId: string) {
   if (!window.fbq) {
     const n: any = (...args: any[]) => {
-      n.callMethod ? n.callMethod(...args) : n.queue.push(args);
+      if (n.callMethod) {
+        n.callMethod(...args);
+      } else {
+        n.queue.push(args);
+      }
     };
     n.queue = [];
     n.loaded = true;
@@ -70,7 +74,9 @@ function alreadyFired(key: string, persist: boolean) {
         return true;
       }
       window.sessionStorage.setItem(key, "1");
-    } catch { /* storage indisponível */ }
+    } catch {
+      /* storage indisponível */
+    }
   }
   firedKeys.add(key);
   return false;
@@ -80,7 +86,13 @@ function alreadyFired(key: string, persist: boolean) {
  * Injects the producer's Meta Pixel / GA4 / Google Ads tags and fires
  * PageView + the given event exactly once per user action.
  */
-export function TrackingScripts({ config, event }: { config: TrackingConfig | null | undefined; event?: TrackEvent }) {
+export function TrackingScripts({
+  config,
+  event,
+}: {
+  config: TrackingConfig | null | undefined;
+  event?: TrackEvent;
+}) {
   useEffect(() => {
     if (!config) return;
     const { meta_pixel_id, ga_measurement_id, google_ads_id, google_ads_label } = config;
@@ -113,7 +125,11 @@ export function TrackingScripts({ config, event }: { config: TrackingConfig | nu
     }
     if (ga_measurement_id) {
       const gaEvent =
-        event.type === "Purchase" ? "purchase" : event.type === "InitiateCheckout" ? "begin_checkout" : "view_item";
+        event.type === "Purchase"
+          ? "purchase"
+          : event.type === "InitiateCheckout"
+            ? "begin_checkout"
+            : "view_item";
       window.gtag?.("event", gaEvent, {
         send_to: ga_measurement_id,
         transaction_id: event.type === "Purchase" ? event.id : undefined,
@@ -135,4 +151,3 @@ export function TrackingScripts({ config, event }: { config: TrackingConfig | nu
 
   return null;
 }
-

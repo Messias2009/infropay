@@ -1,4 +1,13 @@
-import { ShieldCheck, Zap, TrendingUp, Star, Wallet, Trophy, Rocket, Smartphone } from "lucide-react";
+import {
+  ShieldCheck,
+  Zap,
+  TrendingUp,
+  Star,
+  Wallet,
+  Trophy,
+  Rocket,
+  Smartphone,
+} from "lucide-react";
 
 const ITEMS = [
   { icon: ShieldCheck, title: "Compra protegida", desc: "Garantia em todas as ordens" },
@@ -20,7 +29,11 @@ export function TrustMarquee() {
           {row.map((item, i) => {
             const Icon = item.icon;
             return (
-              <div key={i} className="flex items-start gap-3 w-[260px] shrink-0" aria-hidden={i >= ITEMS.length}>
+              <div
+                key={i}
+                className="flex items-start gap-3 w-[260px] shrink-0"
+                aria-hidden={i >= ITEMS.length}
+              >
                 <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 grid place-items-center shrink-0">
                   <Icon className="h-5 w-5 text-primary-glow" />
                 </div>

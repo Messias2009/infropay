@@ -42,8 +42,17 @@ const RULES: Rule[] = [
 
 /** Domínios de encurtadores/hospedagem opaca frequentemente usados para links maliciosos. */
 const BLOCKED_HOSTS = [
-  "bit.ly", "tinyurl.com", "cutt.ly", "is.gd", "t.co", "shorturl.at",
-  "adf.ly", "shrinkme.io", "ouo.io", "linkvertise.com", "grabify.link",
+  "bit.ly",
+  "tinyurl.com",
+  "cutt.ly",
+  "is.gd",
+  "t.co",
+  "shorturl.at",
+  "adf.ly",
+  "shrinkme.io",
+  "ouo.io",
+  "linkvertise.com",
+  "grabify.link",
 ];
 
 function hosts(text: string): string[] {
@@ -71,12 +80,16 @@ export function moderateProduct(input: ModerationInput): ModerationResult {
 
   // Qualidade mínima (evita publicações vazias / de teste no catálogo)
   if (title.length < 5) {
-    return { ok: false, reason: "O título é demasiado curto. Use um título claro com pelo menos 5 caracteres." };
+    return {
+      ok: false,
+      reason: "O título é demasiado curto. Use um título claro com pelo menos 5 caracteres.",
+    };
   }
   if (!short && desc.length < 40) {
     return {
       ok: false,
-      reason: "Adicione uma descrição do produto (mínimo 40 caracteres) ou uma descrição curta antes de publicar.",
+      reason:
+        "Adicione uma descrição do produto (mínimo 40 caracteres) ou uma descrição curta antes de publicar.",
     };
   }
   if (/\b(teste|test|asdf|lorem ipsum)\b/i.test(title) && title.length < 20) {

@@ -15,8 +15,11 @@ export const listMyBankAccounts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data, error } = await (context.supabase as any)
-      .from("bank_accounts").select("*").eq("producer_id", context.userId)
-      .order("is_default", { ascending: false }).order("created_at", { ascending: false });
+      .from("bank_accounts")
+      .select("*")
+      .eq("producer_id", context.userId)
+      .order("is_default", { ascending: false })
+      .order("created_at", { ascending: false });
     if (error) throw error;
     return data ?? [];
   });
@@ -36,16 +39,26 @@ export const upsertBankAccount = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const payload = { ...data, producer_id: context.userId };
     if (payload.is_default) {
-      await (context.supabase as any).from("bank_accounts")
-        .update({ is_default: false }).eq("producer_id", context.userId);
+      await (context.supabase as any)
+        .from("bank_accounts")
+        .update({ is_default: false })
+        .eq("producer_id", context.userId);
     }
     let res;
     if (data.id) {
-      res = await (context.supabase as any).from("bank_accounts")
-        .update(payload).eq("id", data.id).eq("producer_id", context.userId).select().maybeSingle();
+      res = await (context.supabase as any)
+        .from("bank_accounts")
+        .update(payload)
+        .eq("id", data.id)
+        .eq("producer_id", context.userId)
+        .select()
+        .maybeSingle();
     } else {
-      res = await (context.supabase as any).from("bank_accounts")
-        .insert(payload).select().maybeSingle();
+      res = await (context.supabase as any)
+        .from("bank_accounts")
+        .insert(payload)
+        .select()
+        .maybeSingle();
     }
     if (res.error) throw res.error;
     return res.data;
@@ -55,8 +68,11 @@ export const deleteBankAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await (context.supabase as any).from("bank_accounts")
-      .delete().eq("id", data.id).eq("producer_id", context.userId);
+    const { error } = await (context.supabase as any)
+      .from("bank_accounts")
+      .delete()
+      .eq("id", data.id)
+      .eq("producer_id", context.userId);
     if (error) throw error;
     return { ok: true };
   });
@@ -64,18 +80,26 @@ export const deleteBankAccount = createServerFn({ method: "POST" })
 // ---------------- Withdrawals ----------------
 export const requestWithdrawal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) => z.object({
-    gross_cents: z.number().int().min(MIN_WITHDRAWAL_CENTS),
-    bank_account_id: z.string().uuid(),
-  }).parse(d))
+  .inputValidator((d: any) =>
+    z
+      .object({
+        gross_cents: z.number().int().min(MIN_WITHDRAWAL_CENTS),
+        bank_account_id: z.string().uuid(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
-    const { error, data: row } = await (context.supabase as any).from("withdrawals").insert({
-      producer_id: context.userId,
-      bank_account_id: data.bank_account_id,
-      gross_cents: data.gross_cents,
-      fee_cents: 0,
-      net_cents: 0,
-    }).select().maybeSingle();
+    const { error, data: row } = await (context.supabase as any)
+      .from("withdrawals")
+      .insert({
+        producer_id: context.userId,
+        bank_account_id: data.bank_account_id,
+        gross_cents: data.gross_cents,
+        fee_cents: 0,
+        net_cents: 0,
+      })
+      .select()
+      .maybeSingle();
     if (error) throw new Error(error.message ?? "Falha ao pedir saque");
     return row;
   });
@@ -97,9 +121,13 @@ export const listAllWithdrawals = createServerFn({ method: "GET" })
   .inputValidator((d: { status?: string } | undefined) => d ?? {})
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
-    let q = (context.supabase as any).from("withdrawals")
-      .select("*, bank_account:bank_accounts(holder_name, bank_name, iban, phone), producer:profiles!withdrawals_producer_id_fkey(full_name, username, avatar_url)")
-      .order("created_at", { ascending: false }).limit(200);
+    let q = (context.supabase as any)
+      .from("withdrawals")
+      .select(
+        "*, bank_account:bank_accounts(holder_name, bank_name, iban, phone), producer:profiles!withdrawals_producer_id_fkey(full_name, username, avatar_url)",
+      )
+      .order("created_at", { ascending: false })
+      .limit(200);
     if (data?.status) q = q.eq("status", data.status);
     const { data: rows, error } = await q;
     if (error) throw error;
@@ -108,21 +136,36 @@ export const listAllWithdrawals = createServerFn({ method: "GET" })
 
 export const updateWithdrawalStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) => z.object({
-    id: z.string().uuid(),
-    status: z.enum(["em_analise","aprovado","pago","recusado"]),
-    rejection_reason: z.string().trim().max(500).optional(),
-  }).parse(d))
+  .inputValidator((d: any) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["em_analise", "aprovado", "pago", "recusado"]),
+        rejection_reason: z.string().trim().max(500).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const patch: any = { status: data.status };
-    if (data.status === "recusado") patch.rejection_reason = data.rejection_reason ?? "Sem motivo indicado";
-    const { error } = await (context.supabase as any).from("withdrawals").update(patch).eq("id", data.id);
+    if (data.status === "recusado")
+      patch.rejection_reason = data.rejection_reason ?? "Sem motivo indicado";
+    const { error } = await (context.supabase as any)
+      .from("withdrawals")
+      .update(patch)
+      .eq("id", data.id);
     if (error) throw error;
     const { logAdminAction } = await import("./admin.functions");
-    await logAdminAction(context.supabase, context.userId, `withdrawal_${data.status}`, "withdrawal", data.id, {
-      status: data.status,
-      reason: data.rejection_reason ?? null,
-    });
+    await logAdminAction(
+      context.supabase,
+      context.userId,
+      `withdrawal_${data.status}`,
+      "withdrawal",
+      data.id,
+      {
+        status: data.status,
+        reason: data.rejection_reason ?? null,
+      },
+    );
     return { ok: true };
   });
