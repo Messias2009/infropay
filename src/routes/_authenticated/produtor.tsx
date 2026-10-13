@@ -1,8 +1,10 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { LayoutDashboard, Package, Plus, Wallet, Banknote, Settings, Shield, ArrowUpRight, Trophy, Plug, UserCircle2, Menu, TrendingUp, GraduationCap, Handshake } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Wallet, Banknote, Settings, Shield, ArrowUpRight, Trophy, Plug, UserCircle2, Menu, TrendingUp, GraduationCap, Handshake, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import logoMark from "@/assets/infropay-mark.png";
 import { isAdmin } from "@/lib/admin.functions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -28,6 +30,13 @@ const items = [
 ];
 
 function NavBody({ pathname, admin, onNav }: { pathname: string; admin?: boolean; onNav?: () => void }) {
+  const router = useRouter();
+  async function signOut() {
+    await router.options.context.queryClient.cancelQueries();
+    router.options.context.queryClient.clear();
+    await supabase.auth.signOut();
+    await router.navigate({ to: "/", replace: true });
+  }
   return (
     <>
       <nav className="p-3 space-y-1 flex-1 overflow-auto">
@@ -52,9 +61,7 @@ function NavBody({ pathname, admin, onNav }: { pathname: string; admin?: boolean
         )}
       </nav>
       <div className="p-3 border-t border-border space-y-1">
-        <Link to="/" onClick={onNav} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground">
-          <ArrowUpRight className="h-4 w-4" /> Ver site
-        </Link>
+        <Button variant="ghost" onClick={signOut} className="w-full justify-start text-muted-foreground"><LogOut className="h-4 w-4" /> Terminar sessão</Button>
         <Link to="/perfil" onClick={onNav} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground">
           <Settings className="h-4 w-4" /> Configurações
         </Link>
@@ -70,8 +77,8 @@ function ProdutorLayout() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex">
-      <aside className="hidden md:flex w-64 border-r border-border bg-card/40 flex-col">
+    <div className="producer-shell min-h-screen flex">
+      <aside className="hidden md:flex shrink-0 w-64 border-r border-border bg-card/40 flex-col">
         <Link to="/" className="p-5 flex items-center gap-2.5 border-b border-border">
           <img src={logoMark} alt="InfroPay" width={512} height={512} className="h-9 w-9 rounded-lg object-contain" />
           <div>
@@ -82,23 +89,23 @@ function ProdutorLayout() {
         <NavBody pathname={pathname} admin={admin} />
       </aside>
 
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 w-full flex flex-col">
         {/* Top bar with notifications (visible in both mobile and desktop) */}
-        <div className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 md:px-6 h-14 border-b border-border bg-background/85 backdrop-blur">
-          <Link to="/" className="flex items-center gap-2 md:hidden">
+        <div className="sticky top-0 z-30 grid grid-cols-[auto_minmax(0,1fr)_auto] md:flex items-center justify-between gap-3 px-4 md:px-6 h-14 border-b border-border bg-background/85 backdrop-blur">
+          <Link to="/" className="flex min-w-0 items-center gap-2 md:hidden">
             <img src={logoMark} alt="InfroPay" className="h-7 w-7 rounded-md object-contain" />
             <div className="text-sm font-bold leading-none">Infro<span className="text-gradient-gold">Pay</span></div>
           </Link>
           <div className="hidden md:block text-xs uppercase tracking-widest text-muted-foreground">Painel do produtor</div>
-          <div className="flex items-center gap-2">
-            <NotificationBell />
+          <div className="contents md:flex md:items-center md:gap-2">
+            <div className="col-start-3 row-start-1 justify-self-end"><NotificationBell /></div>
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <button aria-label="Abrir menu" className="md:hidden h-10 w-10 grid place-items-center rounded-lg border border-border bg-card active:scale-95 transition">
+                <Button variant="outline" size="icon" aria-label="Abrir menu" className="col-start-1 row-start-1 md:hidden h-10 w-10 shrink-0">
                   <Menu className="h-5 w-5" />
-                </button>
+                </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[86%] max-w-sm p-0 flex flex-col">
+              <SheetContent side="left" className="w-[86%] max-w-sm p-0 flex flex-col">
                 <div className="p-4 border-b border-border flex items-center gap-2">
                   <img src={logoMark} alt="" className="h-8 w-8 rounded-md" />
                   <div className="text-base font-bold">Menu do produtor</div>
@@ -110,7 +117,7 @@ function ProdutorLayout() {
         </div>
 
 
-        <Outlet />
+        <main className="min-w-0 w-full"><Outlet /></main>
       </div>
     </div>
   );

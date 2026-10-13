@@ -121,7 +121,7 @@
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
   }
 }
 
@@ -225,3 +225,14 @@
 }
 
 
+
+/* Branded checkout palettes stay within semantic tokens. */
+.checkout-theme-dourado { --primary: var(--gold); --primary-glow: var(--gold); --primary-foreground: var(--gold-foreground); }
+.checkout-theme-verde { --primary: var(--success); --primary-glow: var(--success); --primary-foreground: var(--gold-foreground); }
+@media (max-width: 639px) {
+  .producer-shell main > div { max-width: 100%; min-width: 0; }
+  .producer-shell main h1 { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

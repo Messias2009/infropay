@@ -19,11 +19,11 @@ function Dashboard() {
   const { data: w } = useQuery({ queryKey: ["producer","wallet"], queryFn: () => walletFn() });
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">
+      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] items-start">
         <div>
           <div className="text-xs uppercase tracking-widest text-gold font-semibold">Dashboard financeiro</div>
-          <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">A sua operação hoje</h1>
+          <h1 className="font-display text-2xl md:text-4xl font-bold mt-2">A sua operação hoje</h1>
           <p className="mt-2 text-muted-foreground">Acompanhe faturamento, comissões, saldo e crescimento em tempo real.</p>
         </div>
         <div className="flex gap-2">
@@ -33,7 +33,7 @@ function Dashboard() {
       </div>
 
       {/* Wallet strip */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <WalletCard tone="brand" icon={Wallet} label="Saldo disponível" value={kz(w?.available_cents ?? 0)} hint="Pronto para saque" />
         <WalletCard tone="gold" icon={Clock} label="Saldo bloqueado" value={kz(w?.pending_cents ?? 0)} hint="Liberação em no mínimo 1h" />
         <WalletCard tone="muted" icon={Receipt} label="Comissões pagas" value={kz(o?.totalFees ?? 0)} hint="2% por venda" />
@@ -49,14 +49,14 @@ function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-5">
+        <div className="min-w-0 lg:col-span-2 rounded-lg border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-xs uppercase tracking-widest text-muted-foreground">Faturamento — últimos 14 dias</div>
               <div className="font-display text-xl font-semibold mt-1">Evolução das vendas</div>
             </div>
           </div>
-          <div className="h-64">
+          <div className="min-w-0 h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={o?.series ?? []}>
                 <defs>
@@ -80,10 +80,10 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="min-w-0 rounded-lg border border-border bg-card p-3 sm:p-5">
           <div className="text-xs uppercase tracking-widest text-muted-foreground">Volume diário</div>
           <div className="font-display text-xl font-semibold mt-1">Nº de vendas</div>
-          <div className="h-64 mt-2">
+          <div className="min-w-0 h-48 sm:h-64 mt-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={o?.series ?? []}>
                 <CartesianGrid stroke="var(--color-border)" strokeOpacity={0.3} vertical={false} />
@@ -188,12 +188,12 @@ function ProductMetrics() {
 
 function Kpi({ icon: Icon, label, value, sub }: any) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="min-w-0 rounded-lg border border-border bg-card p-3 sm:p-5">
       <div className="flex items-center justify-between">
         <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
         <Icon className="h-4 w-4 text-gold" />
       </div>
-      <div className="mt-3 text-2xl font-bold font-display">{value}</div>
+      <div className="mt-3 text-lg sm:text-2xl break-words font-bold font-display">{value}</div>
       {sub && <div className="text-xs text-muted-foreground mt-1">{sub}</div>}
     </div>
   );
@@ -206,12 +206,12 @@ function WalletCard({ icon: Icon, label, value, hint, tone }: { icon: any; label
     muted: "border-border bg-card",
   } as const;
   return (
-    <div className={`rounded-2xl border p-6 ${tones[tone]}`}>
+    <div className={`min-w-0 rounded-lg border p-4 ${tones[tone]}`}>
       <div className="flex items-center justify-between">
         <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
         <Icon className={`h-5 w-5 ${tone==="brand"?"text-primary-glow":tone==="gold"?"text-gold":"text-muted-foreground"}`} />
       </div>
-      <div className="mt-3 font-display text-3xl font-bold">{value}</div>
+      <div className="mt-2 font-display text-2xl font-bold">{value}</div>
       <div className="text-xs text-muted-foreground mt-1">{hint}</div>
     </div>
   );

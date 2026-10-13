@@ -5,6 +5,11 @@ import { z } from "zod";
 
 
 const productSchema = z.object({
+  store_visible: z.boolean().default(true),
+  checkout_brand_name: z.string().trim().max(80).optional().nullable(),
+  checkout_logo_url: z.string().url().optional().nullable().or(z.literal("")),
+  checkout_banner_url: z.string().url().optional().nullable().or(z.literal("")),
+  checkout_theme: z.enum(["azul", "dourado", "verde"]).default("azul"),
   title: z.string().trim().min(3).max(160),
   slug: z.string().trim().min(3).max(160).regex(/^[a-z0-9-]+$/),
   short_description: z.string().trim().max(280).optional().nullable(),
@@ -44,7 +49,7 @@ export const listMyProducts = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("products")
-      .select("id, slug, title, status, price_cents, promo_price_cents, currency, sales_count, views_count, cover_url, rejection_reason, created_at, allow_affiliates, affiliate_commission_percent, has_members_area, category:categories(name)")
+      .select("id, slug, title, status, store_visible, price_cents, promo_price_cents, currency, sales_count, views_count, cover_url, rejection_reason, created_at, allow_affiliates, affiliate_commission_percent, has_members_area, category:categories(name)")
       .eq("producer_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
