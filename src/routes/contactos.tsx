@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, MessageCircle, Phone, MapPin, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,75 +38,65 @@ function Contactos() {
 
   return (
     <SiteLayout>
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
+      <section className="mx-auto max-w-4xl px-4 sm:px-6 py-16 md:py-24">
         <div className="text-center max-w-2xl mx-auto">
-          <div className="text-xs font-semibold uppercase tracking-widest text-gold">Contactos</div>
-          <h1 className="mt-2 text-4xl md:text-5xl font-bold">Fale connosco</h1>
-          <p className="mt-4 text-muted-foreground">
-            Estamos aqui para responder — normalmente em menos de 24 horas.
+          <div className="inline-block rounded-full glass px-4 py-1.5 text-xs font-semibold text-gold border border-gold/30">
+            Suporte Oficial
+          </div>
+          <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+            Fale com a nossa equipa
+          </h1>
+          <p className="mt-3 text-muted-foreground text-base">
+            Envie a sua mensagem ou dúvida. A nossa equipa de suporte responde diretamente para o
+            seu email em menos de 24 horas.
           </p>
         </div>
 
-        <div className="mt-14 grid lg:grid-cols-[1fr_1.2fr] gap-8">
-          <div className="space-y-4">
-            {[
-              { i: Mail, t: "Email", v: "suporte@infropay.ao", h: "mailto:suporte@infropay.ao" },
-              {
-                i: MessageCircle,
-                t: "WhatsApp",
-                v: "+244 900 000 000",
-                h: "https://wa.me/244900000000",
-              },
-              { i: Phone, t: "Telefone", v: "+244 923 000 000", h: "tel:+244923000000" },
-              { i: MapPin, t: "Endereço", v: "Luanda, Angola" },
-            ].map(({ i: Icon, t, v, h }) => (
-              <a
-                key={t}
-                href={h ?? "#"}
-                className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 hover:border-primary/40 transition"
-              >
-                <div className="h-10 w-10 rounded-lg gradient-brand grid place-items-center shrink-0">
-                  <Icon className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{t}</div>
-                  <div className="font-semibold mt-0.5 truncate">{v}</div>
-                </div>
-              </a>
-            ))}
-          </div>
-
+        <div className="mt-10 max-w-2xl mx-auto">
           <form
             onSubmit={submit}
-            className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-5"
+            className="rounded-3xl border border-border bg-card p-6 sm:p-10 space-y-6 shadow-card"
           >
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-5">
               <div>
-                <Label>Nome</Label>
-                <Input required placeholder="O seu nome" />
+                <Label className="text-xs font-semibold">O seu Nome</Label>
+                <Input required placeholder="Ex: Manuel António" className="mt-1.5 h-11" />
               </div>
               <div>
-                <Label>Email</Label>
-                <Input required type="email" placeholder="voce@email.com" />
+                <Label className="text-xs font-semibold">O seu Email</Label>
+                <Input required type="email" placeholder="voce@email.com" className="mt-1.5 h-11" />
               </div>
             </div>
             <div>
-              <Label>Assunto</Label>
-              <Input required placeholder="Como podemos ajudar?" />
+              <Label className="text-xs font-semibold">Assunto</Label>
+              <Input
+                required
+                placeholder="Ex: Dúvida sobre saque, produto ou parceria"
+                className="mt-1.5 h-11"
+              />
             </div>
             <div>
-              <Label>Mensagem</Label>
-              <Textarea required rows={6} placeholder="Escreva a sua mensagem..." />
+              <Label className="text-xs font-semibold">Mensagem</Label>
+              <Textarea
+                required
+                rows={6}
+                placeholder="Descreva a sua solicitação em detalhe para podermos ajudar com rapidez..."
+                className="mt-1.5"
+              />
             </div>
             <Button
               disabled={loading}
               type="submit"
               size="lg"
-              className="w-full gradient-brand text-primary-foreground shadow-glow h-12"
+              className="w-full gradient-brand text-primary-foreground shadow-glow h-12 text-base font-semibold cursor-pointer"
             >
               <Send className="h-4 w-4 mr-2" />
-              {loading ? "A enviar..." : "Enviar mensagem"}
+              {loading ? "A enviar..." : "Enviar mensagem ao suporte"}
             </Button>
+
+            <p className="text-center text-xs text-muted-foreground">
+              Atendimento em horário comercial de segunda a sábado.
+            </p>
           </form>
         </div>
       </section>

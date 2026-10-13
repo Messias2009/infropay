@@ -109,6 +109,7 @@ function EditarProduto() {
         allow_affiliates: (product as any).allow_affiliates ?? false,
         affiliate_commission_percent: Number((product as any).affiliate_commission_percent ?? 30),
         status: product.status,
+        store_visible: (product as any).store_visible !== false,
       });
       setDelivery(deliveryFromRow(product));
     }
@@ -141,6 +142,7 @@ function EditarProduto() {
             price_cents: Math.round(Number(form.price || "0") * 100),
             promo_price_cents: form.promo_price ? Math.round(Number(form.promo_price) * 100) : null,
             currency: form.currency.toUpperCase(),
+            store_visible: Boolean(form.store_visible),
             tags: form.tags
               ? form.tags
                   .split(",")
@@ -434,6 +436,25 @@ function EditarProduto() {
               />
             </Field>
           )}
+        </Section>
+
+        <Section title="Visibilidade na Loja">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Label className="text-sm font-semibold">
+                Exibir na vitrine pública da loja (/loja)
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1 max-w-lg">
+                {form.store_visible
+                  ? "Ativo: Este produto está visível na vitrine geral da loja e nas buscas para qualquer visitante."
+                  : "Oculto: Este produto NÃO aparece na vitrine pública. Apenas compradores com o seu link direto de checkout poderão comprar."}
+              </p>
+            </div>
+            <Switch
+              checked={!!form.store_visible}
+              onCheckedChange={(v) => set("store_visible", v)}
+            />
+          </div>
         </Section>
 
         <div className="flex gap-3 justify-end pt-4 border-t border-border">

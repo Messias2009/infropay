@@ -48,15 +48,20 @@ export function CountUp({
     return () => io.disconnect();
   }, [to, duration]);
 
-  const formatted = val.toLocaleString("pt-PT", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
+  const formatted = val
+    .toLocaleString("pt-PT", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    })
+    .replace(/\s/g, "\u00A0");
+
+  const cleanSuffix = suffix ? suffix.replace(/^\s+/, "\u00A0") : "";
+
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={`whitespace-nowrap tabular-nums inline-block ${className ?? ""}`}>
       {prefix}
       {formatted}
-      {suffix}
+      {cleanSuffix}
     </span>
   );
 }

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Mail, MessageCircle, MapPin, ArrowRight, Headphones } from "lucide-react";
+import { ArrowRight, Headphones } from "lucide-react";
 import logoMark from "@/assets/infropay-mark.png";
 
 export function Footer() {
@@ -18,13 +18,13 @@ export function Footer() {
           </div>
           <Link
             to="/contactos"
-            className="inline-flex items-center gap-2 text-sm text-primary-glow"
+            className="inline-flex items-center gap-2 text-sm text-primary-glow font-medium hover:underline"
           >
             Falar com a equipa <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-10 md:grid-cols-5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center gap-2">
             <img
@@ -38,21 +38,9 @@ export function Footer() {
               Infro<span className="text-gradient-gold">Pay</span>
             </div>
           </Link>
-          <p className="mt-3 text-sm text-muted-foreground max-w-sm">
-            A plataforma premium de infoprodutos em Angola. Transformando conhecimento em renda
-            desde 2026.
+          <p className="mt-3 text-sm text-muted-foreground max-w-sm leading-relaxed">
+            A plataforma premium de infoprodutos em Angola. Transformando conhecimento em renda.
           </p>
-          <ul className="mt-5 space-y-2 text-xs text-muted-foreground">
-            <li className="flex items-center gap-2">
-              <Mail className="h-3.5 w-3.5 text-gold" /> suporte@infropay.ao
-            </li>
-            <li className="flex items-center gap-2">
-              <MessageCircle className="h-3.5 w-3.5 text-gold" /> +244 900 000 000
-            </li>
-            <li className="flex items-center gap-2">
-              <MapPin className="h-3.5 w-3.5 text-gold" /> Luanda, Angola
-            </li>
-          </ul>
         </div>
         <div>
           <div className="text-sm font-semibold mb-3">Plataforma</div>
@@ -80,32 +68,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <div className="text-sm font-semibold mb-3">Categorias</div>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>
-              <Link to="/loja" search={{ cat: "cursos" }} className="hover:text-foreground">
-                Cursos
-              </Link>
-            </li>
-            <li>
-              <Link to="/loja" search={{ cat: "ebooks" }} className="hover:text-foreground">
-                Ebooks
-              </Link>
-            </li>
-            <li>
-              <Link to="/loja" search={{ cat: "templates" }} className="hover:text-foreground">
-                Templates
-              </Link>
-            </li>
-            <li>
-              <Link to="/loja" search={{ cat: "mentorias" }} className="hover:text-foreground">
-                Mentorias
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <div className="text-sm font-semibold mb-3">Institucional</div>
+          <div className="text-sm font-semibold mb-3">Ajuda & Termos</div>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li>
               <Link to="/sobre" className="hover:text-foreground">

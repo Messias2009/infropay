@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logoMark from "@/assets/infropay-mark.png";
+import { PWAInstallButton } from "@/components/site/PWAInstallButton";
 
 export function Header() {
   const { user } = useAuth();
@@ -79,6 +80,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <PWAInstallButton />
           <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
             <Search className="h-4 w-4" />
           </Button>

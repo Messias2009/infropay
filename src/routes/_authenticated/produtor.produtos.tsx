@@ -151,12 +151,21 @@ function MeusProdutos() {
                         className="h-full w-full object-cover"
                       />
                     )}
-                    <div className="absolute top-2 left-2">
+                    <div className="absolute top-2 left-2 flex items-center gap-1.5 flex-wrap">
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${BADGE[p.status] ?? BADGE.rascunho}`}
                       >
                         {LABEL[p.status] ?? p.status}
                       </span>
+                      {p.store_visible === false ? (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-black/60 text-muted-foreground border border-border backdrop-blur">
+                          Oculto na Loja
+                        </span>
+                      ) : (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-success/20 text-success border border-success/30 backdrop-blur">
+                          Na Loja
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="p-4">

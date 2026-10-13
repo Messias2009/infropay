@@ -90,6 +90,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "InfroPay" },
       { name: "theme-color", content: "#0F172A" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "InfroPay" },
       { property: "og:title", content: "InfroPay — Transformando conhecimento em renda" },
       {
         property: "og:description",
@@ -105,7 +109,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Plataforma premium para vender e comprar infoprodutos: cursos, ebooks, templates, mentorias e mais.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", type: "image/png", href: "/pwa-192x192.png" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -130,6 +139,31 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if ("caches" in window) {
+        caches
+          .keys()
+          .then((keys) => {
+            keys.forEach((key) => {
+              if (key !== "infropay-cache-v3") {
+                caches.delete(key);
+              }
+            });
+          })
+          .catch(() => {});
+      }
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            reg.update().catch(() => {});
+          })
+          .catch(() => {});
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {

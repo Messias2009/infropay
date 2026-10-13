@@ -75,6 +75,7 @@ function NovoProduto() {
     promo_price: "",
     currency: "AOA",
     submit_for_review: false,
+    store_visible: true,
     tags: "",
     guarantee_days: 7,
   });
@@ -104,6 +105,7 @@ function NovoProduto() {
         promo_price_cents: form.promo_price ? Math.round(Number(form.promo_price) * 100) : null,
         currency: form.currency.toUpperCase(),
         status: form.submit_for_review ? ("publicado" as const) : ("rascunho" as const),
+        store_visible: Boolean(form.store_visible),
         tags: form.tags
           ? form.tags
               .split(",")
@@ -313,7 +315,24 @@ function NovoProduto() {
           </Field>
         </Section>
 
-        <Section title="Publicação">
+        <Section title="Publicação & Visibilidade">
+          <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border p-4 hover:border-primary/60 transition mb-3">
+            <input
+              type="checkbox"
+              checked={form.store_visible}
+              onChange={(e) => set("store_visible", e.target.checked)}
+              className="mt-1 h-4 w-4 accent-primary"
+            />
+            <div>
+              <div className="font-semibold text-sm">Exibir na loja pública (/loja)</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                {form.store_visible
+                  ? "Ativo: O seu produto aparecerá na vitrine da loja e nos resultados de busca."
+                  : "Oculto: O produto não aparecerá na vitrine pública. Apenas clientes com o seu link direto de checkout poderão comprar."}
+              </div>
+            </div>
+          </label>
+
           <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border p-4 hover:border-primary/60 transition">
             <input
               type="checkbox"

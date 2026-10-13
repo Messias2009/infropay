@@ -1,8 +1,6 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { useSuspenseQuery, useQuery, queryOptions } from "@tanstack/react-query";
 import {
   ArrowRight,
-  Sparkles,
   ShieldCheck,
   Zap,
   TrendingUp,
@@ -15,36 +13,21 @@ import {
   Crown,
   Award,
   Gem,
+  Percent,
+  ArrowDownToLine,
+  Clock,
+  Store,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { TrustMarquee } from "@/components/site/TrustMarquee";
-import { ProductCard } from "@/components/site/ProductCard";
-import { ProductGridSkeleton } from "@/components/site/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
-import { listPublishedProducts, listCategories } from "@/lib/catalog.functions";
-import heroBg from "@/assets/hero-premium.jpg";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 import dashboardImg from "@/assets/dashboard-preview.jpg";
 
-const popularQuery = queryOptions({
-  queryKey: ["products", "popular"],
-  queryFn: () => listPublishedProducts({ data: { limit: 8 } }),
-  staleTime: 5 * 60_000,
-});
-const recentQuery = queryOptions({
-  queryKey: ["products", "recent"],
-  queryFn: () => listPublishedProducts({ data: { limit: 4, sort: "recent" } }),
-  staleTime: 5 * 60_000,
-});
-const categoriesQuery = queryOptions({
-  queryKey: ["categories"],
-  queryFn: () => listCategories(),
-  staleTime: 10 * 60_000,
-});
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -64,16 +47,11 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
-  loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(popularQuery);
-  },
   component: Home,
 });
 
 function Home() {
   const { user, loading } = useAuth();
-  const { data: products } = useSuspenseQuery(popularQuery);
-  const { data: recent, isPending: recentPending } = useQuery(recentQuery);
 
   if (loading)
     return (
@@ -85,67 +63,104 @@ function Home() {
 
   return (
     <SiteLayout>
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <img
-          src={heroBg}
-          alt=""
-          width={1920}
-          height={1080}
-          className="absolute inset-0 h-full w-full object-cover opacity-50"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/75 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-primary)_0%,_transparent_60%)] opacity-25" />
+      {/* HERO — Fundo com gradiente escuro premium de alta legibilidade (sem letras) */}
+      <section className="relative overflow-hidden bg-background">
+        {/* Glows de ambientação sem interferir na leitura */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-primary/20 blur-[130px] rounded-full" />
+          <div className="absolute top-1/4 -right-28 w-[400px] h-[400px] bg-gold/15 blur-[110px] rounded-full" />
+          <div className="absolute bottom-0 left-0 w-[450px] h-[300px] bg-primary/15 blur-[120px] rounded-full" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_oklch(0.55_0.19_255_/_0.15)_0%,_transparent_70%)]" />
+        </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-24 md:pt-28 md:pb-36">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 md:pt-24 md:pb-28">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-muted-foreground animate-fade-in">
-              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-              InfroPay · Pagamento em Kwanza
+            <div className="inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 text-xs font-medium text-muted-foreground animate-fade-in border border-border/80">
+              <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+              <span>InfroPay · Pagamento instantâneo em Kwanza</span>
             </div>
-            <h1 className="mt-6 text-5xl md:text-7xl font-bold tracking-tight leading-[1.02] animate-fade-in">
+            <h1 className="mt-6 text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] animate-fade-in">
               Transformando
               <br />
               <span className="text-gradient-gold">conhecimento</span>
               <br />
               em renda.
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl">
-              Venda cursos, ebooks e mentorias com checkout Multicaixa que converte, dinheiro
-              liberado em 1 hora e apenas 2% de comissão — a menor de Angola.
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+              Venda cursos, ebooks e mentorias com checkout Multicaixa de alta conversão, dinheiro
+              liberado em 1 hora e apenas 2% de comissão — a menor taxa de Angola.
             </p>
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/loja">
                 <Button
                   size="lg"
-                  className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90 h-12 px-6"
+                  className="gradient-brand text-primary-foreground shadow-glow hover:opacity-90 h-12 px-7 font-semibold"
                 >
-                  Comprar na loja <ArrowRight className="ml-1 h-4 w-4" />
+                  <Store className="mr-2 h-4 w-4" /> Comprar na loja
                 </Button>
               </Link>
               <Link to="/auth" search={{ mode: "signup" }}>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 px-6 border-gold/40 hover:bg-gold/10 hover:border-gold"
+                  className="h-12 px-6 border-gold/40 hover:bg-gold/10 hover:border-gold font-semibold"
                 >
-                  <Rocket className="mr-2 h-4 w-4" /> Começar a vender grátis
+                  <Rocket className="mr-2 h-4 w-4 text-gold" /> Começar a vender grátis
                 </Button>
               </Link>
             </div>
 
-            <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg">
-              <Stat value="2%" label="Comissão por venda" />
-              <Stat value="8%" label="Taxa de saque" />
-              <Stat value="1h" label="Liberação em no mínimo 1 hora após aprovação" />
+            {/* BANNER DE TAXAS EM DESTAQUE */}
+            <div className="mt-12 rounded-2xl border border-gold/30 bg-card/85 backdrop-blur-md p-4 sm:p-5 shadow-gold/10 shadow-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
+                <div className="flex items-center gap-3.5 sm:px-2">
+                  <div className="h-10 w-10 rounded-xl grid place-items-center bg-gold/10 border border-gold/30 text-gold shrink-0">
+                    <Percent className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-display text-xl sm:text-2xl font-bold text-gradient-gold whitespace-nowrap">
+                      2% por venda
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      A menor comissão de Angola
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3.5 pt-3 sm:pt-0 sm:px-4">
+                  <div className="h-10 w-10 rounded-xl grid place-items-center bg-primary/10 border border-primary/30 text-primary-glow shrink-0">
+                    <ArrowDownToLine className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-display text-xl sm:text-2xl font-bold text-foreground whitespace-nowrap">
+                      8% por saque
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      Transparência sem taxas ocultas
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3.5 pt-3 sm:pt-0 sm:px-4">
+                  <div className="h-10 w-10 rounded-xl grid place-items-center bg-success/10 border border-success/30 text-success shrink-0">
+                    <Clock className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-display text-xl sm:text-2xl font-bold text-success whitespace-nowrap">
+                      Saque em 1 hora
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      Liberação rápida após aprovação
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* DASHBOARD PREVIEW — animated */}
-      <section className="relative mx-auto max-w-7xl px-4 sm:px-6 -mt-8 md:-mt-16">
-        <div className="relative rounded-3xl border border-primary/25 overflow-hidden bg-card animate-fade-in">
+      {/* DASHBOARD PREVIEW */}
+      <section className="relative mx-auto max-w-7xl px-4 sm:px-6 -mt-6 md:-mt-12">
+        <div className="relative rounded-3xl border border-primary/25 overflow-hidden bg-card animate-fade-in shadow-card">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full gradient-brand opacity-30 blur-3xl animate-glow-pulse" />
             <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full gradient-gold opacity-20 blur-3xl animate-floaty" />
@@ -155,7 +170,7 @@ function Home() {
               <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
               <span className="h-2.5 w-2.5 rounded-full bg-warning" />
               <span className="h-2.5 w-2.5 rounded-full bg-success" />
-              <div className="ml-3 text-[11px] text-muted-foreground truncate">
+              <div className="ml-3 text-[11px] text-muted-foreground truncate font-mono">
                 app.infropay.com / dashboard
               </div>
             </div>
@@ -171,7 +186,7 @@ function Home() {
           </div>
         </div>
 
-        {/* PLATFORM LIVE STATS — animated numbers */}
+        {/* ESTATÍSTICAS DA PLATAFORMA — SEM QUEBRAS */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
           {[
             {
@@ -215,20 +230,22 @@ function Home() {
             return (
               <div
                 key={i}
-                className={`relative rounded-2xl border ${s.ring} bg-card/70 backdrop-blur p-4 md:p-5 overflow-hidden`}
+                className={`relative rounded-2xl border ${s.ring} bg-card/75 backdrop-blur p-4 md:p-5 overflow-hidden`}
               >
                 <div className="absolute -top-8 -right-8 h-24 w-24 rounded-full gradient-brand opacity-10 blur-2xl animate-glow-pulse" />
                 <div className="relative flex items-center gap-3">
                   <div
-                    className={`h-10 w-10 rounded-xl grid place-items-center bg-card border ${s.ring}`}
+                    className={`h-10 w-10 rounded-xl grid place-items-center bg-card border ${s.ring} shrink-0`}
                   >
                     <Icon className={`h-5 w-5 ${s.accent}`} />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground truncate">
                       {s.label}
                     </div>
-                    <div className={`font-display font-bold text-xl md:text-2xl ${s.accent}`}>
+                    <div
+                      className={`font-display font-bold text-base sm:text-lg lg:text-xl xl:text-2xl whitespace-nowrap overflow-hidden ${s.accent}`}
+                    >
                       <CountUp to={s.value} prefix={s.prefix} suffix={s.suffix} />
                     </div>
                   </div>
@@ -238,7 +255,7 @@ function Home() {
           })}
         </div>
 
-        {/* PLACAS / TIER PREVIEW — animated badges */}
+        {/* PLACAS / CONQUISTAS */}
         <div className="mt-14">
           <div className="text-center max-w-2xl mx-auto mb-8">
             <div className="text-xs font-semibold uppercase tracking-widest text-gold">
@@ -248,7 +265,7 @@ function Home() {
               Ganhe <span className="text-shimmer">placas oficiais</span> a cada meta
             </h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Do Bronze ao Infinito: 10 níveis reais, conquistados por faturamento — e reconhecidos
+              Do Bronze ao Infinito: níveis reais conquistados por faturamento e reconhecidos
               publicamente.
             </p>
           </div>
@@ -313,7 +330,7 @@ function Home() {
           <div className="mt-6 text-center">
             <Link
               to="/legends"
-              className="inline-flex items-center gap-1 text-sm text-gold hover:opacity-80"
+              className="inline-flex items-center gap-1 text-sm text-gold hover:opacity-80 font-medium"
             >
               Ver todas as placas <ArrowRight className="h-4 w-4" />
             </Link>
@@ -321,7 +338,7 @@ function Home() {
         </div>
       </section>
 
-      {/* TRUST STRIP — carrossel infinito */}
+      {/* TRUST STRIP */}
       <TrustMarquee />
 
       {/* BANNER — GANHE ONLINE */}
@@ -358,95 +375,39 @@ function Home() {
         </div>
       </section>
 
-      <section className="relative mt-12 mb-16 overflow-hidden border-y border-border bg-card">
-        <img
-          src={bannerProdutores}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-20"
-        />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-8 grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] items-center">
-          <div className="min-w-0">
-            <p className="text-xs uppercase text-gold font-semibold">O que pode vender</p>
-            <h2 className="mt-2 text-2xl font-bold">O seu talento. Muitos formatos.</h2>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              Cursos · Ebooks · Mentorias · Templates · Software · Assinaturas · Comunidades
+      {/* CONVITE PARA A LOJA OFICIAL (PRODUTOS VISÍVEIS SOMENTE AO CLICAR EM VER LOJA) */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-20">
+        <div className="relative rounded-3xl border border-border bg-gradient-to-br from-card via-card/90 to-primary/10 p-8 sm:p-12 overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full bg-gold/10 text-gold px-3 py-1 text-xs font-semibold mb-4 border border-gold/20">
+              <Store className="h-3.5 w-3.5" /> Vitrine Oficial
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Explore os melhores infoprodutos de Angola
+            </h2>
+            <p className="mt-4 text-muted-foreground leading-relaxed">
+              Cursos práticos, livros digitais, templates prontos e mentorias exclusivas. Aceda à
+              loja completa para filtrar por categorias e comprar com Multicaixa Express.
             </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link to="/loja">
+                <Button
+                  size="lg"
+                  className="gradient-brand text-primary-foreground shadow-glow px-6 font-semibold"
+                >
+                  <Store className="mr-2 h-4 w-4" /> Ver Loja Completa
+                </Button>
+              </Link>
+              <Link to="/auth" search={{ mode: "signup" }}>
+                <Button size="lg" variant="outline" className="px-6 font-semibold">
+                  Publicar o meu infoproduto
+                </Button>
+              </Link>
+            </div>
           </div>
-          <Button asChild className="gradient-brand">
-            <Link to="/auth" search={{ mode: "signup" }}>
-              Começar a vender <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
         </div>
       </section>
-
-      {/* PRODUTOS POPULARES */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
-        <div className="flex items-end justify-between mb-8 gap-4">
-          <div className="min-w-0">
-            <div className="text-xs font-semibold uppercase tracking-widest text-gold">
-              Em destaque
-            </div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-bold">Os mais vendidos agora</h2>
-          </div>
-          <Link
-            to="/loja"
-            className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0"
-          >
-            Ver loja <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
-        </div>
-        {products.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card/40 p-12 text-center">
-            <Sparkles className="h-10 w-10 text-gold mx-auto mb-3" />
-            <h3 className="font-display text-xl font-semibold">Seja o primeiro produtor</h3>
-            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-              Ainda não há produtos publicados. Crie a sua conta e seja pioneiro na InfroPay.
-            </p>
-            <Link to="/auth" search={{ mode: "signup" }} className="inline-block mt-6">
-              <Button className="gradient-brand text-primary-foreground shadow-glow">
-                Começar agora
-              </Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {products.map((p) => (
-              <ProductCard key={p.slug} product={p as any} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* LANÇAMENTOS */}
-      {(recentPending || (recent && recent.length > 0)) && (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
-          <div className="flex items-end justify-between mb-8 gap-4">
-            <div className="min-w-0">
-              <div className="text-xs font-semibold uppercase tracking-widest text-primary">
-                Acabou de chegar
-              </div>
-              <h2 className="mt-2 text-3xl md:text-4xl font-bold">Lançamentos da semana</h2>
-            </div>
-            <Link
-              to="/loja"
-              className="hidden sm:inline-flex items-center text-sm text-muted-foreground hover:text-foreground shrink-0"
-            >
-              Ver tudo <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </div>
-          {recentPending ? (
-            <ProductGridSkeleton count={4} />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {(recent ?? []).map((p) => (
-                <ProductCard key={p.slug} product={p as any} />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
 
       {/* COMO FUNCIONA */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-20">
@@ -469,7 +430,7 @@ function Home() {
             {
               n: "02",
               t: "Publique o seu produto",
-              d: "Capa, ficheiro e preço. Validação automática: fica publicado na hora.",
+              d: "Capa, ficheiro e preço. Escolha se quer exibir na loja pública ou vender por link direto.",
               i: Play,
             },
             {
@@ -528,7 +489,7 @@ function Home() {
               O ranking dos produtores que mais faturam em Angola. Suba de nível, ganhe placa
               oficial e prove o seu resultado.
             </p>
-            <div className="mt-6 inline-flex items-center text-sm text-gold group-hover:translate-x-1 transition">
+            <div className="mt-6 inline-flex items-center text-sm text-gold group-hover:translate-x-1 transition font-medium">
               Ver ranking <ArrowRight className="ml-1 h-4 w-4" />
             </div>
           </div>
@@ -587,7 +548,7 @@ function Home() {
             width={1600}
             height={900}
             loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover opacity-40"
+            className="absolute inset-0 h-full w-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-background/85 to-primary/20" />
           <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full gradient-brand opacity-25 blur-3xl" />
@@ -620,13 +581,13 @@ function Home() {
               <Link to="/auth" search={{ mode: "signup" }}>
                 <Button
                   size="lg"
-                  className="gradient-brand text-primary-foreground shadow-glow h-12 px-6"
+                  className="gradient-brand text-primary-foreground shadow-glow h-12 px-6 font-semibold"
                 >
                   Criar conta de produtor <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </Link>
               <Link to="/loja">
-                <Button size="lg" variant="outline" className="h-12 px-6">
+                <Button size="lg" variant="outline" className="h-12 px-6 font-semibold">
                   Ver a loja
                 </Button>
               </Link>
@@ -635,14 +596,5 @@ function Home() {
         </div>
       </section>
     </SiteLayout>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="font-display text-3xl font-bold text-gradient-gold">{value}</div>
-      <div className="text-xs text-muted-foreground mt-1">{label}</div>
-    </div>
   );
 }
