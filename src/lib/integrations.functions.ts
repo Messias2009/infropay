@@ -34,7 +34,7 @@ export const getMyIntegrations = createServerFn({ method: "GET" })
 
 export const upsertMyIntegrations = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => schema.parse(d))
+  .validator((d: unknown) => schema.parse(d))
   .handler(async ({ context, data }) => {
     const payload = { user_id: context.userId, ...data, updated_at: new Date().toISOString() };
     const { data: row, error } = await (context.supabase as any)

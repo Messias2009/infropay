@@ -31,7 +31,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
 
 export const updateMyProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => profileSchema.parse(d))
+  .validator((d: unknown) => profileSchema.parse(d))
   .handler(async ({ context, data }) => {
     const { data: row, error } = await (context.supabase as any)
       .from("profiles")

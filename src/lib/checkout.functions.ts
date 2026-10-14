@@ -19,7 +19,7 @@ const createOrderSchema = z.object({
 });
 
 export const createOrder = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => createOrderSchema.parse(d))
+  .validator((d: unknown) => createOrderSchema.parse(d))
   .handler(async ({ data }) => {
     const supabase = pub();
     const { data: product, error: pErr } = await supabase
@@ -84,7 +84,7 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 export const getOrderByToken = createServerFn({ method: "GET" })
-  .inputValidator((d: { token: string }) => z.object({ token: z.string().min(10) }).parse(d))
+  .validator((d: { token: string }) => z.object({ token: z.string().min(10) }).parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: sale, error } = await supabaseAdmin

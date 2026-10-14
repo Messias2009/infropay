@@ -10,7 +10,7 @@ export type TrackingConfig = {
 
 /** Public: pixel/analytics IDs for a product page (product override > producer defaults). */
 export const getProductTracking = createServerFn({ method: "GET" })
-  .inputValidator((d: { slug: string }) => z.object({ slug: z.string().min(1) }).parse(d))
+  .validator((d: { slug: string }) => z.object({ slug: z.string().min(1) }).parse(d))
   .handler(async ({ data }): Promise<TrackingConfig> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const empty: TrackingConfig = {
@@ -50,7 +50,7 @@ export type OrderTracking = TrackingConfig & {
 
 /** Public: tracking payload for the order page + server-side UTMify/CAPI dispatch when paid. */
 export const getOrderTracking = createServerFn({ method: "GET" })
-  .inputValidator((d: { token: string; notify?: boolean }) =>
+  .validator((d: { token: string; notify?: boolean }) =>
     z.object({ token: z.string().min(10), notify: z.boolean().optional() }).parse(d),
   )
   .handler(async ({ data }): Promise<OrderTracking | null> => {

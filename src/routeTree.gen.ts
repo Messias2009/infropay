@@ -9,79 +9,53 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermosRouteImport } from './routes/termos'
-import { Route as SobreRouteImport } from './routes/sobre'
-import { Route as PrivacidadeRouteImport } from './routes/privacidade'
-import { Route as LojaRouteImport } from './routes/loja'
-import { Route as LegendsRouteImport } from './routes/legends'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as ContactosRouteImport } from './routes/contactos'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
-import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
-import { Route as PSlugRouteImport } from './routes/p.$slug'
-import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
-import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
-import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
-import { Route as AuthenticatedAfiliadosRouteImport } from './routes/_authenticated/afiliados'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ContactosRouteImport } from './routes/contactos'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as LegendsRouteImport } from './routes/legends'
+import { Route as LojaRouteImport } from './routes/loja'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
-import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
-import { Route as AuthenticatedMembrosIndexRouteImport } from './routes/_authenticated/membros.index'
+import { Route as AuthenticatedAfiliadosRouteImport } from './routes/_authenticated/afiliados'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
+import { Route as AuthenticatedProdutorRouteImport } from './routes/_authenticated/produtor'
+import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
+import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as AuthenticatedAdmIndexRouteImport } from './routes/_authenticated/adm.index'
-import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authenticated/produtor.saques'
-import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
-import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
-import { Route as AuthenticatedProdutorIntegracoesRouteImport } from './routes/_authenticated/produtor.integracoes'
-import { Route as AuthenticatedProdutorFunilRouteImport } from './routes/_authenticated/produtor.funil'
-import { Route as AuthenticatedProdutorFinanceiroRouteImport } from './routes/_authenticated/produtor.financeiro'
-import { Route as AuthenticatedProdutorConquistasRouteImport } from './routes/_authenticated/produtor.conquistas'
-import { Route as AuthenticatedMembrosSlugRouteImport } from './routes/_authenticated/membros.$slug'
-import { Route as AuthenticatedAdmUsuariosRouteImport } from './routes/_authenticated/adm.usuarios'
-import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
-import { Route as AuthenticatedAdmRelatoriosRouteImport } from './routes/_authenticated/adm.relatorios'
-import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
 import { Route as AuthenticatedAdmLogsRouteImport } from './routes/_authenticated/adm.logs'
-import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
-import { Route as ApiPublicWebhooksMulticaixaRouteImport } from './routes/api/public/webhooks/multicaixa'
-import { Route as AuthenticatedProdutorSucessoIdRouteImport } from './routes/_authenticated/produtor.sucesso.$id'
-import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
+import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
+import { Route as AuthenticatedAdmRelatoriosRouteImport } from './routes/_authenticated/adm.relatorios'
+import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
+import { Route as AuthenticatedAdmUsuariosRouteImport } from './routes/_authenticated/adm.usuarios'
+import { Route as AuthenticatedMembrosIndexRouteImport } from './routes/_authenticated/membros.index'
+import { Route as AuthenticatedMembrosSlugRouteImport } from './routes/_authenticated/membros.$slug'
+import { Route as AuthenticatedProdutorIndexRouteImport } from './routes/_authenticated/produtor.index'
+import { Route as AuthenticatedProdutorConquistasRouteImport } from './routes/_authenticated/produtor.conquistas'
+import { Route as AuthenticatedProdutorFinanceiroRouteImport } from './routes/_authenticated/produtor.financeiro'
+import { Route as AuthenticatedProdutorFunilRouteImport } from './routes/_authenticated/produtor.funil'
+import { Route as AuthenticatedProdutorIntegracoesRouteImport } from './routes/_authenticated/produtor.integracoes'
+import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
+import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
+import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authenticated/produtor.saques'
 import { Route as AuthenticatedProdutorCursoIdRouteImport } from './routes/_authenticated/produtor.curso.$id'
+import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
+import { Route as AuthenticatedProdutorSucessoIdRouteImport } from './routes/_authenticated/produtor.sucesso.$id'
+import { Route as ApiPublicWebhooksMulticaixaRouteImport } from './routes/api/public/webhooks/multicaixa'
+import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 
-const TermosRoute = TermosRouteImport.update({
-  id: '/termos',
-  path: '/termos',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadeRoute = PrivacidadeRouteImport.update({
-  id: '/privacidade',
-  path: '/privacidade',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LojaRoute = LojaRouteImport.update({
-  id: '/loja',
-  path: '/loja',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LegendsRoute = LegendsRouteImport.update({
-  id: '/legends',
-  path: '/legends',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactosRoute = ContactosRouteImport.update({
-  id: '/contactos',
-  path: '/contactos',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -89,43 +63,44 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const ContactosRoute = ContactosRouteImport.update({
+  id: '/contactos',
+  path: '/contactos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
-  id: '/produto/$slug',
-  path: '/produto/$slug',
+const LegendsRoute = LegendsRouteImport.update({
+  id: '/legends',
+  path: '/legends',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PedidoTokenRoute = PedidoTokenRouteImport.update({
-  id: '/pedido/$token',
-  path: '/pedido/$token',
+const LojaRoute = LojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PSlugRoute = PSlugRouteImport.update({
-  id: '/p/$slug',
-  path: '/p/$slug',
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CheckoutSlugRoute = CheckoutSlugRouteImport.update({
-  id: '/checkout/$slug',
-  path: '/checkout/$slug',
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedProdutorRoute = AuthenticatedProdutorRouteImport.update({
-  id: '/produtor',
-  path: '/produtor',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
+const AuthenticatedAdmRoute = AuthenticatedAdmRouteImport.update({
+  id: '/adm',
+  path: '/adm',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAfiliadosRoute = AuthenticatedAfiliadosRouteImport.update({
@@ -133,16 +108,68 @@ const AuthenticatedAfiliadosRoute = AuthenticatedAfiliadosRouteImport.update({
   path: '/afiliados',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAdmRoute = AuthenticatedAdmRouteImport.update({
-  id: '/adm',
-  path: '/adm',
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProdutorIndexRoute =
-  AuthenticatedProdutorIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedProdutorRoute,
+const AuthenticatedProdutorRoute = AuthenticatedProdutorRouteImport.update({
+  id: '/produtor',
+  path: '/produtor',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const CheckoutSlugRoute = CheckoutSlugRouteImport.update({
+  id: '/checkout/$slug',
+  path: '/checkout/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoTokenRoute = PedidoTokenRouteImport.update({
+  id: '/pedido/$token',
+  path: '/pedido/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
+  id: '/produto/$slug',
+  path: '/produto/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdmIndexRoute = AuthenticatedAdmIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdmRoute,
+} as any)
+const AuthenticatedAdmLogsRoute = AuthenticatedAdmLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AuthenticatedAdmRoute,
+} as any)
+const AuthenticatedAdmProdutosRoute =
+  AuthenticatedAdmProdutosRouteImport.update({
+    id: '/produtos',
+    path: '/produtos',
+    getParentRoute: () => AuthenticatedAdmRoute,
+  } as any)
+const AuthenticatedAdmRelatoriosRoute =
+  AuthenticatedAdmRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => AuthenticatedAdmRoute,
+  } as any)
+const AuthenticatedAdmSaquesRoute = AuthenticatedAdmSaquesRouteImport.update({
+  id: '/saques',
+  path: '/saques',
+  getParentRoute: () => AuthenticatedAdmRoute,
+} as any)
+const AuthenticatedAdmUsuariosRoute =
+  AuthenticatedAdmUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdmRoute,
   } as any)
 const AuthenticatedMembrosIndexRoute =
   AuthenticatedMembrosIndexRouteImport.update({
@@ -150,45 +177,16 @@ const AuthenticatedMembrosIndexRoute =
     path: '/membros/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdmIndexRoute = AuthenticatedAdmIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedAdmRoute,
-} as any)
-const AuthenticatedProdutorSaquesRoute =
-  AuthenticatedProdutorSaquesRouteImport.update({
-    id: '/saques',
-    path: '/saques',
-    getParentRoute: () => AuthenticatedProdutorRoute,
+const AuthenticatedMembrosSlugRoute =
+  AuthenticatedMembrosSlugRouteImport.update({
+    id: '/membros/$slug',
+    path: '/membros/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedProdutorProdutosRoute =
-  AuthenticatedProdutorProdutosRouteImport.update({
-    id: '/produtos',
-    path: '/produtos',
-    getParentRoute: () => AuthenticatedProdutorRoute,
-  } as any)
-const AuthenticatedProdutorNovoRoute =
-  AuthenticatedProdutorNovoRouteImport.update({
-    id: '/novo',
-    path: '/novo',
-    getParentRoute: () => AuthenticatedProdutorRoute,
-  } as any)
-const AuthenticatedProdutorIntegracoesRoute =
-  AuthenticatedProdutorIntegracoesRouteImport.update({
-    id: '/integracoes',
-    path: '/integracoes',
-    getParentRoute: () => AuthenticatedProdutorRoute,
-  } as any)
-const AuthenticatedProdutorFunilRoute =
-  AuthenticatedProdutorFunilRouteImport.update({
-    id: '/funil',
-    path: '/funil',
-    getParentRoute: () => AuthenticatedProdutorRoute,
-  } as any)
-const AuthenticatedProdutorFinanceiroRoute =
-  AuthenticatedProdutorFinanceiroRouteImport.update({
-    id: '/financeiro',
-    path: '/financeiro',
+const AuthenticatedProdutorIndexRoute =
+  AuthenticatedProdutorIndexRouteImport.update({
+    id: '/',
+    path: '/',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
 const AuthenticatedProdutorConquistasRoute =
@@ -197,61 +195,40 @@ const AuthenticatedProdutorConquistasRoute =
     path: '/conquistas',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
-const AuthenticatedMembrosSlugRoute =
-  AuthenticatedMembrosSlugRouteImport.update({
-    id: '/membros/$slug',
-    path: '/membros/$slug',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdmUsuariosRoute =
-  AuthenticatedAdmUsuariosRouteImport.update({
-    id: '/usuarios',
-    path: '/usuarios',
-    getParentRoute: () => AuthenticatedAdmRoute,
-  } as any)
-const AuthenticatedAdmSaquesRoute = AuthenticatedAdmSaquesRouteImport.update({
-  id: '/saques',
-  path: '/saques',
-  getParentRoute: () => AuthenticatedAdmRoute,
-} as any)
-const AuthenticatedAdmRelatoriosRoute =
-  AuthenticatedAdmRelatoriosRouteImport.update({
-    id: '/relatorios',
-    path: '/relatorios',
-    getParentRoute: () => AuthenticatedAdmRoute,
-  } as any)
-const AuthenticatedAdmProdutosRoute =
-  AuthenticatedAdmProdutosRouteImport.update({
-    id: '/produtos',
-    path: '/produtos',
-    getParentRoute: () => AuthenticatedAdmRoute,
-  } as any)
-const AuthenticatedAdmLogsRoute = AuthenticatedAdmLogsRouteImport.update({
-  id: '/logs',
-  path: '/logs',
-  getParentRoute: () => AuthenticatedAdmRoute,
-} as any)
-const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
-  id: '/api/public/webhooks/stripe',
-  path: '/api/public/webhooks/stripe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicWebhooksMulticaixaRoute =
-  ApiPublicWebhooksMulticaixaRouteImport.update({
-    id: '/api/public/webhooks/multicaixa',
-    path: '/api/public/webhooks/multicaixa',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AuthenticatedProdutorSucessoIdRoute =
-  AuthenticatedProdutorSucessoIdRouteImport.update({
-    id: '/sucesso/$id',
-    path: '/sucesso/$id',
+const AuthenticatedProdutorFinanceiroRoute =
+  AuthenticatedProdutorFinanceiroRouteImport.update({
+    id: '/financeiro',
+    path: '/financeiro',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
-const AuthenticatedProdutorEditarIdRoute =
-  AuthenticatedProdutorEditarIdRouteImport.update({
-    id: '/editar/$id',
-    path: '/editar/$id',
+const AuthenticatedProdutorFunilRoute =
+  AuthenticatedProdutorFunilRouteImport.update({
+    id: '/funil',
+    path: '/funil',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorIntegracoesRoute =
+  AuthenticatedProdutorIntegracoesRouteImport.update({
+    id: '/integracoes',
+    path: '/integracoes',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorNovoRoute =
+  AuthenticatedProdutorNovoRouteImport.update({
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorProdutosRoute =
+  AuthenticatedProdutorProdutosRouteImport.update({
+    id: '/produtos',
+    path: '/produtos',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorSaquesRoute =
+  AuthenticatedProdutorSaquesRouteImport.update({
+    id: '/saques',
+    path: '/saques',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
 const AuthenticatedProdutorCursoIdRoute =
@@ -260,6 +237,29 @@ const AuthenticatedProdutorCursoIdRoute =
     path: '/curso/$id',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
+const AuthenticatedProdutorEditarIdRoute =
+  AuthenticatedProdutorEditarIdRouteImport.update({
+    id: '/editar/$id',
+    path: '/editar/$id',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorSucessoIdRoute =
+  AuthenticatedProdutorSucessoIdRouteImport.update({
+    id: '/sucesso/$id',
+    path: '/sucesso/$id',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const ApiPublicWebhooksMulticaixaRoute =
+  ApiPublicWebhooksMulticaixaRouteImport.update({
+    id: '/api/public/webhooks/multicaixa',
+    path: '/api/public/webhooks/multicaixa',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
+  id: '/api/public/webhooks/stripe',
+  path: '/api/public/webhooks/stripe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -524,60 +524,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/termos': {
-      id: '/termos'
-      path: '/termos'
-      fullPath: '/termos'
-      preLoaderRoute: typeof TermosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidade': {
-      id: '/privacidade'
-      path: '/privacidade'
-      fullPath: '/privacidade'
-      preLoaderRoute: typeof PrivacidadeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/loja': {
-      id: '/loja'
-      path: '/loja'
-      fullPath: '/loja'
-      preLoaderRoute: typeof LojaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legends': {
-      id: '/legends'
-      path: '/legends'
-      fullPath: '/legends'
-      preLoaderRoute: typeof LegendsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contactos': {
-      id: '/contactos'
-      path: '/contactos'
-      fullPath: '/contactos'
-      preLoaderRoute: typeof ContactosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -587,53 +538,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/produto/$slug': {
-      id: '/produto/$slug'
-      path: '/produto/$slug'
-      fullPath: '/produto/$slug'
-      preLoaderRoute: typeof ProdutoSlugRouteImport
+    '/contactos': {
+      id: '/contactos'
+      path: '/contactos'
+      fullPath: '/contactos'
+      preLoaderRoute: typeof ContactosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pedido/$token': {
-      id: '/pedido/$token'
-      path: '/pedido/$token'
-      fullPath: '/pedido/$token'
-      preLoaderRoute: typeof PedidoTokenRouteImport
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/$slug': {
-      id: '/p/$slug'
-      path: '/p/$slug'
-      fullPath: '/p/$slug'
-      preLoaderRoute: typeof PSlugRouteImport
+    '/legends': {
+      id: '/legends'
+      path: '/legends'
+      fullPath: '/legends'
+      preLoaderRoute: typeof LegendsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/checkout/$slug': {
-      id: '/checkout/$slug'
-      path: '/checkout/$slug'
-      fullPath: '/checkout/$slug'
-      preLoaderRoute: typeof CheckoutSlugRouteImport
+    '/loja': {
+      id: '/loja'
+      path: '/loja'
+      fullPath: '/loja'
+      preLoaderRoute: typeof LojaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/produtor': {
-      id: '/_authenticated/produtor'
-      path: '/produtor'
-      fullPath: '/produtor'
-      preLoaderRoute: typeof AuthenticatedProdutorRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/perfil': {
-      id: '/_authenticated/perfil'
-      path: '/perfil'
-      fullPath: '/perfil'
-      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/adm': {
+      id: '/_authenticated/adm'
+      path: '/adm'
+      fullPath: '/adm'
+      preLoaderRoute: typeof AuthenticatedAdmRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/afiliados': {
@@ -643,116 +608,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAfiliadosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/adm': {
-      id: '/_authenticated/adm'
-      path: '/adm'
-      fullPath: '/adm'
-      preLoaderRoute: typeof AuthenticatedAdmRouteImport
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/produtor/': {
-      id: '/_authenticated/produtor/'
-      path: '/'
-      fullPath: '/produtor/'
-      preLoaderRoute: typeof AuthenticatedProdutorIndexRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/membros/': {
-      id: '/_authenticated/membros/'
-      path: '/membros'
-      fullPath: '/membros/'
-      preLoaderRoute: typeof AuthenticatedMembrosIndexRouteImport
+    '/_authenticated/produtor': {
+      id: '/_authenticated/produtor'
+      path: '/produtor'
+      fullPath: '/produtor'
+      preLoaderRoute: typeof AuthenticatedProdutorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/checkout/$slug': {
+      id: '/checkout/$slug'
+      path: '/checkout/$slug'
+      fullPath: '/checkout/$slug'
+      preLoaderRoute: typeof CheckoutSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/$token': {
+      id: '/pedido/$token'
+      path: '/pedido/$token'
+      fullPath: '/pedido/$token'
+      preLoaderRoute: typeof PedidoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produto/$slug': {
+      id: '/produto/$slug'
+      path: '/produto/$slug'
+      fullPath: '/produto/$slug'
+      preLoaderRoute: typeof ProdutoSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/adm/': {
       id: '/_authenticated/adm/'
       path: '/'
       fullPath: '/adm/'
       preLoaderRoute: typeof AuthenticatedAdmIndexRouteImport
-      parentRoute: typeof AuthenticatedAdmRoute
-    }
-    '/_authenticated/produtor/saques': {
-      id: '/_authenticated/produtor/saques'
-      path: '/saques'
-      fullPath: '/produtor/saques'
-      preLoaderRoute: typeof AuthenticatedProdutorSaquesRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/produtor/produtos': {
-      id: '/_authenticated/produtor/produtos'
-      path: '/produtos'
-      fullPath: '/produtor/produtos'
-      preLoaderRoute: typeof AuthenticatedProdutorProdutosRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/produtor/novo': {
-      id: '/_authenticated/produtor/novo'
-      path: '/novo'
-      fullPath: '/produtor/novo'
-      preLoaderRoute: typeof AuthenticatedProdutorNovoRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/produtor/integracoes': {
-      id: '/_authenticated/produtor/integracoes'
-      path: '/integracoes'
-      fullPath: '/produtor/integracoes'
-      preLoaderRoute: typeof AuthenticatedProdutorIntegracoesRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/produtor/funil': {
-      id: '/_authenticated/produtor/funil'
-      path: '/funil'
-      fullPath: '/produtor/funil'
-      preLoaderRoute: typeof AuthenticatedProdutorFunilRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/produtor/financeiro': {
-      id: '/_authenticated/produtor/financeiro'
-      path: '/financeiro'
-      fullPath: '/produtor/financeiro'
-      preLoaderRoute: typeof AuthenticatedProdutorFinanceiroRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/produtor/conquistas': {
-      id: '/_authenticated/produtor/conquistas'
-      path: '/conquistas'
-      fullPath: '/produtor/conquistas'
-      preLoaderRoute: typeof AuthenticatedProdutorConquistasRouteImport
-      parentRoute: typeof AuthenticatedProdutorRoute
-    }
-    '/_authenticated/membros/$slug': {
-      id: '/_authenticated/membros/$slug'
-      path: '/membros/$slug'
-      fullPath: '/membros/$slug'
-      preLoaderRoute: typeof AuthenticatedMembrosSlugRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/adm/usuarios': {
-      id: '/_authenticated/adm/usuarios'
-      path: '/usuarios'
-      fullPath: '/adm/usuarios'
-      preLoaderRoute: typeof AuthenticatedAdmUsuariosRouteImport
-      parentRoute: typeof AuthenticatedAdmRoute
-    }
-    '/_authenticated/adm/saques': {
-      id: '/_authenticated/adm/saques'
-      path: '/saques'
-      fullPath: '/adm/saques'
-      preLoaderRoute: typeof AuthenticatedAdmSaquesRouteImport
-      parentRoute: typeof AuthenticatedAdmRoute
-    }
-    '/_authenticated/adm/relatorios': {
-      id: '/_authenticated/adm/relatorios'
-      path: '/relatorios'
-      fullPath: '/adm/relatorios'
-      preLoaderRoute: typeof AuthenticatedAdmRelatoriosRouteImport
-      parentRoute: typeof AuthenticatedAdmRoute
-    }
-    '/_authenticated/adm/produtos': {
-      id: '/_authenticated/adm/produtos'
-      path: '/produtos'
-      fullPath: '/adm/produtos'
-      preLoaderRoute: typeof AuthenticatedAdmProdutosRouteImport
       parentRoute: typeof AuthenticatedAdmRoute
     }
     '/_authenticated/adm/logs': {
@@ -762,25 +664,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmLogsRouteImport
       parentRoute: typeof AuthenticatedAdmRoute
     }
-    '/api/public/webhooks/stripe': {
-      id: '/api/public/webhooks/stripe'
-      path: '/api/public/webhooks/stripe'
-      fullPath: '/api/public/webhooks/stripe'
-      preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/adm/produtos': {
+      id: '/_authenticated/adm/produtos'
+      path: '/produtos'
+      fullPath: '/adm/produtos'
+      preLoaderRoute: typeof AuthenticatedAdmProdutosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
     }
-    '/api/public/webhooks/multicaixa': {
-      id: '/api/public/webhooks/multicaixa'
-      path: '/api/public/webhooks/multicaixa'
-      fullPath: '/api/public/webhooks/multicaixa'
-      preLoaderRoute: typeof ApiPublicWebhooksMulticaixaRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/adm/relatorios': {
+      id: '/_authenticated/adm/relatorios'
+      path: '/relatorios'
+      fullPath: '/adm/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdmRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
     }
-    '/_authenticated/produtor/sucesso/$id': {
-      id: '/_authenticated/produtor/sucesso/$id'
-      path: '/sucesso/$id'
-      fullPath: '/produtor/sucesso/$id'
-      preLoaderRoute: typeof AuthenticatedProdutorSucessoIdRouteImport
+    '/_authenticated/adm/saques': {
+      id: '/_authenticated/adm/saques'
+      path: '/saques'
+      fullPath: '/adm/saques'
+      preLoaderRoute: typeof AuthenticatedAdmSaquesRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
+    }
+    '/_authenticated/adm/usuarios': {
+      id: '/_authenticated/adm/usuarios'
+      path: '/usuarios'
+      fullPath: '/adm/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdmUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
+    }
+    '/_authenticated/membros/': {
+      id: '/_authenticated/membros/'
+      path: '/membros'
+      fullPath: '/membros/'
+      preLoaderRoute: typeof AuthenticatedMembrosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/membros/$slug': {
+      id: '/_authenticated/membros/$slug'
+      path: '/membros/$slug'
+      fullPath: '/membros/$slug'
+      preLoaderRoute: typeof AuthenticatedMembrosSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/produtor/': {
+      id: '/_authenticated/produtor/'
+      path: '/'
+      fullPath: '/produtor/'
+      preLoaderRoute: typeof AuthenticatedProdutorIndexRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/conquistas': {
+      id: '/_authenticated/produtor/conquistas'
+      path: '/conquistas'
+      fullPath: '/produtor/conquistas'
+      preLoaderRoute: typeof AuthenticatedProdutorConquistasRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/financeiro': {
+      id: '/_authenticated/produtor/financeiro'
+      path: '/financeiro'
+      fullPath: '/produtor/financeiro'
+      preLoaderRoute: typeof AuthenticatedProdutorFinanceiroRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/funil': {
+      id: '/_authenticated/produtor/funil'
+      path: '/funil'
+      fullPath: '/produtor/funil'
+      preLoaderRoute: typeof AuthenticatedProdutorFunilRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/integracoes': {
+      id: '/_authenticated/produtor/integracoes'
+      path: '/integracoes'
+      fullPath: '/produtor/integracoes'
+      preLoaderRoute: typeof AuthenticatedProdutorIntegracoesRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/novo': {
+      id: '/_authenticated/produtor/novo'
+      path: '/novo'
+      fullPath: '/produtor/novo'
+      preLoaderRoute: typeof AuthenticatedProdutorNovoRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/produtos': {
+      id: '/_authenticated/produtor/produtos'
+      path: '/produtos'
+      fullPath: '/produtor/produtos'
+      preLoaderRoute: typeof AuthenticatedProdutorProdutosRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/saques': {
+      id: '/_authenticated/produtor/saques'
+      path: '/saques'
+      fullPath: '/produtor/saques'
+      preLoaderRoute: typeof AuthenticatedProdutorSaquesRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/_authenticated/produtor/curso/$id': {
+      id: '/_authenticated/produtor/curso/$id'
+      path: '/curso/$id'
+      fullPath: '/produtor/curso/$id'
+      preLoaderRoute: typeof AuthenticatedProdutorCursoIdRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
     }
     '/_authenticated/produtor/editar/$id': {
@@ -790,12 +776,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutorEditarIdRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
     }
-    '/_authenticated/produtor/curso/$id': {
-      id: '/_authenticated/produtor/curso/$id'
-      path: '/curso/$id'
-      fullPath: '/produtor/curso/$id'
-      preLoaderRoute: typeof AuthenticatedProdutorCursoIdRouteImport
+    '/_authenticated/produtor/sucesso/$id': {
+      id: '/_authenticated/produtor/sucesso/$id'
+      path: '/sucesso/$id'
+      fullPath: '/produtor/sucesso/$id'
+      preLoaderRoute: typeof AuthenticatedProdutorSucessoIdRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
+    }
+    '/api/public/webhooks/multicaixa': {
+      id: '/api/public/webhooks/multicaixa'
+      path: '/api/public/webhooks/multicaixa'
+      fullPath: '/api/public/webhooks/multicaixa'
+      preLoaderRoute: typeof ApiPublicWebhooksMulticaixaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/stripe': {
+      id: '/api/public/webhooks/stripe'
+      path: '/api/public/webhooks/stripe'
+      fullPath: '/api/public/webhooks/stripe'
+      preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

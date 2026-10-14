@@ -42,7 +42,7 @@ export const listPendingProducts = createServerFn({ method: "GET" })
 
 export const listAllProductsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { status?: string } | undefined) => d ?? {})
+  .validator((d: { status?: string } | undefined) => d ?? {})
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     let q = context.supabase
@@ -60,7 +60,7 @@ export const listAllProductsAdmin = createServerFn({ method: "GET" })
 
 export const approveProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { error } = await context.supabase
@@ -74,7 +74,7 @@ export const approveProduct = createServerFn({ method: "POST" })
 
 export const rejectProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; reason: string }) =>
+  .validator((d: { id: string; reason: string }) =>
     z.object({ id: z.string().uuid(), reason: z.string().trim().min(3).max(500) }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -132,7 +132,7 @@ export async function logAdminAction(
 
 export const listAdminLogs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { action?: string } | undefined) => d ?? {})
+  .validator((d: { action?: string } | undefined) => d ?? {})
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     let q = (context.supabase as any)
@@ -149,7 +149,7 @@ export const listAdminLogs = createServerFn({ method: "GET" })
 // ---------------- Users ----------------
 export const listUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { search?: string } | undefined) => d ?? {})
+  .validator((d: { search?: string } | undefined) => d ?? {})
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -205,7 +205,7 @@ export const listUsers = createServerFn({ method: "GET" })
 
 export const toggleUserBan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; banned: boolean; reason?: string }) =>
+  .validator((d: { id: string; banned: boolean; reason?: string }) =>
     z
       .object({
         id: z.string().uuid(),
@@ -349,7 +349,7 @@ function toCsv(rows: Record<string, unknown>[]) {
 
 export const exportCsv = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { kind: "pedidos" | "produtores" | "produtos" }) =>
+  .validator((d: { kind: "pedidos" | "produtores" | "produtos" }) =>
     z.object({ kind: z.enum(["pedidos", "produtores", "produtos"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {

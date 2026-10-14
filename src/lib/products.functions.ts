@@ -136,7 +136,7 @@ export const getMyProductMetrics = createServerFn({ method: "GET" })
 /** Duplica um produto do próprio produtor como rascunho. */
 export const duplicateProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("products")
@@ -179,7 +179,7 @@ export const duplicateProduct = createServerFn({ method: "POST" })
 
 export const getMyProduct = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("products")
@@ -194,7 +194,7 @@ export const getMyProduct = createServerFn({ method: "GET" })
 
 export const createProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => productSchema.parse(d))
+  .validator((d: unknown) => productSchema.parse(d))
   .handler(async ({ data, context }) => {
     await context.supabase
       .from("user_roles")
@@ -233,7 +233,7 @@ export const createProduct = createServerFn({ method: "POST" })
 
 export const updateProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ id: z.string().uuid(), patch: productSchema.partial() }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -276,7 +276,7 @@ export const updateProduct = createServerFn({ method: "POST" })
 
 export const deleteProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("products")
@@ -290,7 +290,7 @@ export const deleteProduct = createServerFn({ method: "POST" })
 /** Publica o produto após validação automática de conteúdo. */
 export const submitProductForApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: current, error: gErr } = await context.supabase
       .from("products")

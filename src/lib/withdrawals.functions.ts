@@ -35,7 +35,7 @@ const bankSchema = z.object({
 
 export const upsertBankAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) => bankSchema.parse(d))
+  .validator((d: any) => bankSchema.parse(d))
   .handler(async ({ data, context }) => {
     const payload = { ...data, producer_id: context.userId };
     if (payload.is_default) {
@@ -66,7 +66,7 @@ export const upsertBankAccount = createServerFn({ method: "POST" })
 
 export const deleteBankAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("bank_accounts")
@@ -80,7 +80,7 @@ export const deleteBankAccount = createServerFn({ method: "POST" })
 // ---------------- Withdrawals ----------------
 export const requestWithdrawal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) =>
+  .validator((d: any) =>
     z
       .object({
         gross_cents: z.number().int().min(MIN_WITHDRAWAL_CENTS),
@@ -118,7 +118,7 @@ export const listMyWithdrawals = createServerFn({ method: "GET" })
 // ---------------- Admin ----------------
 export const listAllWithdrawals = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { status?: string } | undefined) => d ?? {})
+  .validator((d: { status?: string } | undefined) => d ?? {})
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     let q = (context.supabase as any)
@@ -136,7 +136,7 @@ export const listAllWithdrawals = createServerFn({ method: "GET" })
 
 export const updateWithdrawalStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) =>
+  .validator((d: any) =>
     z
       .object({
         id: z.string().uuid(),

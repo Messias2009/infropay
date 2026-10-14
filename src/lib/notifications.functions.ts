@@ -27,7 +27,7 @@ export const countUnread = createServerFn({ method: "GET" })
 
 export const markNotificationRead = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: any) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await (context.supabase as any)
       .from("notifications")
@@ -50,7 +50,7 @@ export const markAllNotificationsRead = createServerFn({ method: "POST" })
 
 export const deleteNotification = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: any) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await (context.supabase as any)
       .from("notifications")

@@ -27,7 +27,7 @@ export const listAffiliateOffers = createServerFn({ method: "GET" }).handler(asy
 
 /** Regista um clique num link de afiliado (idempotência é do lado do cliente). */
 export const registerAffiliateClick = createServerFn({ method: "POST" })
-  .inputValidator((d: { code: string }) =>
+  .validator((d: { code: string }) =>
     z.object({ code: z.string().trim().min(4).max(40) }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -45,7 +45,7 @@ function randomCode() {
 /** Gera (ou devolve) o link de afiliado do utilizador para um produto. */
 export const createAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { product_id: string }) =>
+  .validator((d: { product_id: string }) =>
     z.object({ product_id: z.string().uuid() }).parse(d),
   )
   .handler(async ({ data, context }) => {
