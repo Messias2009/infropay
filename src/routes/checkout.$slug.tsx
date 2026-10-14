@@ -223,6 +223,13 @@ function Checkout() {
       {/* CONTEÚDO PRINCIPAL: COLUNA ÚNICA CENTRALIZADA, SEM ROLAGEM HORIZONTAL */}
       <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6 w-full">
         <div className="w-full max-w-xl mx-auto overflow-x-hidden">
+          {p.checkout_banner_url && (
+            <img
+              src={p.checkout_banner_url}
+              alt={p.checkout_brand_name || p.title}
+              className="w-full aspect-[3/1] object-cover rounded-2xl border border-border mb-6"
+            />
+          )}
           {/* TOPO CENTRALIZADO: IMAGEM DO PRODUTO, NOME, SELO DE VERIFICAÇÃO E PREÇO */}
           <div className="flex flex-col items-center text-center mb-8">
             {p.cover_url && (
