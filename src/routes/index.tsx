@@ -176,11 +176,12 @@ function Home() {
             </div>
             <img
               src={dashboardImg}
-              alt="Prévia do painel financeiro InfroPay"
+              alt="Painel real do produtor InfroPay com receita e saldo em Kwanza"
               width={1600}
               height={1024}
               loading="lazy"
-              className="w-full h-auto rounded-xl object-cover animate-floaty"
+              referrerPolicy="no-referrer"
+              className="w-full h-auto rounded-xl object-cover animate-floaty shadow-2xl"
               style={{ animationDuration: "6s" }}
             />
           </div>
