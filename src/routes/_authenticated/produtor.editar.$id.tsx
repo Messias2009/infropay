@@ -28,6 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { MediaUpload } from "@/components/MediaUpload";
+import { CheckoutBrandFields } from "@/components/products/CheckoutBrandFields";
 import {
   DeliveryFields,
   emptyDelivery,
@@ -110,6 +111,10 @@ function EditarProduto() {
         affiliate_commission_percent: Number((product as any).affiliate_commission_percent ?? 30),
         status: product.status,
         store_visible: (product as any).store_visible !== false,
+        checkout_brand_name: (product as any).checkout_brand_name ?? "",
+        checkout_logo_url: (product as any).checkout_logo_url ?? "",
+        checkout_banner_url: (product as any).checkout_banner_url ?? "",
+        checkout_theme: (product as any).checkout_theme ?? "azul",
       });
       setDelivery(deliveryFromRow(product));
     }
@@ -143,6 +148,10 @@ function EditarProduto() {
             promo_price_cents: form.promo_price ? Math.round(Number(form.promo_price) * 100) : null,
             currency: form.currency.toUpperCase(),
             store_visible: Boolean(form.store_visible),
+            checkout_brand_name: form.checkout_brand_name || null,
+            checkout_logo_url: form.checkout_logo_url || null,
+            checkout_banner_url: form.checkout_banner_url || null,
+            checkout_theme: form.checkout_theme || "azul",
             tags: form.tags
               ? form.tags
                   .split(",")
@@ -455,6 +464,20 @@ function EditarProduto() {
               onCheckedChange={(v) => set("store_visible", v)}
             />
           </div>
+        </Section>
+
+        <Section title="Checkout personalizado">
+          <CheckoutBrandFields
+            productKey={id}
+            value={{
+              store_visible: !!form.store_visible,
+              checkout_brand_name: form.checkout_brand_name ?? "",
+              checkout_logo_url: form.checkout_logo_url ?? "",
+              checkout_banner_url: form.checkout_banner_url ?? "",
+              checkout_theme: form.checkout_theme ?? "azul",
+            }}
+            onChange={(v) => setForm((f: any) => ({ ...f, ...v }))}
+          />
         </Section>
 
         <div className="flex gap-3 justify-end pt-4 border-t border-border">

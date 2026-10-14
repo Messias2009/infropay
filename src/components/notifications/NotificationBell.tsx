@@ -78,6 +78,13 @@ export function NotificationBell() {
           (payload) => {
             const n = payload.new as N;
             toast(n.title, { description: n.body ?? undefined });
+            if (typeof Notification !== "undefined") {
+              if (Notification.permission === "granted") {
+                try { new Notification(n.title, { body: n.body ?? undefined, icon: "/favicon.ico" }); } catch {}
+              } else if (Notification.permission === "default") {
+                Notification.requestPermission();
+              }
+            }
             qc.invalidateQueries({ queryKey: ["notifications"] });
           },
         )

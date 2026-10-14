@@ -205,13 +205,17 @@ function Checkout() {
         <div className="mx-auto flex items-center justify-center px-4">
           <div className="flex items-center gap-2">
             <img
-              src={logoMark}
-              alt="InfroPay"
+              src={p.checkout_logo_url || logoMark}
+              alt={p.checkout_brand_name || "InfroPay"}
               className="h-8 w-8 rounded-lg object-contain shadow-xs"
             />
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              Infro<span className="text-gradient-gold">Pay</span>
-            </span>
+            {p.checkout_brand_name ? (
+              <span className="text-xl font-bold tracking-tight text-foreground">{p.checkout_brand_name}</span>
+            ) : (
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                Infro<span className="text-gradient-gold">Pay</span>
+              </span>
+            )}
           </div>
         </div>
       </header>
@@ -219,6 +223,13 @@ function Checkout() {
       {/* CONTEÚDO PRINCIPAL: COLUNA ÚNICA CENTRALIZADA, SEM ROLAGEM HORIZONTAL */}
       <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6 w-full">
         <div className="w-full max-w-xl mx-auto overflow-x-hidden">
+          {p.checkout_banner_url && (
+            <img
+              src={p.checkout_banner_url}
+              alt={p.checkout_brand_name || p.title}
+              className="w-full aspect-[3/1] object-cover rounded-2xl border border-border mb-6"
+            />
+          )}
           {/* TOPO CENTRALIZADO: IMAGEM DO PRODUTO, NOME, SELO DE VERIFICAÇÃO E PREÇO */}
           <div className="flex flex-col items-center text-center mb-8">
             {p.cover_url && (

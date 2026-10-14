@@ -203,6 +203,22 @@ function AuthPage() {
                   className="pl-9"
                 />
               </div>
+              {mode !== "signup" && (
+                <button
+                  type="button"
+                  className="mt-2 text-xs text-primary hover:underline"
+                  onClick={async () => {
+                    if (!email) return toast.error("Escreva o seu email primeiro.");
+                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                      redirectTo: `${window.location.origin}/reset-password`,
+                    });
+                    if (error) toast.error(error.message);
+                    else toast.success("Enviámos um link de recuperação para o seu email.");
+                  }}
+                >
+                  Esqueceu a palavra-passe?
+                </button>
+              )}
             </div>
             <Button
               type="submit"
