@@ -205,13 +205,17 @@ function Checkout() {
         <div className="mx-auto flex items-center justify-center px-4">
           <div className="flex items-center gap-2">
             <img
-              src={logoMark}
-              alt="InfroPay"
+              src={p.checkout_logo_url || logoMark}
+              alt={p.checkout_brand_name || "InfroPay"}
               className="h-8 w-8 rounded-lg object-contain shadow-xs"
             />
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              Infro<span className="text-gradient-gold">Pay</span>
-            </span>
+            {p.checkout_brand_name ? (
+              <span className="text-xl font-bold tracking-tight text-foreground">{p.checkout_brand_name}</span>
+            ) : (
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                Infro<span className="text-gradient-gold">Pay</span>
+              </span>
+            )}
           </div>
         </div>
       </header>
