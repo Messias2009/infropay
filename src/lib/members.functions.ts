@@ -24,7 +24,7 @@ const lessonSchema = z.object({
 
 export const getMyCourseTree = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ product_id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ product_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: product } = await (context.supabase as any)
       .from("products")
@@ -59,7 +59,7 @@ export const getMyCourseTree = createServerFn({ method: "GET" })
 
 export const createModule = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => moduleSchema.parse(d))
+  .validator((d: unknown) => moduleSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("course_modules")
@@ -70,7 +70,7 @@ export const createModule = createServerFn({ method: "POST" })
 
 export const deleteModule = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("course_modules")
@@ -83,7 +83,7 @@ export const deleteModule = createServerFn({ method: "POST" })
 
 export const createLesson = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => lessonSchema.parse(d))
+  .validator((d: unknown) => lessonSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any).from("course_lessons").insert({
       ...data,
@@ -97,7 +97,7 @@ export const createLesson = createServerFn({ method: "POST" })
 
 export const deleteLesson = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("course_lessons")
@@ -150,7 +150,7 @@ export const listMyEnrollments = createServerFn({ method: "GET" })
 
 export const getMyCourse = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
+  .validator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: product } = await (context.supabase as any)
       .from("products")
@@ -209,7 +209,7 @@ export const getMyCourse = createServerFn({ method: "GET" })
 
 export const setLessonProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         lesson_id: z.string().uuid(),

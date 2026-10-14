@@ -29,7 +29,7 @@ export const listCategories = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const listPublishedProducts = createServerFn({ method: "GET" })
-  .inputValidator(
+  .validator(
     (d: { category?: string; limit?: number; sort?: "popular" | "recent" } | undefined) => d ?? {},
   )
   .handler(async ({ data }) => {
@@ -58,7 +58,7 @@ export const listPublishedProducts = createServerFn({ method: "GET" })
   });
 
 export const getProductBySlug = createServerFn({ method: "GET" })
-  .inputValidator((d: { slug: string }) => d)
+  .validator((d: { slug: string }) => d)
   .handler(async ({ data }) => {
     const supabase = publicClient();
     const { data: row, error } = await supabase

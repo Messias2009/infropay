@@ -42,7 +42,7 @@ export const listMyOffers = createServerFn({ method: "GET" })
 
 export const createOffer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => offerSchema.parse(d))
+  .validator((d: unknown) => offerSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("product_offers")
@@ -53,7 +53,7 @@ export const createOffer = createServerFn({ method: "POST" })
 
 export const toggleOffer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), active: z.boolean() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid(), active: z.boolean() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("product_offers")
@@ -66,7 +66,7 @@ export const toggleOffer = createServerFn({ method: "POST" })
 
 export const deleteOffer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("product_offers")
@@ -91,7 +91,7 @@ export const listMyCoupons = createServerFn({ method: "GET" })
 
 export const createCoupon = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => couponSchema.parse(d))
+  .validator((d: unknown) => couponSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any).from("coupons").insert({
       ...data,
@@ -106,7 +106,7 @@ export const createCoupon = createServerFn({ method: "POST" })
 
 export const toggleCoupon = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), active: z.boolean() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid(), active: z.boolean() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("coupons")
@@ -119,7 +119,7 @@ export const toggleCoupon = createServerFn({ method: "POST" })
 
 export const deleteCoupon = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await (context.supabase as any)
       .from("coupons")
@@ -132,7 +132,7 @@ export const deleteCoupon = createServerFn({ method: "POST" })
 
 /** Public: order bumps / upsells shown on a checkout page. */
 export const getCheckoutOffers = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => z.object({ product_id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ product_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const { createServerPublicClient } = await import("./public-client.server");
     const supabase = createServerPublicClient();
@@ -149,7 +149,7 @@ export const getCheckoutOffers = createServerFn({ method: "GET" })
 
 /** Public: validates a coupon code for a product and returns the discount in cents. */
 export const validateCoupon = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         code: z.string().trim().min(3).max(32),
