@@ -17,6 +17,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LegendsRouteImport } from './routes/legends'
 import { Route as LojaRouteImport } from './routes/loja'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedAdmRouteImport } from './routes/_authenticated/adm'
@@ -86,6 +87,11 @@ const LojaRoute = LojaRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SobreRoute = SobreRouteImport.update({
@@ -269,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/legends': typeof LegendsRoute
   '/loja': typeof LojaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/adm': typeof AuthenticatedAdmRouteWithChildren
@@ -309,6 +316,7 @@ export interface FileRoutesByTo {
   '/legends': typeof LegendsRoute
   '/loja': typeof LojaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/afiliados': typeof AuthenticatedAfiliadosRoute
@@ -349,6 +357,7 @@ export interface FileRoutesById {
   '/legends': typeof LegendsRoute
   '/loja': typeof LojaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/_authenticated/adm': typeof AuthenticatedAdmRouteWithChildren
@@ -391,6 +400,7 @@ export interface FileRouteTypes {
     | '/legends'
     | '/loja'
     | '/privacidade'
+    | '/reset-password'
     | '/sobre'
     | '/termos'
     | '/adm'
@@ -431,6 +441,7 @@ export interface FileRouteTypes {
     | '/legends'
     | '/loja'
     | '/privacidade'
+    | '/reset-password'
     | '/sobre'
     | '/termos'
     | '/afiliados'
@@ -470,6 +481,7 @@ export interface FileRouteTypes {
     | '/legends'
     | '/loja'
     | '/privacidade'
+    | '/reset-password'
     | '/sobre'
     | '/termos'
     | '/_authenticated/adm'
@@ -512,6 +524,7 @@ export interface RootRouteChildren {
   LegendsRoute: typeof LegendsRoute
   LojaRoute: typeof LojaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   CheckoutSlugRoute: typeof CheckoutSlugRoute
@@ -578,6 +591,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sobre': {
@@ -884,6 +904,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegendsRoute: LegendsRoute,
   LojaRoute: LojaRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   CheckoutSlugRoute: CheckoutSlugRoute,
