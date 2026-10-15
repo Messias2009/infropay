@@ -1,106 +1,88 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
-
-function pub() {
-  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
-  });
-}
+import { createServerPublicClient } from "@/lib/public-client.server";
+import placaPrata from "@/assets/placa-prata.jpg";
+import placaOuro from "@/assets/placa-ouro.jpg";
+import placaPlatina from "@/assets/placa-platina.jpg";
+import placaDiamante from "@/assets/placa-diamante.jpg";
+import placaBlack from "@/assets/placa-black.jpg";
 
 export type Level = {
   key: string;
   name: string;
   min_cents: number;
+  goal_label: string;
   color: string;
   gradient: string;
+  image: string;
 };
 
 export const LEVELS: Level[] = [
   {
-    key: "bronze",
-    name: "Bronze",
-    min_cents: 0,
-    color: "#B87333",
-    gradient: "linear-gradient(135deg,#8B4513,#B87333)",
-  },
-  {
     key: "prata",
-    name: "Prata",
+    name: "Placa de Prata",
     min_cents: 100_000_00,
+    goal_label: "100.000 Kz",
     color: "#C0C0C0",
     gradient: "linear-gradient(135deg,#7C7C7C,#E8E8E8)",
+    image: placaPrata,
   },
   {
     key: "ouro",
-    name: "Ouro",
+    name: "Placa de Ouro",
     min_cents: 500_000_00,
+    goal_label: "500.000 Kz",
     color: "#F9A825",
     gradient: "linear-gradient(135deg,#B8860B,#FFD700)",
+    image: placaOuro,
   },
   {
     key: "platina",
-    name: "Platina",
+    name: "Placa de Platina",
     min_cents: 1_000_000_00,
+    goal_label: "1.000.000 Kz",
     color: "#E5E4E2",
     gradient: "linear-gradient(135deg,#8FA6B3,#E5E4E2)",
+    image: placaPlatina,
   },
   {
     key: "diamante",
-    name: "Diamante",
+    name: "Placa de Diamante",
     min_cents: 5_000_000_00,
-    color: "#B9F2FF",
-    gradient: "linear-gradient(135deg,#4FC3F7,#B9F2FF)",
+    goal_label: "5.000.000 Kz",
+    color: "#4FC3F7",
+    gradient: "linear-gradient(135deg,#00838F,#4DD0E1)",
+    image: placaDiamante,
   },
   {
-    key: "mestre",
-    name: "Mestre",
+    key: "black",
+    name: "Placa Black Elite",
     min_cents: 10_000_000_00,
-    color: "#9C27B0",
-    gradient: "linear-gradient(135deg,#6A1B9A,#CE93D8)",
-  },
-  {
-    key: "elite",
-    name: "Elite",
-    min_cents: 25_000_000_00,
-    color: "#F44336",
-    gradient: "linear-gradient(135deg,#B71C1C,#FF7043)",
-  },
-  {
-    key: "lenda",
-    name: "Lenda",
-    min_cents: 50_000_000_00,
-    color: "#00BCD4",
-    gradient: "linear-gradient(135deg,#006064,#4DD0E1)",
-  },
-  {
-    key: "imortal",
-    name: "Imortal",
-    min_cents: 100_000_000_00,
-    color: "#FFEB3B",
-    gradient: "linear-gradient(135deg,#F57F17,#FFF176)",
-  },
-  {
-    key: "infinito",
-    name: "Infinito",
-    min_cents: 250_000_000_00,
-    color: "#7C4DFF",
-    gradient: "linear-gradient(135deg,#311B92,#B388FF)",
+    goal_label: "10.000.000 Kz",
+    color: "#D4AF37",
+    gradient: "linear-gradient(135deg,#1A1A1A,#D4AF37)",
+    image: placaBlack,
   },
 ];
 
 export function levelFor(total: number): Level {
   let current = LEVELS[0];
-  for (const l of LEVELS) if (total >= l.min_cents) current = l;
+  for (const l of LEVELS) {
+    if (total >= l.min_cents) current = l;
+  }
   return current;
 }
 
 export const listLegends = createServerFn({ method: "GET" }).handler(async () => {
-  const supabase = pub();
-  const { data: sales } = await supabase
+  const supabase = createServerPublicClient();
+  const { data: sales, error: salesError } = await supabase
     .from("sales")
     .select("producer_id, gross_cents")
     .eq("status", "pago");
+
+  if (salesError) {
+    console.error("Error fetching sales for legends:", salesError);
+    return [];
+  }
 
   const agg = new Map<string, { revenue: number; count: number }>();
   for (const s of sales ?? []) {
@@ -110,26 +92,34 @@ export const listLegends = createServerFn({ method: "GET" }).handler(async () =>
     agg.set(s.producer_id, cur);
   }
 
-  const ids = [...agg.keys()];
-  if (ids.length === 0) return [];
+  const producerIds = Array.from(agg.keys());
+  if (producerIds.length === 0) return [];
 
-  const { data: profiles } = await supabase
+  const { data: profiles, error: profError } = await supabase
     .from("profiles")
-    .select("id, full_name, username, avatar_url")
-    .in("id", ids);
+    .select("id, full_name, username, avatar_url, bio")
+    .in("id", producerIds);
 
-  const rows = (profiles ?? []).map((p) => {
-    const stats = agg.get(p.id)!;
-    const lvl = levelFor(stats.revenue);
+  if (profError) {
+    console.error("Error fetching profiles for legends:", profError);
+    return [];
+  }
+
+  const list = (profiles ?? []).map((p) => {
+    const a = agg.get(p.id) ?? { revenue: 0, count: 0 };
+    const lvl = levelFor(a.revenue);
     return {
       id: p.id,
-      name: p.full_name ?? p.username ?? "Produtor",
+      full_name: p.full_name || p.username || "Produtor InfroPay",
+      username: p.username,
       avatar_url: p.avatar_url,
-      revenue_cents: stats.revenue,
-      sales_count: stats.count,
+      bio: p.bio,
+      total_revenue_cents: a.revenue,
+      sales_count: a.count,
       level: lvl,
     };
   });
-  rows.sort((a, b) => b.revenue_cents - a.revenue_cents);
-  return rows.slice(0, 100);
+
+  list.sort((a, b) => b.total_revenue_cents - a.total_revenue_cents);
+  return list.slice(0, 100);
 });

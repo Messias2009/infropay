@@ -12,6 +12,20 @@ export default defineConfig({
       host: "0.0.0.0",
       port: 3000,
     },
+    define: {
+      "process.env.SUPABASE_URL": JSON.stringify(
+        process.env.SUPABASE_URL ||
+          process.env.VITE_SUPABASE_URL ||
+          "https://dbiyvmjtxgholatsonbo.supabase.co",
+      ),
+      "process.env.SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+        process.env.SUPABASE_PUBLISHABLE_KEY ||
+          process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+          process.env.SUPABASE_ANON_KEY ||
+          process.env.VITE_SUPABASE_ANON_KEY ||
+          "sb_publishable_NFT-Qg1DBlJ3LBlo9FDM4A_SvxcA8UU",
+      ),
+    },
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

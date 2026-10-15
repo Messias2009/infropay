@@ -44,89 +44,82 @@ function Page() {
         </div>
       </div>
 
-      {/* MARCO ESPECIAL: PULSEIRA PRIMEIRA VENDA */}
-      <div className="rounded-3xl border border-gold/40 bg-gradient-to-br from-card via-card/90 to-gold/10 p-6 sm:p-8 shadow-card overflow-hidden">
-        <div className="grid md:grid-cols-[minmax(0,1fr)_auto] gap-6 items-center">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-gold/15 text-gold border border-gold/30">
-              <Award className="h-3.5 w-3.5" />
-              Marco Inicial de Entrada
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Pulseira Oficial 1ª Venda
+      {/* CARD SIMPLES: PULSEIRA PRIMEIRA VENDA */}
+      <div className="rounded-2xl border border-gold/40 bg-card/90 p-5 shadow-card">
+        <div className="flex flex-col sm:flex-row items-center gap-5">
+          <div className="shrink-0 w-36 sm:w-44 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
+            <img
+              src={wristbandImg}
+              alt="Pulseira Primeira Venda"
+              width={400}
+              height={300}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="space-y-1.5 text-center sm:text-left flex-1">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+              Pulseira da Primeira Venda
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
               {data && data.sales_count > 0 ? (
                 <span className="text-emerald-400 font-medium">
-                  Parabéns! Já realizou {data.sales_count} venda(s) na plataforma. Entre em contacto
-                  com o suporte no WhatsApp ou Instagram para confirmar os seus dados de envio e
-                  receber a sua pulseira em casa.
+                  Parabéns! Já realizou {data.sales_count} venda(s) na plataforma. Fale com o nosso
+                  suporte para receber a sua pulseira de primeira venda.
                 </span>
               ) : (
                 <span>
-                  Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay. Uma
-                  peça exclusiva em silicone fosco de alta durabilidade com detalhes dourados em
-                  relevo para marcar o seu início.
+                  Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
                 </span>
               )}
             </p>
           </div>
-
-          <div className="shrink-0 flex justify-center">
-            <div className="w-48 sm:w-56 aspect-[4/3] rounded-2xl overflow-hidden border border-gold/40 bg-card/80 shadow-2xl">
-              <img
-                src={wristbandImg}
-                alt="Pulseira Primeira Venda"
-                width={600}
-                height={450}
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div>
+        <div className="text-xs font-semibold uppercase tracking-widest text-gold mb-1">
+          Metas de Faturamento
+        </div>
+        <h2 className="font-display text-2xl font-bold">5 Níveis de Placas Oficiais</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Placas físicas exclusivas de reconhecimento entregues diretamente aos produtores InfroPay.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {LEVELS.map((l) => {
           const unlocked = revenue >= l.min_cents;
           return (
             <div
               key={l.key}
-              className={`relative rounded-2xl border p-5 overflow-hidden ${unlocked ? "badge-shine" : "opacity-45"}`}
-              style={{ borderColor: l.color + "50" }}
+              className={`group relative rounded-2xl border p-4 overflow-hidden transition-all bg-card/60 ${unlocked ? "badge-shine shadow-lg" : "opacity-60"}`}
+              style={{ borderColor: l.color + (unlocked ? "80" : "30") }}
             >
-              <div
-                className={`absolute inset-0 opacity-25 ${unlocked ? "animate-bg-pan" : ""}`}
-                style={{ background: l.gradient, backgroundSize: "200% 200%" }}
-              />
-              <div className="relative">
-                <div
-                  className={`h-14 w-14 rounded-2xl grid place-items-center mb-3 ${unlocked ? "animate-floaty" : ""}`}
-                  style={{
-                    background: l.gradient,
-                    boxShadow: unlocked ? `0 8px 30px -8px ${l.color}` : "none",
-                  }}
-                >
-                  {unlocked ? (
-                    <Trophy className="h-7 w-7 text-white drop-shadow" />
-                  ) : (
-                    <Lock className="h-6 w-6 text-white/80" />
-                  )}
-                </div>
-                <div className="font-display text-lg font-bold" style={{ color: l.color }}>
+              <div className="w-full aspect-square rounded-xl overflow-hidden border border-border/40 bg-black/40 mb-3 group-hover:scale-105 transition-transform duration-300">
+                <img
+                  src={l.image}
+                  alt={l.name}
+                  width={400}
+                  height={400}
+                  loading="lazy"
+                  className={`w-full h-full object-cover ${unlocked ? "" : "grayscale-[40%]"}`}
+                />
+              </div>
+              <div className="relative text-center">
+                <div className="font-display text-sm font-bold" style={{ color: l.color }}>
                   {l.name}
                 </div>
-                <div className="text-[11px] text-muted-foreground mt-1">
-                  Meta: {kz(l.min_cents)}
+                <div className="text-[11px] text-muted-foreground mt-0.5 font-medium">
+                  Meta: {l.goal_label}
                 </div>
                 <div
-                  className="text-[10px] mt-2 font-semibold"
+                  className="text-[10px] mt-2 font-semibold uppercase tracking-wider"
                   style={{
                     color: unlocked ? "hsl(var(--success))" : "hsl(var(--muted-foreground))",
                   }}
                 >
-                  {unlocked ? "DESBLOQUEADO" : "Bloqueado"}
+                  {unlocked ? "Conquistado" : "Bloqueado"}
                 </div>
               </div>
             </div>

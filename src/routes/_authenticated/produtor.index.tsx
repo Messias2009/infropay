@@ -68,53 +68,32 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* BANNER OFICIAL: CAMPANHA PULSEIRA DE PRIMEIRA VENDA */}
-      <div className="relative overflow-hidden rounded-3xl border border-gold/40 bg-gradient-to-br from-card via-card/90 to-gold/5 p-6 sm:p-8 shadow-card">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-        <div className="grid md:grid-cols-[minmax(0,1fr)_auto] gap-6 items-center relative z-10">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-gold/15 text-gold border border-gold/30">
-              <Award className="h-3.5 w-3.5" />
-              Marco Oficial InfroPay
-            </div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
-              Faça a sua 1ª venda e receba a pulseira de primeira venda
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl leading-relaxed">
-              O seu primeiro cliente é o passo mais importante. Todo o produtor que realiza a sua
-              primeira venda aprovada na InfroPay tem direito à pulseira oficial de borracha com a
-              marca da InfroPay para comemorar esta conquista.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center gap-3">
-              <Link to="/produtor/produtos">
-                <Button className="gradient-brand text-primary-foreground font-semibold shadow-glow">
-                  Personalizar Checkout do Produto
-                </Button>
-              </Link>
-              <Link to="/produtor/conquistas">
-                <Button variant="outline" className="border-gold/40 text-gold hover:bg-gold/10">
-                  <Sparkles className="h-4 w-4 mr-1.5" />
-                  Ver Todas as Conquistas
-                </Button>
-              </Link>
-            </div>
+      {/* CARD SIMPLES: PULSEIRA DE PRIMEIRA VENDA */}
+      <div className="rounded-2xl border border-gold/40 bg-card/90 p-4 sm:p-5 shadow-card">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+          <div className="shrink-0 w-32 sm:w-40 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
+            <img
+              src={wristbandImg}
+              alt="Pulseira Primeira Venda InfroPay"
+              width={320}
+              height={240}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
           </div>
-
-          <div className="shrink-0 flex justify-center md:justify-end">
-            <div className="relative group">
-              <div className="w-48 sm:w-56 aspect-[4/3] rounded-2xl overflow-hidden border border-gold/40 bg-card/80 shadow-2xl transition duration-300 group-hover:scale-105">
-                <img
-                  src={wristbandImg}
-                  alt="Pulseira Primeira Venda InfroPay"
-                  width={600}
-                  height={450}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="mt-2 text-center text-[11px] font-medium text-gold">
-                Pulseira Oficial 1ª Venda
-              </div>
+          <div className="space-y-1 text-center sm:text-left flex-1">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+              Pulseira da Primeira Venda
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-xl">
+              Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+              <Link to="/produtor/conquistas">
+                <Button size="sm" variant="outline" className="border-gold/40 text-gold hover:bg-gold/10 text-xs">
+                  Ver Conquistas
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
