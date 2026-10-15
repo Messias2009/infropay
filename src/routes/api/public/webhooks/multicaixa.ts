@@ -12,6 +12,9 @@ export const Route = createFileRoute("/api/public/webhooks/multicaixa")({
     handlers: {
       POST: async ({ request }) => {
         const secret = process.env.MULTICAIXA_WEBHOOK_SECRET;
+        if (!secret) {
+          return Response.json({ ok: false, reason: "payment_adapter_not_ready" }, { status: 503 });
+        }
         const raw = await request.text();
 
         if (secret) {
@@ -24,49 +27,9 @@ export const Route = createFileRoute("/api/public/webhooks/multicaixa")({
           }
         }
 
-        let event: any;
-        try {
-          event = JSON.parse(raw);
-        } catch {
-          return new Response("invalid json", { status: 400 });
-        }
-
-        const eventId = String(event.event_id ?? event.reference ?? crypto.randomUUID());
-        const reference = String(event.reference ?? "");
-        const status = String(event.status ?? "").toLowerCase();
-
-        if (!reference) return new Response("missing reference", { status: 400 });
-
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-        const { error: dupErr } = await supabaseAdmin
-          .from("webhook_events" as any)
-          .insert({ provider: "multicaixa", event_id: eventId, payload: event });
-        if (dupErr && !String(dupErr.message).includes("duplicate")) {
-          return new Response("db error", { status: 500 });
-        }
-        if (dupErr) return new Response("ok (duplicate)", { status: 200 });
-
-        if (status === "paid" || status === "success") {
-          await supabaseAdmin
-            .from("sales")
-            .update({
-              status: "pago",
-              paid_at: new Date().toISOString(),
-              provider: "multicaixa",
-            })
-            .eq("access_token", reference);
-        } else if (status === "failed" || status === "cancelled") {
-          await supabaseAdmin
-            .from("sales")
-            .update({
-              status: "cancelado",
-              provider: "multicaixa",
-            })
-            .eq("access_token", reference);
-        }
-
-        return new Response("ok", { status: 200 });
+        // The actual provider protocol is not configured. Do not acknowledge
+        // or mutate orders until amount checks and atomic accounting exist.
+        return Response.json({ ok: false, reason: "payment_adapter_not_ready" }, { status: 503 });
       },
     },
   },

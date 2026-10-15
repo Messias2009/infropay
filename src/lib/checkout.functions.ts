@@ -95,5 +95,10 @@ export const getOrderByToken = createServerFn({ method: "GET" })
       .eq("access_token", data.token)
       .maybeSingle();
     if (error) throw error;
+    if (!sale) return null;
+    // Delivery authorization is enforced server-side, not just hidden in JSX.
+    if (sale.status !== "pago" && sale.product) {
+      return { ...sale, product: { ...sale.product, file_url: null, external_url: null } };
+    }
     return sale;
   });
