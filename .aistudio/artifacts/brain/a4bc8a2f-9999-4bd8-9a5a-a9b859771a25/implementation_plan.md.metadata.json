@@ -1,6 +1,6 @@
 {
-  "summary": "Plano detalhado para otimização da plataforma InfroPay:\n- Correção de quebras de linha nos valores de faturamento com whitespace-nowrap e separadores insecáveis\n- Substituição da imagem com letras na Hero por gradiente escuro premium de alta legibilidade\n- Destaque em banner para as taxas de 2% por venda, 8% por saque e saque em 1 hora\n- Remoção da exibição direta de produtos e categorias da página inicial (acessíveis via Ver Loja)\n- Controle de visibilidade de produtos para os vendedores (loja pública vs oculto para venda direta)\n- Checkout focado e blindado (sem botões de volta a outras páginas, sem navegação institucional, com selos de segurança, direitos reservados, termos e privacidade)\n- Suporte a Progressive Web App (PWA) com manifest, service worker e botão de instalação no topo",
-  "updatedAt": "2026-10-13T22:41:03.312613473Z",
+  "summary": "Plano de implementação detalhado para: (1) Página dedicada de Personalização de Checkout do Produtor com branding customizado e preview em tempo real; (2) Correção e ativação completa do Funil de Vendas com Order Bumps e Cupões no checkout público; (3) Campanha visual e banner da 'Pulseira Primeira Venda InfroPay' no painel e na homepage; (4) Modal unificado de Suporte Oficial com canais directos de WhatsApp e Instagram (@infropay.ao).",
+  "updatedAt": "2026-10-15T07:57:38.603071692Z",
   "requestFeedback": true,
   "userFacing": true
 }

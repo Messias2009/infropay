@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Headphones } from "lucide-react";
 import logoMark from "@/assets/infropay-mark.png";
+import { SupportModal } from "@/components/site/SupportModal";
 
 export function Footer() {
+  const [supportOpen, setSupportOpen] = useState(false);
+
   return (
     <footer className="mt-32 border-t border-border/60 bg-card/30">
+      <SupportModal open={supportOpen} onOpenChange={setSupportOpen} />
       <div className="border-b border-border bg-primary/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] items-center">
           <div className="flex min-w-0 items-center gap-4">
@@ -12,16 +17,17 @@ export function Footer() {
             <div className="min-w-0">
               <h2 className="text-lg font-semibold">Estamos ao seu lado</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Suporte, pagamentos e a sua próxima venda.
+                Suporte humanizado em português, pagamentos e a sua próxima venda.
               </p>
             </div>
           </div>
-          <Link
-            to="/contactos"
-            className="inline-flex items-center gap-2 text-sm text-primary-glow font-medium hover:underline"
+          <button
+            type="button"
+            onClick={() => setSupportOpen(true)}
+            className="inline-flex items-center gap-2 text-sm text-primary-glow font-medium hover:underline cursor-pointer bg-transparent border-0 p-0"
           >
-            Falar com a equipa <ArrowRight className="h-4 w-4" />
-          </Link>
+            Falar com a equipa de suporte <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
       </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 grid gap-10 md:grid-cols-4">

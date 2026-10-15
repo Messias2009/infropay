@@ -10,6 +10,10 @@ import {
   CheckCircle2,
   Award,
   Zap,
+  Sparkles,
+  Tag,
+  Check,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { createOrder } from "@/lib/checkout.functions";
+import { getCheckoutOffers, validateCoupon } from "@/lib/funnel.functions";
 import { getRef } from "@/lib/affiliate-ref";
 import { getProductTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
@@ -141,15 +146,71 @@ function Checkout() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Order Bump e Cupões de Desconto
+  const [selectedBumpIds, setSelectedBumpIds] = useState<string[]>([]);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount_cents: number;
+  } | null>(null);
+
+  const { data: offers } = useQuery({
+    queryKey: ["checkout", "offers", p?.id],
+    queryFn: () => getCheckoutOffers({ data: { product_id: p!.id } }),
+    enabled: Boolean(p?.id),
+    staleTime: 60_000,
+  });
+
+  const orderBumps = (offers ?? []).filter((o: any) => o.kind === "order_bump");
+
   if (!p) return null;
 
   const theme = p.checkout_theme || "azul";
 
-  const price =
+  const basePrice =
     p.promo_price_cents && p.promo_price_cents < p.price_cents
       ? p.promo_price_cents
       : p.price_cents;
   const hasPromo = Boolean(p.promo_price_cents && p.promo_price_cents < p.price_cents);
+
+  const bumpsTotal = orderBumps
+    .filter((b: any) => selectedBumpIds.includes(b.id))
+    .reduce((sum: number, b: any) => sum + (b.offer_price_cents || 0), 0);
+
+  const discountCents = appliedCoupon ? appliedCoupon.discount_cents : 0;
+  const finalPrice = Math.max(0, basePrice + bumpsTotal - discountCents);
+
+  async function handleApplyCoupon() {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const res = await validateCoupon({
+        data: {
+          code: couponCode.trim(),
+          product_id: p.id,
+          amount_cents: basePrice + bumpsTotal,
+        },
+      });
+      if (!res.valid) {
+        toast.error(res.reason || "Cupão inválido");
+        setAppliedCoupon(null);
+      } else {
+        setAppliedCoupon({ code: res.code, discount_cents: res.discount_cents });
+        toast.success(`Cupão ${res.code} aplicado com sucesso!`);
+      }
+    } catch (err) {
+      toast.error((err as Error).message || "Erro ao validar cupão");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    toast.info("Cupão removido");
+  }
 
   // Botão estilizado conforme o tema escolhido pelo vendedor
   const actionButtonClass =
@@ -157,7 +218,11 @@ function Checkout() {
       ? "gradient-gold text-gold-foreground font-bold shadow-gold hover:opacity-90"
       : theme === "verde"
         ? "bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg"
-        : "gradient-brand text-primary-foreground font-bold shadow-glow hover:opacity-95";
+        : theme === "roxo"
+          ? "bg-purple-600 hover:bg-purple-500 text-white font-bold shadow-lg"
+          : theme === "preto"
+            ? "bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 font-bold shadow-md"
+            : "gradient-brand text-primary-foreground font-bold shadow-glow hover:opacity-95";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -176,6 +241,8 @@ function Checkout() {
           buyer_phone: phone,
           payment_method: method,
           ref,
+          bump_offer_ids: selectedBumpIds,
+          coupon_code: appliedCoupon?.code || null,
         },
       });
       toast.success("Pedido criado! A aguardar pagamento.");
@@ -195,7 +262,7 @@ function Checkout() {
           type: "InitiateCheckout",
           id: p.id,
           name: p.title,
-          value: price / 100,
+          value: basePrice / 100,
           currency: p.currency,
         }}
       />
@@ -210,7 +277,9 @@ function Checkout() {
               className="h-8 w-8 rounded-lg object-contain shadow-xs"
             />
             {p.checkout_brand_name ? (
-              <span className="text-xl font-bold tracking-tight text-foreground">{p.checkout_brand_name}</span>
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                {p.checkout_brand_name}
+              </span>
             ) : (
               <span className="text-xl font-bold tracking-tight text-foreground">
                 Infro<span className="text-gradient-gold">Pay</span>
@@ -271,12 +340,12 @@ function Checkout() {
                     {fmt(p.price_cents, p.currency)}
                   </span>
                   <div className="text-3xl sm:text-4xl font-extrabold text-gradient-gold font-mono tabular-nums">
-                    {fmt(price, p.currency)}
+                    {fmt(basePrice, p.currency)}
                   </div>
                 </div>
               ) : (
                 <div className="text-3xl sm:text-4xl font-extrabold text-gradient-gold font-mono tabular-nums">
-                  {fmt(price, p.currency)}
+                  {fmt(basePrice, p.currency)}
                 </div>
               )}
               <p className="text-xs text-muted-foreground mt-1">
@@ -345,6 +414,74 @@ function Checkout() {
               </div>
             </div>
 
+            {/* SEÇÃO ORDER BUMP: OFERTAS COMPLEMENTARES DE 1 CLIQUE */}
+            {orderBumps.length > 0 && (
+              <div className="pt-2 border-t border-border/80 space-y-3">
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold">
+                  <Sparkles className="h-4 w-4 text-gold" />
+                  Oferta Complementar Exclusiva
+                </div>
+
+                <div className="space-y-3">
+                  {orderBumps.map((b: any) => {
+                    const isChecked = selectedBumpIds.includes(b.id);
+                    return (
+                      <div
+                        key={b.id}
+                        className={`rounded-2xl border-2 transition-all p-4 ${
+                          isChecked
+                            ? "border-gold/80 bg-gold/10 shadow-md shadow-gold/10"
+                            : "border-dashed border-gold/40 bg-card/60 hover:border-gold/60"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3.5">
+                          <input
+                            type="checkbox"
+                            id={`bump-${b.id}`}
+                            checked={isChecked}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedBumpIds((prev) => [...prev, b.id]);
+                              } else {
+                                setSelectedBumpIds((prev) => prev.filter((id) => id !== b.id));
+                              }
+                            }}
+                            className="mt-1 h-5 w-5 rounded border-gold text-gold focus:ring-gold cursor-pointer shrink-0"
+                          />
+                          <label htmlFor={`bump-${b.id}`} className="flex-1 min-w-0 cursor-pointer">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold/20 text-gold font-bold uppercase tracking-wider">
+                                SIM, EU QUERO
+                              </span>
+                              <span className="text-sm font-bold text-foreground">
+                                {b.headline || b.offer?.title || "Oferta Especial"}
+                              </span>
+                            </div>
+                            {b.description && (
+                              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                                {b.description}
+                              </p>
+                            )}
+                            <div className="mt-2.5 flex items-center justify-between flex-wrap gap-2">
+                              <span className="text-sm font-extrabold text-gold font-mono tabular-nums">
+                                + {fmt(b.offer_price_cents, p.currency)}
+                              </span>
+                              {b.offer?.price_cents &&
+                                b.offer.price_cents > b.offer_price_cents && (
+                                  <span className="text-xs text-muted-foreground line-through font-mono tabular-nums">
+                                    De {fmt(b.offer.price_cents, p.currency)}
+                                  </span>
+                                )}
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* MÉTODO DE PAGAMENTO */}
             <div className="pt-2 border-t border-border/80">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-3">
@@ -399,22 +536,90 @@ function Checkout() {
               </div>
             </div>
 
-            {/* RESUMO SIMPLES DO VALOR */}
+            {/* CAMPO DE CUPÃO DE DESCONTO */}
+            <div className="pt-2 border-t border-border/80">
+              <div className="flex items-center justify-between mb-2">
+                <Label
+                  htmlFor="checkout-coupon"
+                  className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5"
+                >
+                  <Tag className="h-3.5 w-3.5 text-gold" /> Possui um Cupão de Desconto?
+                </Label>
+              </div>
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-400" />
+                    <span className="font-bold font-mono text-emerald-400">
+                      {appliedCoupon.code}
+                    </span>
+                    <span className="text-muted-foreground">
+                      (-{fmt(appliedCoupon.discount_cents, p.currency)})
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-xs text-rose-400 hover:underline flex items-center gap-1"
+                  >
+                    <X className="h-3.5 w-3.5" /> Remover
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input
+                    id="checkout-coupon"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="Código do cupão"
+                    className="h-10 text-xs uppercase font-mono"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={couponLoading || !couponCode.trim()}
+                    onClick={handleApplyCoupon}
+                    className="h-10 px-4 text-xs font-semibold shrink-0"
+                  >
+                    {couponLoading ? "A verificar..." : "Aplicar"}
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* RESUMO DETALHADO DO VALOR COM ORDER BUMP E CUPÃO */}
             <div className="rounded-2xl bg-secondary/50 p-4 border border-border/80 space-y-2 text-xs">
               <div className="flex justify-between text-muted-foreground">
-                <span>Subtotal</span>
+                <span>Produto principal</span>
                 <span className="font-mono tabular-nums text-foreground">
-                  {fmt(price, p.currency)}
+                  {fmt(basePrice, p.currency)}
                 </span>
               </div>
+
+              {bumpsTotal > 0 && (
+                <div className="flex justify-between text-gold font-semibold">
+                  <span>Ofertas complementares (+{selectedBumpIds.length})</span>
+                  <span className="font-mono tabular-nums">+{fmt(bumpsTotal, p.currency)}</span>
+                </div>
+              )}
+
+              {discountCents > 0 && (
+                <div className="flex justify-between text-emerald-400 font-semibold">
+                  <span>Desconto de cupão</span>
+                  <span className="font-mono tabular-nums">-{fmt(discountCents, p.currency)}</span>
+                </div>
+              )}
+
               <div className="flex justify-between text-muted-foreground">
                 <span>Taxa de processamento</span>
                 <span className="text-emerald-400 font-semibold">Grátis</span>
               </div>
+
               <div className="pt-2 border-t border-border flex justify-between text-sm font-bold">
                 <span className="text-foreground">Total a Pagar</span>
-                <span className="text-gradient-gold font-mono tabular-nums">
-                  {fmt(price, p.currency)}
+                <span className="text-gradient-gold font-mono tabular-nums text-base">
+                  {fmt(finalPrice, p.currency)}
                 </span>
               </div>
             </div>
@@ -428,7 +633,7 @@ function Checkout() {
                 className={`w-full h-14 text-base rounded-xl cursor-pointer ${actionButtonClass}`}
               >
                 <Lock className="h-5 w-5 mr-2" />
-                {loading ? "A processar..." : `Pagar Agora — ${fmt(price, p.currency)}`}
+                {loading ? "A processar..." : `Pagar Agora — ${fmt(finalPrice, p.currency)}`}
               </Button>
 
               <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground text-center mt-3.5">

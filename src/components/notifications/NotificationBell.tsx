@@ -80,7 +80,11 @@ export function NotificationBell() {
             toast(n.title, { description: n.body ?? undefined });
             if (typeof Notification !== "undefined") {
               if (Notification.permission === "granted") {
-                try { new Notification(n.title, { body: n.body ?? undefined, icon: "/favicon.ico" }); } catch {}
+                try {
+                  new Notification(n.title, { body: n.body ?? undefined, icon: "/favicon.ico" });
+                } catch {
+                  /* Notification API failed or unsupported */
+                }
               } else if (Notification.permission === "default") {
                 Notification.requestPermission();
               }

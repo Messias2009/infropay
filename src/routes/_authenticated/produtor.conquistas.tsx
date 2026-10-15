@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Trophy, Lock, Flame, Rocket, Crown, Star, Medal } from "lucide-react";
+import { Trophy, Lock, Flame, Rocket, Crown, Star, Medal, Award, Sparkles } from "lucide-react";
 import { getMyAchievements } from "@/lib/profile.functions";
 import { LEVELS, levelFor } from "@/lib/legends.functions";
 import { kz } from "@/components/finance/FeeBanner";
+import wristbandImg from "@/assets/first-sale-wristband.jpg";
 
 export const Route = createFileRoute("/_authenticated/produtor/conquistas")({
   head: () => ({
@@ -33,12 +34,55 @@ function Page() {
         <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
           Nível atual
         </div>
-        <div className="mt-2 flex items-end gap-3">
+        <div className="mt-2 flex items-end gap-3 flex-wrap">
           <div className="font-display text-4xl font-bold" style={{ color: current.color }}>
             {current.name}
           </div>
           <div className="text-sm text-muted-foreground pb-1.5">
             — {kz(revenue)} faturados · {data?.sales_count ?? 0} vendas
+          </div>
+        </div>
+      </div>
+
+      {/* MARCO ESPECIAL: PULSEIRA PRIMEIRA VENDA */}
+      <div className="rounded-3xl border border-gold/40 bg-gradient-to-br from-card via-card/90 to-gold/10 p-6 sm:p-8 shadow-card overflow-hidden">
+        <div className="grid md:grid-cols-[minmax(0,1fr)_auto] gap-6 items-center">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-gold/15 text-gold border border-gold/30">
+              <Award className="h-3.5 w-3.5" />
+              Marco Inicial de Entrada
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              Pulseira Oficial 1ª Venda
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl">
+              {data && data.sales_count > 0 ? (
+                <span className="text-emerald-400 font-medium">
+                  Parabéns! Já realizou {data.sales_count} venda(s) na plataforma. Entre em contacto
+                  com o suporte no WhatsApp ou Instagram para confirmar os seus dados de envio e
+                  receber a sua pulseira em casa.
+                </span>
+              ) : (
+                <span>
+                  Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay. Uma
+                  peça exclusiva em silicone fosco de alta durabilidade com detalhes dourados em
+                  relevo para marcar o seu início.
+                </span>
+              )}
+            </p>
+          </div>
+
+          <div className="shrink-0 flex justify-center">
+            <div className="w-48 sm:w-56 aspect-[4/3] rounded-2xl overflow-hidden border border-gold/40 bg-card/80 shadow-2xl">
+              <img
+                src={wristbandImg}
+                alt="Pulseira Primeira Venda"
+                width={600}
+                height={450}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>

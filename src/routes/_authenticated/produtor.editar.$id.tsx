@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Send, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Send, Trash2, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -227,7 +227,16 @@ function EditarProduto() {
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Link to="/produtor/checkout/$id" params={{ id }}>
+            <Button
+              type="button"
+              variant="outline"
+              className="border-gold/40 text-gold hover:bg-gold/10"
+            >
+              <Palette className="h-4 w-4 mr-1.5" /> Personalizar Checkout
+            </Button>
+          </Link>
           {product?.status !== "em_analise" && product?.status !== "publicado" && (
             <Button
               type="button"

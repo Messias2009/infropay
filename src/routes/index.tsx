@@ -27,6 +27,7 @@ import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 import dashboardImg from "@/assets/dashboard-preview.jpg";
+import wristbandImg from "@/assets/first-sale-wristband.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -263,13 +264,54 @@ function Home() {
               Conquistas InfroPay
             </div>
             <h2 className="mt-2 text-3xl md:text-4xl font-bold">
-              Ganhe <span className="text-shimmer">placas oficiais</span> a cada meta
+              Ganhe <span className="text-shimmer">reconhecimento físico</span> desde a primeira
+              venda
             </h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Do Bronze ao Infinito: níveis reais conquistados por faturamento e reconhecidos
-              publicamente.
+              Da pulseira colecionável oficial às placas comemorativas por faturamento: a InfroPay
+              celebra cada passo da sua jornada.
             </p>
           </div>
+
+          {/* DESTAQUE: PULSEIRA OFICIAL 1ª VENDA */}
+          <div className="mb-8 rounded-3xl border border-gold/40 bg-gradient-to-r from-card via-card/95 to-gold/10 p-6 md:p-8 shadow-card overflow-hidden">
+            <div className="grid md:grid-cols-[minmax(0,1fr)_auto] gap-6 items-center">
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-gold/15 text-gold border border-gold/30">
+                  <Award className="h-3.5 w-3.5" />
+                  Prémio Inicial de Entrada
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                  Faça a sua primeira venda e receba a pulseira de 1ª venda
+                </h3>
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                  Não importa o valor do seu infoproduto: atingiu a primeira venda aprovada na
+                  plataforma, nós enviamos para si a pulseira oficial de borracha com a marca
+                  InfroPay para marcar a sua virada de chave no digital.
+                </p>
+                <div className="pt-2 flex flex-wrap gap-3">
+                  <Link to="/auth" search={{ mode: "signup" }}>
+                    <Button className="gradient-brand text-primary-foreground font-semibold shadow-glow">
+                      Começar a Vender Agora
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <div className="shrink-0 flex justify-center">
+                <div className="w-48 sm:w-60 aspect-[4/3] rounded-2xl overflow-hidden border border-gold/40 bg-card/80 shadow-2xl">
+                  <img
+                    src={wristbandImg}
+                    alt="Pulseira oficial de primeira venda InfroPay"
+                    width={600}
+                    height={450}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
