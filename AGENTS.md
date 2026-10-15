@@ -13,3 +13,4 @@
 
 - Payment webhook adapters must fail closed until the real provider protocol, amount/currency checks and atomic idempotent accounting are implemented; placeholder callbacks must never approve sales.
 - Buyer token reads must remove delivery URLs server-side unless the sale is paid; hiding links in the UI is not authorization.
+- Follow PAYMENT_READINESS.md before enabling automatic payments; its additive design keeps provider attempts, event deduplication, accounting and alert delivery separate for safe retries.
