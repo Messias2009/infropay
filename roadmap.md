@@ -1,7 +1,7 @@
 # Actualização InfroPay
 
-- [ ] Adaptar 15 criativos à referência azul/dourada com a marca InfroPay; aguarda confirmação do uso das imagens e texto.
-- [ ] Imagens de placas e banner/popup da pulseira da primeira venda; aguarda confirmação do quinto nível.
+- [ ] Adaptar 15 criativos à referência azul/dourada; tratamento misto confirmado, aguarda confirmação da marca e textos exactos.
+- [x] Ilustração conceptual das quatro placas e pulseira; popup da primeira venda com opção de fechar.
 - [ ] Substituir a imagem genérica da home por uma captura real do painel; aguarda sessão no preview.
 - [x] Bloquear confirmações inseguras nos webhooks e retirar links de entrega de pedidos não pagos no servidor.
 - [x] Documentar estrutura proposta de pagamentos automáticos em PAYMENT_READINESS.md (ainda não aplicada).
