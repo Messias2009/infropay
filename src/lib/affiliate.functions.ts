@@ -27,9 +27,7 @@ export const listAffiliateOffers = createServerFn({ method: "GET" }).handler(asy
 
 /** Regista um clique num link de afiliado (idempotência é do lado do cliente). */
 export const registerAffiliateClick = createServerFn({ method: "POST" })
-  .validator((d: { code: string }) =>
-    z.object({ code: z.string().trim().min(4).max(40) }).parse(d),
-  )
+  .validator((d: { code: string }) => z.object({ code: z.string().trim().min(4).max(40) }).parse(d))
   .handler(async ({ data }) => {
     await pub().rpc("register_affiliate_click", { _code: data.code });
     return { ok: true };
@@ -45,9 +43,7 @@ function randomCode() {
 /** Gera (ou devolve) o link de afiliado do utilizador para um produto. */
 export const createAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { product_id: string }) =>
-    z.object({ product_id: z.string().uuid() }).parse(d),
-  )
+  .validator((d: { product_id: string }) => z.object({ product_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: product, error: pErr } = await context.supabase
       .from("products")

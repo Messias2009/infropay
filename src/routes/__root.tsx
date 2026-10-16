@@ -166,11 +166,11 @@ function RootComponent() {
   }, [router, queryClient]);
 
   return (
-    <html lang="pt">
+    <html lang="pt" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <QueryClientProvider client={queryClient}>
           <Outlet />
           <FirstSaleReward />

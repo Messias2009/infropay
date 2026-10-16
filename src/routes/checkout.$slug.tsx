@@ -211,7 +211,9 @@ function Checkout() {
               className="h-8 w-8 rounded-lg object-contain shadow-xs"
             />
             {p.checkout_brand_name ? (
-              <span className="text-xl font-bold tracking-tight text-foreground">{p.checkout_brand_name}</span>
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                {p.checkout_brand_name}
+              </span>
             ) : (
               <span className="text-xl font-bold tracking-tight text-foreground">
                 Infro<span className="text-gradient-gold">Pay</span>

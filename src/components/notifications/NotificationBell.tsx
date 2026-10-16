@@ -240,7 +240,10 @@ export function NotificationBell() {
                           {n.body}
                         </div>
                       )}
-                      <div className="text-[10px] text-muted-foreground mt-1">
+                      <div
+                        className="text-[10px] text-muted-foreground mt-1"
+                        suppressHydrationWarning
+                      >
                         {timeAgo(n.created_at)}
                       </div>
                     </div>

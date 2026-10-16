@@ -19,6 +19,7 @@ interface Props {
 }
 
 export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" }) => {
+  const [mounted, setMounted] = React.useState(false);
   const {
     permission,
     isSubscribing,
@@ -27,6 +28,13 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
     requestPermission,
     scheduleTestNotification,
   } = usePushNotifications();
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const effectivePermission = mounted ? permission : "default";
+  const effectiveSound = mounted ? soundEnabled : true;
 
   const [testCountdown, setTestCountdown] = useState<number | null>(null);
 
@@ -49,14 +57,14 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
       <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border bg-card/60">
         <div className="flex items-center gap-2.5 min-w-0">
           <div
-            className={`p-2 rounded-lg ${permission === "granted" ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}
+            className={`p-2 rounded-lg ${effectivePermission === "granted" ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"}`}
           >
             <Bell className="h-4 w-4" />
           </div>
           <div className="min-w-0">
             <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
               Notificações Push
-              {permission === "granted" ? (
+              {effectivePermission === "granted" ? (
                 <span className="text-[10px] text-emerald-400 font-medium">(Ativas)</span>
               ) : (
                 <span className="text-[10px] text-amber-400 font-medium">(Inativas)</span>
@@ -69,7 +77,7 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {permission !== "granted" ? (
+          {effectivePermission !== "granted" ? (
             <Button
               size="sm"
               variant="outline"
@@ -101,7 +109,7 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
         <div className="flex items-start gap-4">
           <div
             className={`shrink-0 p-3 rounded-xl border ${
-              permission === "granted"
+              effectivePermission === "granted"
                 ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-glow"
                 : "border-gold/30 bg-gold/10 text-gold"
             }`}
@@ -114,7 +122,7 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
               <h3 className="font-display text-lg font-bold text-foreground">
                 Notificação de Vendas Push
               </h3>
-              {permission === "granted" ? (
+              {effectivePermission === "granted" ? (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   <CheckCircle2 className="h-3 w-3" />
                   Ativo no Navegador & Sistema
@@ -141,7 +149,7 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
         <div className="flex flex-wrap items-center gap-3 shrink-0 self-start md:self-center">
           {/* Sound Toggle */}
           <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 bg-background/50">
-            {soundEnabled ? (
+            {effectiveSound ? (
               <Volume2 className="h-4 w-4 text-gold" />
             ) : (
               <VolumeX className="h-4 w-4 text-muted-foreground" />
@@ -151,13 +159,13 @@ export const PushSalesNotificationBanner: React.FC<Props> = ({ variant = "card" 
             </Label>
             <Switch
               id="sound-toggle"
-              checked={soundEnabled}
+              checked={effectiveSound}
               onCheckedChange={toggleSound}
               className="data-[state=checked]:bg-gold"
             />
           </div>
 
-          {permission !== "granted" ? (
+          {effectivePermission !== "granted" ? (
             <Button
               onClick={requestPermission}
               disabled={isSubscribing}

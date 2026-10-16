@@ -26,6 +26,7 @@ import {
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { getMyFinanceOverview, getMyWallet } from "@/lib/finance.functions";
+import { getMyProductMetrics } from "@/lib/products.functions";
 import { FeeBanner, kz } from "@/components/finance/FeeBanner";
 import { PushSalesNotificationBanner } from "@/components/notifications/PushSalesNotificationBanner";
 import { usePlaqueWatcher } from "@/hooks/usePlaqueWatcher";
