@@ -19,6 +19,7 @@ import {
   GraduationCap,
   Handshake,
   LogOut,
+  Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +27,8 @@ import logoMark from "@/assets/infropay-mark.png";
 import { isAdmin } from "@/lib/admin.functions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { SupportModal } from "@/components/site/SupportModal";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 export const Route = createFileRoute("/_authenticated/produtor")({
   head: () => ({
@@ -52,10 +55,12 @@ function NavBody({
   pathname,
   admin,
   onNav,
+  onOpenSupport,
 }: {
   pathname: string;
   admin?: boolean;
   onNav?: () => void;
+  onOpenSupport?: () => void;
 }) {
   const router = useRouter();
   async function signOut() {
@@ -103,13 +108,16 @@ function NavBody({
         )}
       </nav>
       <div className="p-3 border-t border-border space-y-1">
-        <Button
-          variant="ghost"
-          onClick={signOut}
-          className="w-full justify-start text-muted-foreground"
+        <button
+          type="button"
+          onClick={() => {
+            onNav?.();
+            onOpenSupport?.();
+          }}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gold hover:text-gold hover:bg-gold/10 transition text-left cursor-pointer font-medium"
         >
-          <LogOut className="h-4 w-4" /> Terminar sessão
-        </Button>
+          <Headphones className="h-4 w-4 text-gold" /> Falar com suporte
+        </button>
         <Link
           to="/perfil"
           onClick={onNav}
@@ -117,6 +125,13 @@ function NavBody({
         >
           <Settings className="h-4 w-4" /> Configurações
         </Link>
+        <Button
+          variant="ghost"
+          onClick={signOut}
+          className="w-full justify-start text-muted-foreground"
+        >
+          <LogOut className="h-4 w-4" /> Terminar sessão
+        </Button>
       </div>
     </>
   );
@@ -131,9 +146,14 @@ function ProdutorLayout() {
     staleTime: 60_000,
   });
   const [open, setOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
+
+  // Ativa o ouvinte global de vendas push para todo o painel do produtor
+  usePushNotifications();
 
   return (
     <div className="producer-shell min-h-screen flex">
+      <SupportModal open={supportOpen} onOpenChange={setSupportOpen} />
       <aside className="hidden md:flex shrink-0 w-64 border-r border-border bg-card/40 flex-col">
         <Link to="/" className="p-5 flex items-center gap-2.5 border-b border-border">
           <img
@@ -150,7 +170,7 @@ function ProdutorLayout() {
             <div className="text-[10px] text-muted-foreground mt-0.5">painel do produtor</div>
           </div>
         </Link>
-        <NavBody pathname={pathname} admin={admin} />
+        <NavBody pathname={pathname} admin={admin} onOpenSupport={() => setSupportOpen(true)} />
       </aside>
 
       <div className="flex-1 min-w-0 w-full flex flex-col">
@@ -185,7 +205,12 @@ function ProdutorLayout() {
                   <img src={logoMark} alt="" className="h-8 w-8 rounded-md" />
                   <div className="text-base font-bold">Menu do produtor</div>
                 </div>
-                <NavBody pathname={pathname} admin={admin} onNav={() => setOpen(false)} />
+                <NavBody
+                  pathname={pathname}
+                  admin={admin}
+                  onNav={() => setOpen(false)}
+                  onOpenSupport={() => setSupportOpen(true)}
+                />
               </SheetContent>
             </Sheet>
           </div>

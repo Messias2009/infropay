@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -23,6 +24,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { TrustMarquee } from "@/components/site/TrustMarquee";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/CountUp";
+import { WristbandModal } from "@/components/marketing/WristbandModal";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
@@ -52,6 +54,26 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { user, loading } = useAuth();
+  const [showWristbandModal, setShowWristbandModal] = useState(false);
+
+  useEffect(() => {
+    // Show wristband popup once per session if not dismissed
+    if (typeof window === "undefined") return;
+    const dismissed = window.sessionStorage.getItem("infropay_wristband_dismissed");
+    if (!dismissed) {
+      const timer = setTimeout(() => {
+        setShowWristbandModal(true);
+      }, 1400);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCloseWristband = () => {
+    setShowWristbandModal(false);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("infropay_wristband_dismissed", "true");
+    }
+  };
 
   if (loading)
     return (
@@ -263,70 +285,88 @@ function Home() {
               Conquistas InfroPay
             </div>
             <h2 className="mt-2 text-3xl md:text-4xl font-bold">
-              Ganhe <span className="text-shimmer">placas oficiais</span> a cada meta
+              Ganhe <span className="text-shimmer">reconhecimento físico</span> desde a primeira
+              venda
             </h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Do Bronze ao Infinito: níveis reais conquistados por faturamento e reconhecidos
-              publicamente.
+              Da pulseira colecionável oficial às placas comemorativas por faturamento: a InfroPay
+              celebra cada passo da sua jornada.
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+          {/* BOTÃO PARA VISUALIZAR A PULSEIRA OFICIAL */}
+          <div className="flex justify-center mb-8">
+            <button
+              type="button"
+              onClick={() => setShowWristbandModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gold/40 bg-gold/5 hover:bg-gold/10 text-xs font-semibold text-foreground transition-all cursor-pointer shadow-xs"
+            >
+              <Trophy className="w-4 h-4 text-gold" />
+              <span>Ver Prémio Oficial da 1ª Venda: Pulseira Colecionável</span>
+            </button>
+          </div>
+
+          {/* 5 NÍVEIS OFICIAIS DE PREMIAÇÃO DAS PLACAS */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               {
-                name: "Prata",
+                name: "Placa de Prata",
                 goal: "100k Kz",
-                Icon: Award,
-                grad: "linear-gradient(135deg,#7C7C7C,#E8E8E8)",
+                img: "/src/assets/images/infropay_plaque_silver_100k_1792134414511.jpg",
                 color: "#C0C0C0",
               },
               {
-                name: "Ouro",
+                name: "Placa de Ouro",
                 goal: "500k Kz",
-                Icon: Trophy,
-                grad: "linear-gradient(135deg,#B8860B,#FFD700)",
+                img: "/src/assets/images/infropay_plaque_gold_500k_1792134428623.jpg",
                 color: "#F9A825",
               },
               {
-                name: "Diamante",
-                goal: "5M Kz",
-                Icon: Gem,
-                grad: "linear-gradient(135deg,#4FC3F7,#B9F2FF)",
-                color: "#B9F2FF",
+                name: "Placa de Platina",
+                goal: "1M Kz",
+                img: "/src/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg",
+                color: "#E5E4E2",
               },
               {
-                name: "Lenda",
-                goal: "50M Kz",
-                Icon: Crown,
-                grad: "linear-gradient(135deg,#006064,#4DD0E1)",
-                color: "#00BCD4",
+                name: "Placa de Diamante",
+                goal: "5M Kz",
+                img: "/src/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg",
+                color: "#4FC3F7",
               },
-            ].map((b, i) => {
-              const Icon = b.Icon;
-              return (
-                <div
-                  key={b.name}
-                  className="badge-shine relative rounded-2xl border p-5 overflow-hidden"
-                  style={{ borderColor: b.color + "60", animationDelay: `${i * 0.2}s` }}
-                >
-                  <div
-                    className="absolute inset-0 opacity-25 animate-bg-pan"
-                    style={{ background: b.grad, backgroundSize: "200% 200%" }}
+              {
+                name: "Placa Black Elite",
+                goal: "10M Kz",
+                img: "/src/assets/images/infropay_plaque_black_10m_1792134467200.jpg",
+                color: "#D4AF37",
+              },
+            ].map((b) => (
+              <div
+                key={b.name}
+                className="group rounded-2xl border border-border/70 bg-card/60 hover:bg-card/90 transition-all p-3.5 flex flex-col items-center text-center shadow-card"
+                style={{ borderColor: b.color + "40" }}
+              >
+                <div className="w-full aspect-square rounded-xl overflow-hidden border border-border/40 bg-black/40 mb-3 group-hover:scale-105 transition-transform duration-300">
+                  <img
+                    src={b.img}
+                    alt={b.name}
+                    width={400}
+                    height={400}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="relative flex flex-col items-center text-center">
-                    <div
-                      className="h-16 w-16 rounded-2xl grid place-items-center mb-3 animate-floaty"
-                      style={{ background: b.grad, boxShadow: `0 8px 30px -8px ${b.color}` }}
-                    >
-                      <Icon className="h-8 w-8 text-white drop-shadow" />
-                    </div>
-                    <div className="font-display text-lg font-bold" style={{ color: b.color }}>
-                      {b.name}
-                    </div>
-                    <div className="text-[11px] text-muted-foreground mt-0.5">Meta: {b.goal}</div>
-                  </div>
                 </div>
-              );
-            })}
+                <div
+                  className="font-display text-sm font-bold tracking-tight"
+                  style={{ color: b.color }}
+                >
+                  {b.name}
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5 font-medium tabular-nums">
+                  Meta: {b.goal}
+                </div>
+              </div>
+            ))}
           </div>
           <div className="mt-6 text-center">
             <Link
@@ -596,6 +636,12 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <WristbandModal
+        isOpen={showWristbandModal}
+        onClose={handleCloseWristband}
+        wristbandImage="/src/assets/images/infropay_wristband_first_sale_1792134398670.jpg"
+      />
     </SiteLayout>
   );
 }

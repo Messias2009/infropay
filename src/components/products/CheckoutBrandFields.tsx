@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { MediaUpload } from "@/components/MediaUpload";
+import { CheckoutImageUpload } from "@/components/checkout/CheckoutImageUpload";
 
 export const emptyCheckoutBrand = {
   store_visible: true,
@@ -53,18 +53,20 @@ export function CheckoutBrandFields({
           onChange={(e) => set("checkout_brand_name", e.target.value)}
         />
       </div>
-      <MediaUpload
-        kind="image"
-        label="Logo do checkout"
+      <CheckoutImageUpload
+        label="Logótipo da Marca"
+        hint="Substitui o logótipo da InfroPay no checkout deste produto."
         value={value.checkout_logo_url}
-        onChange={(v) => set("checkout_logo_url", v ?? "")}
+        onChange={(v) => set("checkout_logo_url", v)}
+        aspectRatio="square"
         productKey={productKey}
       />
-      <MediaUpload
-        kind="image"
-        label="Banner do checkout"
+      <CheckoutImageUpload
+        label="Banner Promocional de Topo"
+        hint="Banner panorâmico exibido no cabeçalho do checkout."
         value={value.checkout_banner_url}
-        onChange={(v) => set("checkout_banner_url", v ?? "")}
+        onChange={(v) => set("checkout_banner_url", v)}
+        aspectRatio="banner"
         productKey={productKey}
       />
       <div>

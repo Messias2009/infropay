@@ -2,7 +2,17 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Bell, Check, Trash2, ShoppingBag, Banknote, Info } from "lucide-react";
+import {
+  Bell,
+  Check,
+  Trash2,
+  ShoppingBag,
+  Banknote,
+  Info,
+  Trophy,
+  Sparkles,
+  Send,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -13,6 +23,9 @@ import {
   deleteNotification,
 } from "@/lib/notifications.functions";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { playSaleChime } from "@/lib/audio-chimes";
+import { showPlaqueUnlockToast } from "@/components/notifications/PlaqueUnlockToast";
+import { LEVELS } from "@/lib/legends.functions";
 
 type N = {
   id: string;
@@ -23,6 +36,7 @@ type N = {
   link: string | null;
   read: boolean;
   created_at: string;
+  metadata?: any;
 };
 
 function timeAgo(iso: string) {
@@ -36,6 +50,7 @@ function timeAgo(iso: string) {
 function iconFor(type: string) {
   if (type === "sale") return ShoppingBag;
   if (type === "withdrawal") return Banknote;
+  if (type === "plaque" || type === "achievement") return Trophy;
   return Info;
 }
 
@@ -77,10 +92,51 @@ export function NotificationBell() {
           },
           (payload) => {
             const n = payload.new as N;
-            toast(n.title, { description: n.body ?? undefined });
-            if (typeof Notification !== "undefined") {
+
+            // Se for notificação de placa ou conquista
+            const isPlaqueNotif =
+              n.type === "plaque" ||
+              n.type === "achievement" ||
+              n.title.toLowerCase().includes("placa") ||
+              n.title.toLowerCase().includes("troféu");
+
+            if (isPlaqueNotif) {
+              const matchedLevel =
+                LEVELS.find(
+                  (l) =>
+                    n.title.toLowerCase().includes(l.key) ||
+                    n.title.toLowerCase().includes(l.name.toLowerCase()) ||
+                    (n.body && n.body.toLowerCase().includes(l.name.toLowerCase())),
+                ) || LEVELS[0];
+
+              showPlaqueUnlockToast(matchedLevel, true);
+            } else {
+              if (n.type === "sale") {
+                playSaleChime();
+              }
+              toast(n.title, { description: n.body ?? undefined });
+            }
+
+            // Notificação do Sistema / Service Worker
+            if (typeof window !== "undefined" && "Notification" in window) {
               if (Notification.permission === "granted") {
-                try { new Notification(n.title, { body: n.body ?? undefined, icon: "/favicon.ico" }); } catch {}
+                try {
+                  if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                      type: "SHOW_SALE_NOTIFICATION",
+                      title: n.title,
+                      body: n.body || undefined,
+                      url: n.link || "/produtor",
+                    });
+                  } else {
+                    new Notification(n.title, {
+                      body: n.body ?? undefined,
+                      icon: "/pwa-192x192.png",
+                    });
+                  }
+                } catch {
+                  /* Notification API failed or unsupported */
+                }
               } else if (Notification.permission === "default") {
                 Notification.requestPermission();
               }
@@ -213,6 +269,20 @@ export function NotificationBell() {
               })}
             </ul>
           )}
+        </div>
+        <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-border/80 bg-accent/10 text-xs">
+          <Link
+            to="/produtor/conquistas"
+            onClick={() => setOpen(false)}
+            className="inline-flex items-center gap-1.5 text-gold hover:underline font-medium"
+          >
+            <Trophy className="h-3.5 w-3.5" />
+            Galeria de Placas
+          </Link>
+          <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Push 24/7 Ativo
+          </span>
         </div>
       </PopoverContent>
     </Popover>

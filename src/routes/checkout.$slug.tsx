@@ -207,6 +207,7 @@ function Checkout() {
             <img
               src={p.checkout_logo_url || logoMark}
               alt={p.checkout_brand_name || "InfroPay"}
+              referrerPolicy="no-referrer"
               className="h-8 w-8 rounded-lg object-contain shadow-xs"
             />
             {p.checkout_brand_name ? (
@@ -227,6 +228,7 @@ function Checkout() {
             <img
               src={p.checkout_banner_url}
               alt={p.checkout_brand_name || p.title}
+              referrerPolicy="no-referrer"
               className="w-full aspect-[3/1] object-cover rounded-2xl border border-border mb-6"
             />
           )}

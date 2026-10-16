@@ -10,6 +10,8 @@ import {
   Package,
   DollarSign,
   Receipt,
+  Award,
+  Sparkles,
 } from "lucide-react";
 import {
   AreaChart,
@@ -24,8 +26,9 @@ import {
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { getMyFinanceOverview, getMyWallet } from "@/lib/finance.functions";
-import { getMyProductMetrics } from "@/lib/products.functions";
 import { FeeBanner, kz } from "@/components/finance/FeeBanner";
+import { PushSalesNotificationBanner } from "@/components/notifications/PushSalesNotificationBanner";
+import { usePlaqueWatcher } from "@/hooks/usePlaqueWatcher";
 
 export const Route = createFileRoute("/_authenticated/produtor/")({
   component: Dashboard,
@@ -36,6 +39,9 @@ function Dashboard() {
   const walletFn = useServerFn(getMyWallet);
   const { data: o } = useQuery({ queryKey: ["producer", "overview"], queryFn: () => overviewFn() });
   const { data: w } = useQuery({ queryKey: ["producer", "wallet"], queryFn: () => walletFn() });
+
+  // Monitora e celebra desbloqueio de novas placas com base no faturamento total
+  usePlaqueWatcher(o?.total_revenue_cents);
 
   return (
     <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">
@@ -62,6 +68,45 @@ function Dashboard() {
               Novo produto
             </Button>
           </Link>
+        </div>
+      </div>
+
+      {/* BANNER DE NOTIFICAÇÕES PUSH MESMO COM NAVEGADOR FECHADO */}
+      <PushSalesNotificationBanner variant="card" />
+
+      {/* CARD SIMPLES: PULSEIRA DE PRIMEIRA VENDA */}
+      <div className="rounded-2xl border border-gold/40 bg-card/90 p-4 sm:p-5 shadow-card">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+          <div className="shrink-0 w-32 sm:w-40 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
+            <img
+              src="/src/assets/images/infropay_wristband_first_sale_1792134398670.jpg"
+              alt="Pulseira Primeira Venda InfroPay"
+              width={320}
+              height={240}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="space-y-1 text-center sm:text-left flex-1">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+              Pulseira da Primeira Venda
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-xl">
+              Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+              <Link to="/produtor/conquistas">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-gold/40 text-gold hover:bg-gold/10 text-xs"
+                >
+                  Ver Conquistas
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
