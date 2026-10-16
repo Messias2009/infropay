@@ -21,6 +21,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { FirstSaleReward } from "@/components/FirstSaleReward";
 
 function NotFoundComponent() {
   return (
@@ -172,6 +173,7 @@ function RootComponent() {
       <body>
         <QueryClientProvider client={queryClient}>
           <Outlet />
+          <FirstSaleReward />
           <Toaster richColors position="top-right" />
         </QueryClientProvider>
         <Scripts />

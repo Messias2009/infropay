@@ -14,7 +14,6 @@ import {
   Share2,
   Trash2,
   Copy as CopyIcon,
-  Palette,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -223,20 +222,6 @@ function MeusProdutos() {
                     <Button size="sm" variant="outline" className="w-full">
                       <Pencil className="h-3.5 w-3.5 mr-1" />
                       Editar
-                    </Button>
-                  </Link>
-                  <Link
-                    to="/produtor/checkout/$id"
-                    params={{ id: p.id }}
-                    className="flex-1 min-w-28"
-                  >
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="w-full border-gold/40 text-gold hover:bg-gold/10"
-                    >
-                      <Palette className="h-3.5 w-3.5 mr-1" />
-                      Checkout
                     </Button>
                   </Link>
                   {(p.status === "rascunho" || p.status === "pausado") && (

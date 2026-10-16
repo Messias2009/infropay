@@ -1,8 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createServerPublicClient } from "@/lib/public-client.server";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
+
+function publicClient() {
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch: (input, init) => {
+        const headers = new Headers(init?.headers);
+        const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+        if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`)
+          headers.delete("Authorization");
+        headers.set("apikey", key);
+        return fetch(input, { ...init, headers });
+      },
+    },
+  });
+}
 
 export const listCategories = createServerFn({ method: "GET" }).handler(async () => {
-  const supabase = createServerPublicClient();
+  const supabase = publicClient();
   const { data, error } = await supabase
     .from("categories")
     .select("id, slug, name, icon, sort_order")
@@ -43,7 +60,7 @@ export const listPublishedProducts = createServerFn({ method: "GET" })
 export const getProductBySlug = createServerFn({ method: "GET" })
   .validator((d: { slug: string }) => d)
   .handler(async ({ data }) => {
-    const supabase = createServerPublicClient();
+    const supabase = publicClient();
     const { data: row, error } = await supabase
       .from("products")
       .select(

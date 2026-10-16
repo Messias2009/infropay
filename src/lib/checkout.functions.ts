@@ -1,9 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { createServerPublicClient } from "@/lib/public-client.server";
+import type { Database } from "@/integrations/supabase/types";
 
 function pub() {
-  return createServerPublicClient();
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
 }
 
 const createOrderSchema = z.object({
@@ -13,8 +16,6 @@ const createOrderSchema = z.object({
   buyer_phone: z.string().trim().min(6).max(40),
   payment_method: z.enum(["multicaixa_express", "referencia", "transferencia"]),
   ref: z.string().trim().min(4).max(40).optional().nullable(),
-  bump_offer_ids: z.array(z.string().uuid()).optional().default([]),
-  coupon_code: z.string().trim().optional().nullable(),
 });
 
 export const createOrder = createServerFn({ method: "POST" })
@@ -31,61 +32,10 @@ export const createOrder = createServerFn({ method: "POST" })
     if (pErr) throw pErr;
     if (!product || product.status !== "publicado") throw new Error("Produto indisponível");
 
-    const baseGross =
+    const gross =
       product.promo_price_cents && product.promo_price_cents < product.price_cents
         ? product.promo_price_cents
         : product.price_cents;
-
-    // Calcular Order Bumps selecionados
-    let bumpTotalCents = 0;
-    if (data.bump_offer_ids && data.bump_offer_ids.length > 0) {
-      const { data: bumps } = await (supabase as any)
-        .from("product_offers")
-        .select("id, offer_price_cents, active")
-        .eq("product_id", product.id)
-        .in("id", data.bump_offer_ids)
-        .eq("active", true);
-
-      if (bumps && bumps.length > 0) {
-        bumpTotalCents = bumps.reduce((acc: number, b: any) => acc + (b.offer_price_cents || 0), 0);
-      }
-    }
-
-    // Calcular Cupão de desconto se informado
-    let discountCents = 0;
-    let appliedCoupon: string | null = null;
-    if (data.coupon_code) {
-      const { data: coupons } = await (supabase as any)
-        .from("coupons")
-        .select(
-          "id, code, discount_kind, discount_value, max_uses, uses_count, product_id, expires_at, active",
-        )
-        .eq("code", data.coupon_code.toUpperCase())
-        .eq("active", true)
-        .limit(5);
-
-      const c = (coupons ?? []).find((r: any) => !r.product_id || r.product_id === product.id);
-      if (c) {
-        const notExpired = !c.expires_at || new Date(c.expires_at) >= new Date();
-        const notExhausted = c.max_uses == null || c.uses_count < c.max_uses;
-        if (notExpired && notExhausted) {
-          const subtotal = baseGross + bumpTotalCents;
-          discountCents =
-            c.discount_kind === "percentagem"
-              ? Math.min(subtotal, Math.round((subtotal * c.discount_value) / 100))
-              : Math.min(subtotal, c.discount_value * 100);
-          appliedCoupon = c.code;
-
-          // Incrementar uso do cupão
-          await (supabase as any)
-            .from("coupons")
-            .update({ uses_count: (c.uses_count || 0) + 1 })
-            .eq("id", c.id);
-        }
-      }
-    }
-
-    const gross = Math.max(0, baseGross + bumpTotalCents - discountCents);
     const fee = Math.round(gross * 0.02);
 
     // Atribuição de afiliado (se o link for válido para este produto)
@@ -118,8 +68,6 @@ export const createOrder = createServerFn({ method: "POST" })
         buyer_email: data.buyer_email,
         buyer_phone: data.buyer_phone,
         gross_cents: gross,
-        discount_cents: discountCents,
-        coupon_code: appliedCoupon,
         platform_fee_cents: fee,
         net_cents: net,
         currency: product.currency,

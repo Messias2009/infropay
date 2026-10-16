@@ -32,12 +32,16 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
-import { getSupabaseUrl, getSupabaseServiceRoleKey, getSupabasePublishableKey } from "./env";
-
 function createSupabaseAdminClient() {
-  const SUPABASE_URL = getSupabaseUrl();
+  const SUPABASE_URL = process.env.SUPABASE_URL || "https://placeholder-project.supabase.co";
   const SUPABASE_SERVICE_ROLE_KEY =
-    getSupabaseServiceRoleKey() || getSupabasePublishableKey();
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.placeholder";
+
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn(
+      "[Supabase] Supabase server environment variables are not set. Using fallback admin client.",
+    );
+  }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     global: {

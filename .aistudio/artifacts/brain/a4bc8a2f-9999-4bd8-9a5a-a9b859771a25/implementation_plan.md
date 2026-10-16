@@ -1,80 +1,79 @@
-# InfroPay — Checkout Personalizado, Funil com Order Bump, Pulseira Primeira Venda e Suporte Oficial
+# InfroPay — Otimização de Interface, Checkout Focado e PWA
 
-Plano de arquitetura e implementação para capacitar os produtores a editarem os checkouts com a sua própria marca, ativar o funcionamento do funil de vendas (order bump e cupões no checkout), lançar a campanha da pulseira comemorativa da primeira venda e estruturar o atendimento oficial de suporte via Instagram e WhatsApp.
+Plano de refinamento da experiência do utilizador na plataforma InfroPay, eliminando sobreposições visuais, focando o checkout na conversão direta e implementando suporte a Progressive Web App (PWA).
 
 ### User Review & Critical Decisions
 
 > [!IMPORTANT]
-> Decisões confirmadas com base nas suas respostas:
+> Decisões confirmadas com base nas suas preferências:
 >
-> - **Localização do Editor de Checkout**: Página dedicada no painel do produtor acessível por produto (`/produtor/checkout/$id`), permitindo customização profunda sem poluir a tela básica de edição do produto.
-> - **Campanha da Pulseira Primeira Venda**: Exibição em destaque duplo — banner atrativo no topo do painel do produtor (`/produtor`) e bloco de incentivo na página inicial (`/`), com arte realista gerada da pulseira de silicone com marca InfroPay.
-> - **Canais de Suporte**: Modal moderno e direto disparado ao clicar em "Falar com suporte", apresentando o Instagram oficial `@infropay.ao` e o botão direto para atendimento no WhatsApp.
-> - **Order Bump & Funil Funcional**: Ativação imediata no checkout público (`/checkout/$slug`), carregando as ofertas ativas de bump vinculadas ao produto, permitindo ao comprador adicionar com 1 clique antes do pagamento e recalculando o valor total em Kwanza (AOA).
+> - **Botão de Instalação PWA**: Integrado discretamente no topo da barra de navegação (`Header`), com deteção automática de modo instalado e guia visual para utilizadores iOS Safari.
+> - **Fundo da Secção Principal**: Substituição da imagem com texto por um gradiente escuro premium com luz de fundo suave em azul ultramarino (#1565C0) e dourado (#F9A825), garantindo legibilidade perfeita.
+> - **Rodapé do Checkout**: Estrutura minimalista e blindada contendo selos de segurança SSL, direitos reservados, e links acessíveis para Termos de Uso e Política de Privacidade, sem menus institucionais ou atalhos para perfil.
+
+- **Visibilidade de Produtos na Loja**: O produtor terá controle total na criação e edição do produto (`store_visible: true/false`), permitindo manter infoprodutos ocultos da vitrine geral enquanto continuam funcionais para venda via link direto.
+- **Página Inicial sem Lista Direta de Produtos**: A homepage foca-se na proposta de valor, taxas e entrada para produtores e compradores, direcionando o catálogo completo para a página `/loja`.
 
 ---
 
 ### 1. Overview & Core Concept
 
-- **O que faz**:
-  1. **Editor de Checkout Personalizado**: Permite aos vendedores personalizar a identidade visual do checkout de cada infoproduto (nome da marca, logotipo do produtor, banner de topo, tema de cores, mensagem de garantia e cronómetro/urgência promocional), com visualização prévia em tempo real (preview ao vivo).
-  2. **Ativação Real de Order Bump e Funil**: Corrige a desconexão do funil no checkout. As ofertas criadas em `/produtor/funil` passam a ser carregadas no `/checkout/$slug`, renderizando a caixa de Order Bump interativa com checkbox de adição imediata ao pedido, somando o valor ao total e registrando a venda composta.
-  3. **Campanha "Pulseira Primeira Venda"**: Criação de banner de incentivo e gamificação para produtores, com imagem fotorrealista da pulseira de silicone preta/azul e dourada da InfroPay ("Faça a sua primeira venda e receba a pulseira oficial de Primeira Venda em casa").
-  4. **Central de Atendimento Oficial**: Modal de suporte elegante que centraliza o Instagram `@infropay.ao` e o link do WhatsApp para atendimento humanizado sem duplicidades ou ícones soltos redundantes.
-
+- **O que faz**: Transforma a InfroPay numa plataforma de alta conversão para o mercado angolano, com métricas sem quebras, banner destacado de taxas, navegação limpa, checkout isolado e focado sem fugas de conversão, e capacidade de instalação como aplicativo (PWA).
 - **Público-Alvo**:
-  - _Produtores/Vendedores_: Podem criar checkouts com aparência profissional e única da sua própria marca para aumentar a conversão, além de aumentar o ticket médio através de Order Bumps.
-  - _Compradores_: Experiência de compra segura, transparente, com opção de levar complementos promocionais em oferta exclusiva com 1 clique.
+  1. _Produtores e Criadores Digitais_: Precisam de facilidade para publicar, vender por links diretos ou na loja pública, e acompanhar recebimentos em Kwanza.
+  2. _Compradores Finais_: Precisam de um fluxo de checkout rápido, seguro e sem distrações que não exija criação forçada de conta.
+- **Valor Principal**: Experiência fluida e confiável com pagamentos Multicaixa Express e Referência em AOA, com visual premium e compatibilidade móvel nativa via PWA.
 
 ---
 
 ### 2. User Experience & Visual Design
 
-#### A. Editor de Checkout Personalizado (`/produtor/checkout/$id`)
+#### A. Secção Superior (Hero) e Banner de Taxas
 
-- **Layout de Duas Colunas (Desktop)**:
-  - _Coluna Esquerda (Controles do Vendedor)_:
-    - **Identidade da Marca**: Nome comercial/marca do vendedor (`checkout_brand_name`) e upload/URL do logótipo (`checkout_logo_url`).
-    - **Banner de Topo Opcional**: Imagem de cabeçalho promocional (`checkout_banner_url`).
-    - **Tema de Cores**: Seletor de esquema visual (Padrão InfroPay Dark, Safira Noturno, Dourado Luxo, Esmeralda Pro, Minimalista Claro).
-    - **Gatilhos de Conversão**: Cronómetro de contagem regressiva promocional (ex.: 15 minutos), selo de garantia de satisfação (7, 15 ou 30 dias) e texto promocional customizável.
-  - _Coluna Direita (Preview Interativo em Tempo Real)_:
-    - Réplica fiel e responsiva do checkout exatamente como o comprador final o verá, atualizando-se instantaneamente a cada tecla ou cor selecionada.
-- **Botão de Acesso Rápido**:
-  - Inserido no menu de ações de cada produto em `/produtor/produtos` ("Personalizar Checkout") e atalho direto na página de edição do produto.
+- **Fundo Limpo & Legível**: Remoção de imagens com texto pré-renderizado. Uso de tela de fundo com gradiente escuro de alto contraste (`oklch(0.18 0.03 265)`) com iluminação ambiente sutil em tons de safira e ouro.
+- **Banner de Taxas em Destaque**:
+  - `2% por venda` (a menor taxa de plataforma em Angola)
+  - `8% por saque` (transparência total sem surpresas)
+  - `Saque em 1 hora` (liberação expressa após aprovação)
+  - Layout em fita horizontal elegante com ícones funcionais e visual metálico dourado.
 
-#### B. Order Bump Funcional no Checkout (`/checkout/$slug`)
+#### B. Métricas e Faturamento sem Quebras
 
-- **Posicionamento Estratégico**: Localizado logo abaixo dos dados do comprador e acima da escolha do método de pagamento (zona de máxima conversão).
-- **Design de Alta Conversão**:
-  - Caixa com borda destacada e fundo sutil (`border-gold/40 bg-gold/5`).
-  - Checkbox interativo com texto chamativo: _"SIM! Quero adicionar [Título do Bump] por apenas [Preço Promocional em Kz]"_.
-  - Miniatura da capa do produto complementar e breve explicação do benefício.
-  - Ao marcar/desmarcar, o resumo do pedido (Subtotal, Oferta Adicional, Total Final) é recalculado dinamicamente com animação suave e números tabulares (`tabular-nums`).
+- **Correção Numérica**:
+  - Adição de `whitespace-nowrap tabular-nums` em todos os cartões de estatísticas e no componente `CountUp`.
+  - Tratamento responsivo dos dígitos para evitar quebras de linha em ecrãs móveis (ex.: `128 540 000 Kz` mantém-se em linha única com escalonamento de texto `text-lg sm:text-xl md:text-2xl`).
 
-#### C. Campanha "Pulseira Primeira Venda"
+#### C. Catálogo e Gestão de Visibilidade do Produtor
 
-- **Arte Visual Dedicada**: Geração via `generate_image` de imagem de produto de alta definição: pulseira de silicone resistente em preto fosco/azul profundo com gravação em relevo dourado "InfroPay — 1ª Venda".
-- **No Painel do Produtor (`/produtor`)**: Card premium com badge "Marco Inicial", progresso de faturamento, imagem da pulseira e CTA "Criar Oferta & Vender".
-- **Na Página Inicial (`/`)**: Bloco comemorativo dentro da jornada do produtor mostrando a premiação física de reconhecimento que todo criador recebe ao iniciar na InfroPay.
+- **Homepage Focada**: Remoção dos blocos repetidos de produtos ("Populares" e "Lançamentos") e das categorias em formato estático no rodapé da homepage. O botão principal "Comprar na loja" conduz à vitrine `/loja`.
+- **Controle de Ocultação/Exibição**:
+  - Campo interruptor (Switch) no formulário do produtor (`produtor.novo.tsx` e `produtor.editar.$id.tsx`): "Exibir na loja pública".
+  - Se desativado, o produto fica oculto na vitrine geral `/loja`, mas seu link de checkout (`/checkout/$slug` ou `/p/$slug`) continua plenamente ativo para vendas em redes sociais, anúncios ou páginas próprias.
 
-#### D. Modal de Atendimento e Suporte Oficial
+#### D. Checkout Blindado e Focado
 
-- **Abertura Suave**: Ao clicar no botão de suporte (no rodapé, cabeçalho ou página de contactos), abre-se um modal focado com:
-  - Canal 1: **Instagram Oficial** (`@infropay.ao`) com link direto para o perfil/página da InfroPay.
-  - Canal 2: **WhatsApp de Suporte** com link direto pré-formatado para abertura no aplicativo móvel ou web.
-  - Informação de horário e atendimento humanizado em Angola.
+- **Cabeçalho Dedicado**: Apenas o logótipo da InfroPay acompanhado do selo "Checkout Seguro & Criptografado", sem barra de navegação, sem botão de login e sem carrinho.
+- **Sem Botão de Voltar**: Eliminação do link "Voltar ao produto" e de atalhos de perfil. O comprador que recebe o link direto foca-se exclusivamente em concluir o pagamento.
+- **Rodapé Minimalista**: Exibe apenas os selos de segurança (Multicaixa, SSL 256-bit), direitos reservados da InfroPay e atalhos discretos para abrir a Política de Privacidade e os Termos de Uso.
+
+#### E. Progressive Web App (PWA)
+
+- **Instalabilidade Completa**: `manifest.webmanifest`, ícones de alta resolução (192x192, 512x512, maskable e apple-touch-icon), service worker ativo com cache estático.
+- **Botão de Instalação no Topo**: Botão "Instalar App" no `Header`, que abre o prompt nativo em navegadores compatíveis (Chrome/Edge/Android) ou um modal amigável com instruções no iOS Safari.
 
 ---
 
 ### 3. Key Product Decisions & Trade-Offs
 
-- **Persistência de Dados de Checkout**:
-  - _Decisão_: Utilizar as colunas já existentes na tabela `products` (`checkout_brand_name`, `checkout_logo_url`, `checkout_banner_url`, `checkout_theme`, `guarantee_days`) e estendê-las com segurança nas server functions.
-  - _Porquê_: Preserva compatibilidade total com o Supabase sem requerer migrações perigosas em tempo de execução.
-- **Order Bump com Suporte a Ofertas Reais**:
-  - _Decisão_: Conectar o checkout à função `getCheckoutOffers` existente em `src/lib/funnel.functions.ts` e estender `createOrder` em `src/lib/checkout.functions.ts` para processar a venda do produto principal + itens de bump selecionados.
-  - _Porquê_: O produtor já cria bumps em `/produtor/funil`, bastando fechar o ciclo de carregamento e cobrança no checkout público.
+- **Checkout Desacoplado do SiteLayout Geral**:
+  - _Abordagem_: Criar um layout dedicado `CheckoutLayout` para `/checkout/$slug` em vez de partilhar o `SiteLayout` institucional.
+  - _Porquê_: Evita vazamento de tráfego. Compradores vindos de links de campanhas não se perdem no site institucional e têm taxas de conversão muito maiores.
+- **Visibilidade de Loja como Propriedade do Produto**:
+  - _Abordagem_: Integrar o campo booleano `store_visible` na criação e edição do produto, respeitando o filtro já existente no catálogo (`.eq("store_visible", true)`).
+  - _Porquê_: Dá aos produtores liberdade de criar ofertas exclusivas, promoções privadas ou produtos fechados para mentorias sem poluir a loja pública.
+- **Formatação Numérica com Espaço Insecável**:
+  - _Abordagem_: Formatar moeda com `\u00A0` (non-breaking space) e classe CSS `whitespace-nowrap font-mono tabular-nums`.
+  - _Porquê_: O padrão numérico em português utiliza espaços como separador de milhar; forçar espaços insecáveis resolve definitivamente as quebras de linha em ecrãs móveis.
 
 ---
 
@@ -82,53 +81,50 @@ Plano de arquitetura e implementação para capacitar os produtores a editarem o
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                          INFROPAY FUNNEL & CHECKOUT                         │
+│                             INFROPAY APP RUNTIME                            │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
-         ┌─────────────────────────────┼─────────────────────────────┐
-         ▼                             ▼                             ▼
-┌─────────────────────────┐ ┌─────────────────────────┐ ┌─────────────────────────┐
-│ PRODUTOR CHECKOUT EDIT  │ │    PUBLIC CHECKOUT      │ │    SUPPORT & BRACELET   │
-│ - /produtor/checkout/$id│ │ - /checkout/$slug       │ │ - SupportModal          │
-│ - Theme / Brand / Logo  │ │ - Loads product details │ │   (Instagram + WhatsApp)│
-│ - Banner / Urgency / Gar│ │ - Loads getCheckoutOffer│ │ - Pulseira 1ª Venda     │
-│ - Live Interactive Prev │ │ - Order Bump Checkbox   │ │   (Dashboard + Hero)    │
-│ - updateProductCheckout │ │ - Dynamic Total Calc    │ │ - Generated Asset       │
-└────────────┬────────────┘ └────────────┬────────────┘ └────────────┬────────────┘
-             │                           │                           │
-             ▼                           ▼                           ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                             API & SERVER FUNCTIONS                          │
-│ - checkout.functions.ts: createOrder (with order bump & coupons)            │
-│ - funnel.functions.ts: getCheckoutOffers, listMyOffers, createOffer         │
-│ - products.functions.ts: getMyProduct, updateProductCheckoutSettings        │
-└──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │
-                                       ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                             SUPABASE POSTGRES                               │
-│ - products (checkout_brand_name, checkout_logo_url, checkout_theme, etc.)   │
-│ - product_offers (kind='order_bump', active=true, offer_price_cents)        │
-│ - sales & order tracking                                                    │
-└─────────────────────────────────────────────────────────────────────────────┘
+         ┌─────────────────────────────┴─────────────────────────────┐
+         ▼                                                           ▼
+┌─────────────────────────────────┐                         ┌─────────────────────────────────┐
+│     PUBLIC & STORE SURFACES     │                         │        FOCUSED CHECKOUT         │
+│  - Home (Hero limpo + Banner)   │                         │  - CheckoutLayout isolado       │
+│  - Loja (/loja: filtros + grid) │                         │  - Sem links de retorno         │
+│  - TopBar com botão PWA Install │                         │  - Formulário + Resumo + SSL    │
+│  - Rodapé institucional limpo   │                         │  - Termos & Privacidade         │
+└────────────────┬────────────────┘                         └────────────────┬────────────────┘
+                 │                                                           │
+                 ▼                                                           ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 PRODUTOR & CATALOG STATE                                    │
+│  - produtor.novo & produtor.editar: Toggle "Visível na Loja" (store_visible)                │
+│  - catalog.functions.ts: Filtra produtos onde status='publicado' AND store_visible=true     │
+│  - checkout.functions.ts: Permite compra direta mesmo se store_visible=false                │
+└────────────────────────────────────────┬────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   PWA & OFFLINE LAYER                                       │
+│  - public/manifest.webmanifest (standalone, tema #0F172A, ícones 192/512)                   │
+│  - public/sw.js (Service Worker para cache de assets)                                       │
+│  - hooks/usePWAInstall.ts (captura 'beforeinstallprompt', suporte iOS)                      │
+│  - components/site/PWAInstallButton.tsx (integrado no Header e navegação móvel)              │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-#### Passos de Implementação:
+#### Mapeamento de Ficheiros e Componentes:
 
-1. **Geração de Imagem**:
-   - Gerar a imagem em alta definição da pulseira de silicone da InfroPay (`infropay_first_sale_bracelet`) via `generate_image`.
-2. **Backend & Funções de Servidor**:
-   - Atualizar `src/lib/checkout.functions.ts` para receber `bump_offer_ids` e calcular corretamente o total com os order bumps adicionados.
-   - Garantir que a função de atualizar configurações de checkout do produto esteja disponível e tipada.
-3. **Editor de Checkout do Produtor**:
-   - Criar a rota `src/routes/_authenticated/produtor.checkout.$id.tsx` com formulário de configuração e preview interativo ao vivo.
-   - Adicionar o botão "Personalizar Checkout" em `src/routes/_authenticated/produtor.produtos.tsx` e no menu do produtor.
-4. **Checkout com Order Bump**:
-   - Integrar `getCheckoutOffers` em `src/routes/checkout.$slug.tsx`.
-   - Renderizar o componente de Order Bump interativo com cálculo em tempo real e visual personalizado da marca do vendedor se configurada.
-5. **Campanha da Pulseira Primeira Venda**:
-   - Inserir o card da conquista no topo de `src/routes/_authenticated/produtor.index.tsx` e seção correspondente em `src/routes/index.tsx`.
-6. **Central de Suporte Unificada**:
-   - Criar `src/components/site/SupportModal.tsx` com atalhos para Instagram (`@infropay.ao`) e WhatsApp, integrando-o ao Header, Footer e botões de suporte.
-7. **Verificação & Testes**:
-   - Executar `lint_applet` e `compile_applet` para assegurar compilação limpa sem erros.
+1. `src/components/CountUp.tsx` & `src/routes/index.tsx`: Aplicação de `whitespace-nowrap tabular-nums` e espaçamento insecável para evitar quebras no faturado.
+2. `src/routes/index.tsx`:
+   - Remoção da imagem de fundo com texto; aplicação de gradiente escuro com iluminação radial subtil.
+   - Novo `FeeBanner` horizontal em destaque (2% por venda, 8% por saque, saque em 1 hora).
+   - Remoção dos blocos diretos de produtos ("Populares" e "Lançamentos") e da lista de categorias estáticas no fim da página.
+3. `src/routes/_authenticated/produtor.novo.tsx` & `src/routes/_authenticated/produtor.editar.$id.tsx`:
+   - Inclusão do campo Switch/Checkbox `store_visible` ("Visível na vitrine da loja").
+   - Envio da propriedade `store_visible` na criação e atualização do produto.
+4. `src/routes/checkout.$slug.tsx`:
+   - Remoção do `SiteLayout` genérico; implementação de cabeçalho e rodapé focados e seguros.
+   - Remoção do botão "Voltar ao produto" e links externos.
+   - Exibição limpa de dados do pedido, pagamento, selos de segurança, direitos reservados e modais/links diretos para Termos e Privacidade.
+5. `public/manifest.webmanifest`, `public/sw.js`, `src/hooks/usePWAInstall.ts`, `src/components/site/PWAInstallButton.tsx`, `src/routes/__root.tsx`:
+   - Configuração completa do PWA e posicionamento do botão de instalação na barra de navegação superior.

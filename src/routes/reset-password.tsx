@@ -12,10 +12,7 @@ export const Route = createFileRoute("/reset-password")({
       { title: "Recuperar palavra-passe — InfroPay" },
       { name: "description", content: "Defina uma nova palavra-passe para a sua conta InfroPay." },
       { property: "og:title", content: "Recuperar palavra-passe — InfroPay" },
-      {
-        property: "og:description",
-        content: "Defina uma nova palavra-passe para a sua conta InfroPay.",
-      },
+      { property: "og:description", content: "Defina uma nova palavra-passe para a sua conta InfroPay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -42,43 +39,18 @@ function ResetPassword() {
 
   return (
     <div className="min-h-screen grid place-items-center p-4 bg-background">
-      <form
-        onSubmit={submit}
-        className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-card p-6 shadow-glow"
-      >
+      <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-card p-6 shadow-glow">
         <h1 className="text-xl font-bold">Nova palavra-passe</h1>
-        <p className="text-sm text-muted-foreground">
-          Escolha uma nova palavra-passe para a sua conta.
-        </p>
+        <p className="text-sm text-muted-foreground">Escolha uma nova palavra-passe para a sua conta.</p>
         <div>
           <Label htmlFor="pw">Nova palavra-passe</Label>
-          <Input
-            id="pw"
-            type="password"
-            minLength={6}
-            required
-            value={pw}
-            onChange={(e) => setPw(e.target.value)}
-            className="mt-1.5"
-          />
+          <Input id="pw" type="password" minLength={6} required value={pw} onChange={(e) => setPw(e.target.value)} className="mt-1.5" />
         </div>
         <div>
           <Label htmlFor="pw2">Confirmar</Label>
-          <Input
-            id="pw2"
-            type="password"
-            minLength={6}
-            required
-            value={pw2}
-            onChange={(e) => setPw2(e.target.value)}
-            className="mt-1.5"
-          />
+          <Input id="pw2" type="password" minLength={6} required value={pw2} onChange={(e) => setPw2(e.target.value)} className="mt-1.5" />
         </div>
-        <Button
-          type="submit"
-          disabled={loading}
-          className="w-full gradient-brand text-primary-foreground"
-        >
+        <Button type="submit" disabled={loading} className="w-full gradient-brand text-primary-foreground">
           {loading ? "A guardar..." : "Guardar palavra-passe"}
         </Button>
       </form>

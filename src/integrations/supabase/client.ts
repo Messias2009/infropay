@@ -30,11 +30,26 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
-import { getSupabaseUrl, getSupabasePublishableKey } from "./env";
-
 function createSupabaseClient() {
-  const SUPABASE_URL = getSupabaseUrl();
-  const SUPABASE_PUBLISHABLE_KEY = getSupabasePublishableKey();
+  // Use import.meta.env for client-side (Vite build-time replacement)
+  // Fall back to process.env for SSR (server-side rendering)
+  const SUPABASE_URL =
+    import.meta.env.VITE_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    "https://placeholder-project.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY =
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.placeholder";
+
+  if (
+    (!import.meta.env.VITE_SUPABASE_URL && !process.env.SUPABASE_URL) ||
+    (!import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY && !process.env.SUPABASE_PUBLISHABLE_KEY)
+  ) {
+    console.warn(
+      "[Supabase] Supabase environment variables are not set. The app will run in preview mode with fallback client.",
+    );
+  }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     global: {

@@ -73,29 +73,19 @@ function Legends() {
         <div className="text-xs font-semibold uppercase tracking-widest text-gold">
           Sistema de níveis
         </div>
-        <h2 className="mt-2 text-2xl md:text-3xl font-bold">5 Níveis Oficiais de Placas</h2>
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <h2 className="mt-2 text-2xl md:text-3xl font-bold">10 níveis · Do Bronze ao Infinito</h2>
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {LEVELS.map((l) => (
-            <div
-              key={l.key}
-              className="group rounded-2xl border border-border/70 bg-card/60 hover:bg-card/90 transition-all p-3.5 flex flex-col items-center text-center shadow-card"
-              style={{ borderColor: l.color + "40" }}
-            >
-              <div className="w-full aspect-square rounded-xl overflow-hidden border border-border/40 bg-black/40 mb-3 group-hover:scale-105 transition-transform duration-300">
-                <img
-                  src={l.image}
-                  alt={l.name}
-                  width={300}
-                  height={300}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
+            <div key={l.key} className="rounded-xl border border-border/60 bg-card/50 p-4">
+              <div
+                className="h-10 w-10 rounded-lg grid place-items-center mb-3"
+                style={{ background: l.gradient }}
+              >
+                <Crown className="h-5 w-5 text-white/90" />
               </div>
-              <div className="font-semibold text-sm" style={{ color: l.color }}>
-                {l.name}
-              </div>
-              <div className="text-[11px] text-muted-foreground mt-0.5 font-medium">
-                Meta: {l.goal_label}
+              <div className="font-semibold text-sm">{l.name}</div>
+              <div className="text-[10px] text-muted-foreground mt-1">
+                {l.min_cents === 0 ? "Início" : `Desde ${fmt(l.min_cents)}`}
               </div>
             </div>
           ))}

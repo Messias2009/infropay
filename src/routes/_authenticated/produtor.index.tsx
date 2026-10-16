@@ -10,10 +10,7 @@ import {
   Package,
   DollarSign,
   Receipt,
-  Award,
-  Sparkles,
 } from "lucide-react";
-import wristbandImg from "@/assets/first-sale-wristband.jpg";
 import {
   AreaChart,
   Area,
@@ -65,37 +62,6 @@ function Dashboard() {
               Novo produto
             </Button>
           </Link>
-        </div>
-      </div>
-
-      {/* CARD SIMPLES: PULSEIRA DE PRIMEIRA VENDA */}
-      <div className="rounded-2xl border border-gold/40 bg-card/90 p-4 sm:p-5 shadow-card">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
-          <div className="shrink-0 w-32 sm:w-40 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
-            <img
-              src={wristbandImg}
-              alt="Pulseira Primeira Venda InfroPay"
-              width={320}
-              height={240}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="space-y-1 text-center sm:text-left flex-1">
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
-              Pulseira da Primeira Venda
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-xl">
-              Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-              <Link to="/produtor/conquistas">
-                <Button size="sm" variant="outline" className="border-gold/40 text-gold hover:bg-gold/10 text-xs">
-                  Ver Conquistas
-                </Button>
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
 

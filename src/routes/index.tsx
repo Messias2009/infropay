@@ -27,12 +27,6 @@ import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 import dashboardImg from "@/assets/dashboard-preview.jpg";
-import wristbandImg from "@/assets/first-sale-wristband.jpg";
-import placaPrata from "@/assets/placa-prata.jpg";
-import placaOuro from "@/assets/placa-ouro.jpg";
-import placaPlatina from "@/assets/placa-platina.jpg";
-import placaDiamante from "@/assets/placa-diamante.jpg";
-import placaBlack from "@/assets/placa-black.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -269,101 +263,70 @@ function Home() {
               Conquistas InfroPay
             </div>
             <h2 className="mt-2 text-3xl md:text-4xl font-bold">
-              Ganhe <span className="text-shimmer">reconhecimento físico</span> desde a primeira
-              venda
+              Ganhe <span className="text-shimmer">placas oficiais</span> a cada meta
             </h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Da pulseira colecionável oficial às placas comemorativas por faturamento: a InfroPay
-              celebra cada passo da sua jornada.
+              Do Bronze ao Infinito: níveis reais conquistados por faturamento e reconhecidos
+              publicamente.
             </p>
           </div>
-
-          {/* CARD SIMPLES: PULSEIRA OFICIAL 1ª VENDA */}
-          <div className="mb-8 rounded-2xl border border-gold/40 bg-card/90 p-5 md:p-6 shadow-card">
-            <div className="flex flex-col sm:flex-row items-center gap-5">
-              <div className="shrink-0 w-36 sm:w-44 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-lg">
-                <img
-                  src={wristbandImg}
-                  alt="Pulseira oficial de primeira venda InfroPay"
-                  width={400}
-                  height={300}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="space-y-1.5 text-center sm:text-left flex-1">
-                <h3 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
-                  Pulseira da Primeira Venda
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
-                  Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
-                </p>
-                <div className="pt-2">
-                  <Link to="/auth" search={{ mode: "signup" }}>
-                    <Button size="sm" className="gradient-brand text-primary-foreground font-semibold shadow-glow">
-                      Começar a Vender
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 5 NÍVEIS OFICIAIS DE PREMIAÇÃO DAS PLACAS */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
-                name: "Placa de Prata",
+                name: "Prata",
                 goal: "100k Kz",
-                img: placaPrata,
+                Icon: Award,
+                grad: "linear-gradient(135deg,#7C7C7C,#E8E8E8)",
                 color: "#C0C0C0",
               },
               {
-                name: "Placa de Ouro",
+                name: "Ouro",
                 goal: "500k Kz",
-                img: placaOuro,
+                Icon: Trophy,
+                grad: "linear-gradient(135deg,#B8860B,#FFD700)",
                 color: "#F9A825",
               },
               {
-                name: "Placa de Platina",
-                goal: "1M Kz",
-                img: placaPlatina,
-                color: "#E5E4E2",
-              },
-              {
-                name: "Placa de Diamante",
+                name: "Diamante",
                 goal: "5M Kz",
-                img: placaDiamante,
-                color: "#4FC3F7",
+                Icon: Gem,
+                grad: "linear-gradient(135deg,#4FC3F7,#B9F2FF)",
+                color: "#B9F2FF",
               },
               {
-                name: "Placa Black Elite",
-                goal: "10M Kz",
-                img: placaBlack,
-                color: "#D4AF37",
+                name: "Lenda",
+                goal: "50M Kz",
+                Icon: Crown,
+                grad: "linear-gradient(135deg,#006064,#4DD0E1)",
+                color: "#00BCD4",
               },
-            ].map((b) => (
-              <div
-                key={b.name}
-                className="group rounded-2xl border border-border/70 bg-card/60 hover:bg-card/90 transition-all p-3.5 flex flex-col items-center text-center shadow-card"
-                style={{ borderColor: b.color + "40" }}
-              >
-                <div className="w-full aspect-square rounded-xl overflow-hidden border border-border/40 bg-black/40 mb-3 group-hover:scale-105 transition-transform duration-300">
-                  <img
-                    src={b.img}
-                    alt={b.name}
-                    width={400}
-                    height={400}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
+            ].map((b, i) => {
+              const Icon = b.Icon;
+              return (
+                <div
+                  key={b.name}
+                  className="badge-shine relative rounded-2xl border p-5 overflow-hidden"
+                  style={{ borderColor: b.color + "60", animationDelay: `${i * 0.2}s` }}
+                >
+                  <div
+                    className="absolute inset-0 opacity-25 animate-bg-pan"
+                    style={{ background: b.grad, backgroundSize: "200% 200%" }}
                   />
+                  <div className="relative flex flex-col items-center text-center">
+                    <div
+                      className="h-16 w-16 rounded-2xl grid place-items-center mb-3 animate-floaty"
+                      style={{ background: b.grad, boxShadow: `0 8px 30px -8px ${b.color}` }}
+                    >
+                      <Icon className="h-8 w-8 text-white drop-shadow" />
+                    </div>
+                    <div className="font-display text-lg font-bold" style={{ color: b.color }}>
+                      {b.name}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">Meta: {b.goal}</div>
+                  </div>
                 </div>
-                <div className="font-display text-sm font-bold tracking-tight" style={{ color: b.color }}>
-                  {b.name}
-                </div>
-                <div className="text-[11px] text-muted-foreground mt-0.5 font-medium">Meta: {b.goal}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="mt-6 text-center">
             <Link

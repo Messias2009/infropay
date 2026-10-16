@@ -1,10 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { createServerPublicClient } from "@/lib/public-client.server";
+import type { Database } from "@/integrations/supabase/types";
 
 function pub() {
-  return createServerPublicClient();
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
 }
 
 /** Catálogo público de produtos abertos a afiliação. */
@@ -24,7 +27,9 @@ export const listAffiliateOffers = createServerFn({ method: "GET" }).handler(asy
 
 /** Regista um clique num link de afiliado (idempotência é do lado do cliente). */
 export const registerAffiliateClick = createServerFn({ method: "POST" })
-  .validator((d: { code: string }) => z.object({ code: z.string().trim().min(4).max(40) }).parse(d))
+  .validator((d: { code: string }) =>
+    z.object({ code: z.string().trim().min(4).max(40) }).parse(d),
+  )
   .handler(async ({ data }) => {
     await pub().rpc("register_affiliate_click", { _code: data.code });
     return { ok: true };
@@ -40,7 +45,9 @@ function randomCode() {
 /** Gera (ou devolve) o link de afiliado do utilizador para um produto. */
 export const createAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { product_id: string }) => z.object({ product_id: z.string().uuid() }).parse(d))
+  .validator((d: { product_id: string }) =>
+    z.object({ product_id: z.string().uuid() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { data: product, error: pErr } = await context.supabase
       .from("products")

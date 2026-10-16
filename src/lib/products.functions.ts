@@ -7,9 +7,8 @@ const productSchema = z.object({
   store_visible: z.boolean().default(true),
   checkout_brand_name: z.string().trim().max(80).optional().nullable(),
   checkout_logo_url: z.string().url().optional().nullable().or(z.literal("")),
-  checkout_theme: z
-    .enum(["azul", "dourado", "verde", "roxo", "preto", "minimalista"])
-    .default("azul"),
+  checkout_banner_url: z.string().url().optional().nullable().or(z.literal("")),
+  checkout_theme: z.enum(["azul", "dourado", "verde"]).default("azul"),
   title: z.string().trim().min(3).max(160),
   slug: z
     .string()
