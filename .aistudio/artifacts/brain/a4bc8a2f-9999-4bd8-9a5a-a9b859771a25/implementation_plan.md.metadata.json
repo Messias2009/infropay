@@ -1,6 +1,6 @@
 {
-  "summary": "Plano de implementação detalhado para:\n1. Modal popup centralizado com botão 'X' de fechamento para a pulseira oficial de 1ª venda.\n2. Geração e integração de 5 novas imagens de placas de premiação oficiais (estilo troféus metálicos com acrílico e ouro) e nova imagem da pulseira de 1ª venda.\n3. Upload direto de ficheiros de imagem (logo e banner) com pré-visualização imediata no personalizador de checkout.",
-  "updatedAt": "2026-10-16T07:04:15.181306164Z",
+  "summary": "Plano de implementação para:\n1. Limpeza do Dashboard do Produtor: remoção do banner de notificações push e do card da pulseira da primeira venda da tela principal (/produtor).\n2. Integração do controlo e teste das Notificações Push na página de Configurações de Perfil (/perfil).\n3. Preservação do card da pulseira e galeria oficial de placas em Conquistas (/produtor/conquistas) e no sino do topo.",
+  "updatedAt": "2026-10-16T07:49:34.000598311Z",
   "requestFeedback": true,
   "userFacing": true
 }
