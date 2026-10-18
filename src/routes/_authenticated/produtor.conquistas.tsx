@@ -1,3 +1,4 @@
+import wristbandImg from "@/assets/images/infropay_wristband_first_sale_1792134398670.jpg";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -79,7 +80,7 @@ function Page() {
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="shrink-0 w-36 sm:w-44 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
             <img
-              src="/src/assets/images/infropay_wristband_first_sale_1792134398670.jpg"
+              src={wristbandImg}
               alt="Pulseira Primeira Venda"
               width={400}
               height={300}

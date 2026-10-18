@@ -44,6 +44,7 @@ import { Route as AuthenticatedProdutorIntegracoesRouteImport } from './routes/_
 import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
 import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
 import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authenticated/produtor.saques'
+import { Route as AuthenticatedProdutorCheckoutIdRouteImport } from './routes/_authenticated/produtor.checkout.$id'
 import { Route as AuthenticatedProdutorCursoIdRouteImport } from './routes/_authenticated/produtor.curso.$id'
 import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_authenticated/produtor.editar.$id'
 import { Route as AuthenticatedProdutorSucessoIdRouteImport } from './routes/_authenticated/produtor.sucesso.$id'
@@ -237,6 +238,12 @@ const AuthenticatedProdutorSaquesRoute =
     path: '/saques',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
+const AuthenticatedProdutorCheckoutIdRoute =
+  AuthenticatedProdutorCheckoutIdRouteImport.update({
+    id: '/checkout/$id',
+    path: '/checkout/$id',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
 const AuthenticatedProdutorCursoIdRoute =
   AuthenticatedProdutorCursoIdRouteImport.update({
     id: '/curso/$id',
@@ -302,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/adm/': typeof AuthenticatedAdmIndexRoute
   '/membros/': typeof AuthenticatedMembrosIndexRoute
   '/produtor/': typeof AuthenticatedProdutorIndexRoute
+  '/produtor/checkout/$id': typeof AuthenticatedProdutorCheckoutIdRoute
   '/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
   '/produtor/sucesso/$id': typeof AuthenticatedProdutorSucessoIdRoute
@@ -341,6 +349,7 @@ export interface FileRoutesByTo {
   '/adm': typeof AuthenticatedAdmIndexRoute
   '/membros': typeof AuthenticatedMembrosIndexRoute
   '/produtor': typeof AuthenticatedProdutorIndexRoute
+  '/produtor/checkout/$id': typeof AuthenticatedProdutorCheckoutIdRoute
   '/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
   '/produtor/sucesso/$id': typeof AuthenticatedProdutorSucessoIdRoute
@@ -384,6 +393,7 @@ export interface FileRoutesById {
   '/_authenticated/adm/': typeof AuthenticatedAdmIndexRoute
   '/_authenticated/membros/': typeof AuthenticatedMembrosIndexRoute
   '/_authenticated/produtor/': typeof AuthenticatedProdutorIndexRoute
+  '/_authenticated/produtor/checkout/$id': typeof AuthenticatedProdutorCheckoutIdRoute
   '/_authenticated/produtor/curso/$id': typeof AuthenticatedProdutorCursoIdRoute
   '/_authenticated/produtor/editar/$id': typeof AuthenticatedProdutorEditarIdRoute
   '/_authenticated/produtor/sucesso/$id': typeof AuthenticatedProdutorSucessoIdRoute
@@ -427,6 +437,7 @@ export interface FileRouteTypes {
     | '/adm/'
     | '/membros/'
     | '/produtor/'
+    | '/produtor/checkout/$id'
     | '/produtor/curso/$id'
     | '/produtor/editar/$id'
     | '/produtor/sucesso/$id'
@@ -466,6 +477,7 @@ export interface FileRouteTypes {
     | '/adm'
     | '/membros'
     | '/produtor'
+    | '/produtor/checkout/$id'
     | '/produtor/curso/$id'
     | '/produtor/editar/$id'
     | '/produtor/sucesso/$id'
@@ -508,6 +520,7 @@ export interface FileRouteTypes {
     | '/_authenticated/adm/'
     | '/_authenticated/membros/'
     | '/_authenticated/produtor/'
+    | '/_authenticated/produtor/checkout/$id'
     | '/_authenticated/produtor/curso/$id'
     | '/_authenticated/produtor/editar/$id'
     | '/_authenticated/produtor/sucesso/$id'
@@ -782,6 +795,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutorSaquesRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
     }
+    '/_authenticated/produtor/checkout/$id': {
+      id: '/_authenticated/produtor/checkout/$id'
+      path: '/checkout/$id'
+      fullPath: '/produtor/checkout/$id'
+      preLoaderRoute: typeof AuthenticatedProdutorCheckoutIdRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
     '/_authenticated/produtor/curso/$id': {
       id: '/_authenticated/produtor/curso/$id'
       path: '/curso/$id'
@@ -850,6 +870,7 @@ interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
   AuthenticatedProdutorSaquesRoute: typeof AuthenticatedProdutorSaquesRoute
   AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
+  AuthenticatedProdutorCheckoutIdRoute: typeof AuthenticatedProdutorCheckoutIdRoute
   AuthenticatedProdutorCursoIdRoute: typeof AuthenticatedProdutorCursoIdRoute
   AuthenticatedProdutorEditarIdRoute: typeof AuthenticatedProdutorEditarIdRoute
   AuthenticatedProdutorSucessoIdRoute: typeof AuthenticatedProdutorSucessoIdRoute
@@ -864,6 +885,7 @@ const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
   AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
   AuthenticatedProdutorSaquesRoute: AuthenticatedProdutorSaquesRoute,
   AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,
+  AuthenticatedProdutorCheckoutIdRoute: AuthenticatedProdutorCheckoutIdRoute,
   AuthenticatedProdutorCursoIdRoute: AuthenticatedProdutorCursoIdRoute,
   AuthenticatedProdutorEditarIdRoute: AuthenticatedProdutorEditarIdRoute,
   AuthenticatedProdutorSucessoIdRoute: AuthenticatedProdutorSucessoIdRoute,

@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { createOrder } from "@/lib/checkout.functions";
+import multicaixaLogo from "@/assets/logo-multicaixa.svg";
+import emisLogo from "@/assets/logo-emis.svg";
 import { getRef } from "@/lib/affiliate-ref";
 import { getProductTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
@@ -105,16 +107,9 @@ const METHODS = [
   {
     id: "referencia",
     label: "Referência Multicaixa",
-    desc: "Pagar no Multicaixa (ATM) ou Internet Banking",
+    desc: "Pague no ATM, Internet Banking ou Multicaixa Express",
     badge: "Multicaixa",
     icon: CreditCard,
-  },
-  {
-    id: "transferencia",
-    label: "Transferência Bancária",
-    desc: "Pagamento via IBAN com comprovativo",
-    badge: "IBAN",
-    icon: Building2,
   },
 ] as const;
 
@@ -357,7 +352,6 @@ function Checkout() {
 
               <div className="space-y-3">
                 {METHODS.map((m) => {
-                  const Icon = m.icon;
                   const active = method === m.id;
                   return (
                     <button
@@ -371,13 +365,11 @@ function Checkout() {
                       }`}
                     >
                       <div
-                        className={`h-10 w-10 rounded-xl grid place-items-center shrink-0 ${
-                          active
-                            ? "gradient-brand text-primary-foreground"
-                            : "bg-secondary text-foreground"
+                        className={`h-12 w-16 rounded-xl grid place-items-center shrink-0 bg-primary ${
+                          active ? "ring-2 ring-gold" : ""
                         }`}
                       >
-                        <Icon className="h-5 w-5" />
+                        <img src={multicaixaLogo} alt="Multicaixa" className="w-12 h-auto object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -420,6 +412,15 @@ function Checkout() {
                 <span className="text-gradient-gold font-mono tabular-nums">
                   {fmt(price, p.currency)}
                 </span>
+              </div>
+
+              <div className="mt-4 flex items-center justify-center gap-3 rounded-xl border border-border bg-card/60 p-3">
+                <div className="rounded-lg bg-foreground px-2.5 py-1.5">
+                  <img src={emisLogo} alt="EMIS" className="h-6 w-auto" />
+                </div>
+                <p className="text-[11px] leading-snug text-muted-foreground text-left">
+                  Pagamentos processados na rede Multicaixa, gerida pela EMIS — Empresa Interbancária de Serviços.
+                </p>
               </div>
             </div>
 

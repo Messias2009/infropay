@@ -1,3 +1,4 @@
+import assetFirst0 from "@/assets/images/infropay_wristband_first_sale_1792134398670.jpg";
 import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
@@ -12,7 +13,7 @@ type Props = {
 export function WristbandModal({
   isOpen,
   onClose,
-  wristbandImage = "/src/assets/images/infropay_wristband_first_sale_1792134398670.jpg",
+  wristbandImage = assetFirst0,
 }: Props) {
   useEffect(() => {
     if (!isOpen) return;
