@@ -14,7 +14,7 @@ const createOrderSchema = z.object({
   buyer_name: z.string().trim().min(2).max(120),
   buyer_email: z.string().trim().email().max(180),
   buyer_phone: z.string().trim().min(6).max(40),
-  payment_method: z.enum(["multicaixa_express", "referencia", "transferencia"]),
+  payment_method: z.enum(["multicaixa_express", "referencia"]),
   ref: z.string().trim().min(4).max(40).optional().nullable(),
 });
 
