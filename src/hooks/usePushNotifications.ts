@@ -140,7 +140,7 @@ export function usePushNotifications() {
             body: "Cliente: Pedro Manuel · Produto: Pack Design Gráfico 2026",
             icon: "/pwa-192x192.png",
             badge: "/pwa-192x192.png",
-            vibrate: [200, 100, 200, 100, 200],
+            ...({ vibrate: [200, 100, 200, 100, 200] } as NotificationOptions),
             tag: "infropay-test-" + Date.now(),
           });
         }, delaySeconds * 1000);
@@ -233,7 +233,7 @@ export function usePushNotifications() {
             body: `Comprador: ${customer} · Pagamento recebido com sucesso.`,
             icon: "/pwa-192x192.png",
             badge: "/pwa-192x192.png",
-            vibrate: [200, 100, 200, 100, 200],
+            ...({ vibrate: [200, 100, 200, 100, 200] } as NotificationOptions),
             tag: `sale-${sale.id}`,
             data: { url: "/produtor" },
           });
