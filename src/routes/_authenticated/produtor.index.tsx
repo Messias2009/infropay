@@ -43,7 +43,7 @@ function Dashboard() {
   const { data: w } = useQuery({ queryKey: ["producer", "wallet"], queryFn: () => walletFn() });
 
   // Monitora e celebra desbloqueio de novas placas com base no faturamento total
-  usePlaqueWatcher(o?.total_revenue_cents);
+  usePlaqueWatcher(o?.totalGross);
 
   return (
     <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">

@@ -86,7 +86,7 @@ export function usePushNotifications() {
             body: "Agora és alertado instantaneamente sempre que realizares uma venda.",
             icon: "/pwa-192x192.png",
             badge: "/pwa-192x192.png",
-            vibrate: [100, 50, 100],
+            ...({ vibrate: [100, 50, 100] } as NotificationOptions),
             tag: "welcome-notification",
           });
         }
