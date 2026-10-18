@@ -1,6 +1,6 @@
 {
-  "summary": "Plano de implementação para:\n1. Limpeza do Dashboard do Produtor: remoção do banner de notificações push e do card da pulseira da primeira venda da tela principal (/produtor).\n2. Integração do controlo e teste das Notificações Push na página de Configurações de Perfil (/perfil).\n3. Preservação do card da pulseira e galeria oficial de placas em Conquistas (/produtor/conquistas) e no sino do topo.",
-  "updatedAt": "2026-10-16T07:49:34.000598311Z",
+  "summary": "Plano de implementação completo para:\n1. Checkout Personalizado: ativação e atalho direto 'Personalizar Checkout' na gestão de produtos e ao editar produto, com upload de logo, banners, temas de cores, contagem decrescente e depoimentos.\n2. Centralização de Notificações & Palavra-passe no Perfil: adição de formulário de alteração de palavra-passe com validação segura e gestão de som/permissões de notificações no Perfil (/perfil).\n3. Conquistas (/produtor/conquistas):\n   - Atualização da imagem da Pulseira de Primeira Venda para a nova pulseira de borracha de silicone azul real com logotipo em relevo InfroPay.\n   - Adição da imagem em alta definição para os Selos Especiais.\n   - Remoção completa de botões de prévias de notificações em todas as placas.\n   - Barra de progresso de meta dinâmica informando o percentual restante (ex: 'Faltam 7% (X Kz) para a Placa de Ouro').",
+  "updatedAt": "2026-10-18T16:01:22.663269627Z",
   "requestFeedback": true,
   "userFacing": true
 }

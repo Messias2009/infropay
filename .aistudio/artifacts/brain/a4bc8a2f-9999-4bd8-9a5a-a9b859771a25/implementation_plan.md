@@ -1,49 +1,70 @@
-# Limpeza do Dashboard do Produtor & Centralização das Notificações Push no Perfil
+# Checkout Personalizado, Gestão de Segurança no Perfil & Conquistas Aprimoradas
 
-Plano para desobstruir a página principal do Dashboard do Produtor (`/produtor`), removendo o banner de notificações push e o card da pulseira da primeira venda, e transferindo a gestão e teste das notificações push para a página de Configurações de Perfil (`/perfil`).
+Plano de implementação para ativar os atalhos de Checkout Personalizado com upload de imagens e identidade visual, mover as configurações de notificações e alteração de palavra-passe para o Perfil, e refinar a página de Conquistas com a nova pulseira de borracha azul InfroPay, selos especiais ilustrados, acompanhamento percentual de metas e remoção de prévias.
 
 ## Decisões Confirmadas com o Utilizador
 
 > [!IMPORTANT]
-> - **Remoção no Dashboard Principal (`/produtor`)**: Remoção total do banner de notificações push e do card da pulseira de primeira venda da tela inicial do painel financeiro, mantendo o dashboard 100% focado em métricas financeiras, gráficos e operação de vendas.
-> - **Localização do Controlo de Notificações Push**: Centralizado na página de **Configurações de Perfil** (`/perfil`), além de mantido no menu do sino do topo (`NotificationBell`) e em Conquistas (`/produtor/conquistas`).
-> - **Preservação da Pulseira de 1ª Venda**: Continua em destaque na página dedicada de Conquistas & Prémios Físicos (`/produtor/conquistas`).
+> - **Checkout Personalizado**: Atalho visível e direto "Personalizar Checkout" nos cards de produtos (`/produtor/produtos`) e na tela de edição de produto (`/produtor/editar/$id`), levando à tela de personalização completa com upload de logo, banner, temas e temporizadores.
+> - **Notificações & Segurança no Perfil (`/perfil`)**:
+>   - Removido de Conquistas e adicionado na tela de perfil.
+>   - Adição de formulário seguro para alteração de palavra-passe (`Nova palavra-passe` e `Confirmar palavra-passe`).
+>   - Gestão de notificações push e áudio "Ka-ching!".
+> - **Página de Conquistas (`/produtor/conquistas`)**:
+>   - Nova fotografia oficial de estúdio da **pulseira de borracha de silicone azul** com logotipo em relevo `InfroPay`.
+>   - Nova imagem premium e medalhas em alta resolução para os **Selos Especiais**.
+>   - **Remoção de todas as prévias**: eliminados botões de prévia/teste de notificação das placas e do topo.
+>   - **Acompanhamento de Nível em Tempo Real**: barra de progresso calculando exatamente quanto falta em percentual e Kwanzas (ex: *"Faltam 7% (35.000 Kz) para a Placa de Ouro"*).
 
 ---
 
-## 1. Visão Geral & Experiência do Produtor
+## 1. Visão Geral das Funcionalidades
 
-### A. Dashboard Limpo e Focado (`/produtor`)
-- O topo do dashboard apresentará diretamente o cabeçalho financeiro com botões de ação ("Saques" e "Novo produto").
-- Imediatamente a seguir, o utilizador verá a grelha de cartões de indicadores (faturamento bruto, saldo disponível, retenções e taxas).
-- Remove os dois cards promocionais/informativos que ocupavam o terço superior da visualização, proporcionando uma experiência analítica premium, rápida e sem poluição visual.
+### A. Checkout Personalizado com Imagens e Marca
+- O produtor tem acesso ao editor completo em `/produtor/checkout/$id`:
+  - **Upload de Logo da Marca**: upload de logotipo personalizado exibido no topo do checkout.
+  - **Banner de Topo / Capa**: proporções 16:9 ou 3:1 para promoção de autoridade.
+  - **Seletor de Temas de Cores**: Azul InfroPay, Dourado Imperial, Verde Esmeralda, Roxo Creator e Preto Minimalista.
+  - **Temporizador de Escassez**: contagem decrescente regressiva para impulsionar conversões.
+  - **Garantia & Depoimentos**: textos de garantia e selos de segurança SSL / Multicaixa GPO.
+  - **Pré-visualização em Tempo Real**: alternância instantânea entre visualização Mobile e Desktop.
 
-### B. Gestão de Notificações no Perfil (`/perfil`)
-- Adição da secção "Notificações de Vendas (Push & Alertas)" na página de perfil do produtor.
-- Inclui o componente `PushSalesNotificationBanner`:
-  - Indicador de status (Ativo / Pendente).
-  - Interruptor do som característico de venda ("Ka-ching!").
-  - Botão de ativação e teste de entrega em 5 segundos em segundo plano.
+### B. Perfil com Segurança e Notificações (`/perfil`)
+- **Alteração de Palavra-Passe**:
+  - Campos: Nova palavra-passe e Confirmação.
+  - Validação de correspondência e comprimento mínimo de 6 caracteres.
+  - Atualização direta via `supabase.auth.updateUser`.
+- **Notificações Push & Sons de Venda**:
+  - Painel de controlo integrado ao perfil para ativação de alertas e som de caixa registadora.
+
+### C. Conquistas Limpas e Gamificadas (`/produtor/conquistas`)
+- **Pulseira Oficial de Silicone Azul**: exibição da nova fotografia de alta qualidade da pulseira azul da InfroPay.
+- **Rastreador de Nível de Faturamento**:
+  - Faturamento total e quantidade de vendas.
+  - Percentual dinâmico do nível atual até à próxima placa.
+  - Destaque claro: *"Faltam apenas X% (Y Kz) para desbloquear a [Próxima Placa]"*.
+- **5 Placas Oficiais Físicas**: exibição focada das placas de reconhecimento (Prata, Ouro, Platina, Diamante, Black Elite) sem botões de prévia desnecessários.
+- **Selos Especiais Ilustrados**: selos em alta definição para conquistas como Primeira Venda, 10 Vendas, 100 Vendas, Milionário, Top Vendedor e Escala.
 
 ---
 
-## 2. Diagrama de Arquitetura & Fluxo
+## 2. Diagrama de Navegação & Ações
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        PAINEL DO PRODUTOR                              │
+│                        ECOSSISTEMA INFROPAY                            │
 ├────────────────────────────────┬───────────────────────────────────────┤
-│ 1. Dashboard (/produtor)       │ • Métricas financeiras em tempo real  │
-│    (Foco analítico limpo)      │ • Gráficos de receita e volume        │
-│                                │ • Lista de produtos e atividades      │
+│ 1. Produtos (/produtor/produtos│ • Botão "Personalizar Checkout"       │
+│    e /produtor/editar/$id)     │ • Edição de logo, capas e tema visual │
 ├────────────────────────────────┼───────────────────────────────────────┤
-│ 2. Perfil (/perfil)            │ • Dados cadastrais e biografia        │
-│    (Definições & Preferências) │ • [NOVO] Controlo de Notificações     │
-│                                │   Push (permissões, som, teste 5s)    │
+│ 2. Perfil (/perfil)            │ • Dados cadastrais do produtor        │
+│    (Definições & Segurança)    │ • [NOVO] Alterar palavra-passe        │
+│                                │ • [NOVO] Preferências de notificações │
 ├────────────────────────────────┼───────────────────────────────────────┤
-│ 3. Conquistas (/conquistas)    │ • Pulseira oficial de 1ª venda        │
-│    (Prémios físicos)           │ • 5 Níveis de placas fotorrealistas   │
-│                                │ • Prévia e celebração de troféus      │
+│ 3. Conquistas (/conquistas)    │ • Pulseira oficial de borracha azul   │
+│    (100% focado em mérito)     │ • Acompanhamento: "Faltam X% para..." │
+│                                │ • 5 Placas Oficiais (sem prévias)     │
+│                                │ • Galeria de Selos Especiais 8K       │
 └────────────────────────────────┴───────────────────────────────────────┘
 ```
 
@@ -51,25 +72,29 @@ Plano para desobstruir a página principal do Dashboard do Produtor (`/produtor`
 
 ## 3. Plano de Modificações por Ficheiro
 
-### 1. `src/routes/_authenticated/produtor.index.tsx`
-- Remover o bloco JSX do card da pulseira de primeira venda (`Pulseira da Primeira Venda`).
-- Remover o bloco JSX `<PushSalesNotificationBanner variant="card" />`.
-- Limpar importações não mais utilizadas (`PushSalesNotificationBanner`, imagens não usadas).
-- Manter o observador de placas em segundo plano (`usePlaqueWatcher`) para garantir que toasts de desbloqueio continuem a disparar automaticamente se o produtor bater uma meta.
+### 1. `src/routes/_authenticated/produtor.produtos.tsx`
+- Adicionar botão com ícone de paleta `Personalizar Checkout` apontando para `/produtor/checkout/$id` em cada produto da lista.
 
-### 2. `src/routes/_authenticated/perfil.tsx`
-- Importar e renderizar o componente `<PushSalesNotificationBanner variant="card" />` abaixo do formulário de perfil.
-- Fornecer título de secção claro: "Notificações & Alertas no Navegador".
+### 2. `src/routes/_authenticated/produtor.editar.$id.tsx`
+- Adicionar botão de atalho `Personalizar Checkout` no topo da tela de edição do produto.
+
+### 3. `src/routes/_authenticated/perfil.tsx`
+- Adicionar formulário de **Alteração de Palavra-Passe** com campos protegidos, indicador de força e chamada a `supabase.auth.updateUser`.
+- Adicionar o bloco de **Preferências de Notificações de Vendas** (`PushSalesNotificationBanner`).
+
+### 4. `src/routes/_authenticated/produtor.conquistas.tsx`
+- Substituir a imagem da pulseira pela nova imagem oficial gerada da pulseira de borracha azul (`infropay_blue_rubber_wristband_1792339247732.jpg`).
+- Adicionar a imagem de alta definição para a secção de Selos Especiais (`infropay_special_seals_badge_1792339262403.jpg`).
+- Remover todos os botões de prévia de notificações (`Testar Notificação da Minha Placa` e `Ver Notificação / Prévia Notificação`).
+- Implementar o indicador de acompanhamento do nível com a barra e a contagem de percentual restante (ex: *"Faltam 7% (X Kz) para a Placa de Ouro"*).
 
 ---
 
 ## 4. Verificação & Validação
 
-1. **Validação Estática**:
-   - Executar `lint_applet` para assegurar 0 erros de linting e TypeScript.
-2. **Validação de Compilação**:
-   - Executar `compile_applet` para validar o build de produção no Vite/TanStack Start.
-3. **Validação Visual**:
-   - Aceder a `/produtor` e confirmar que a página inicia diretamente nos KPIs financeiros sem banners intrusivos.
-   - Aceder a `/perfil` e testar a ativação e o som das notificações push.
-   - Aceder a `/produtor/conquistas` e confirmar que a pulseira de primeira venda e as 5 placas permanecem intactas.
+1. **Validação Estática**: `lint_applet` para garantir zero erros de TypeScript e formatação.
+2. **Validação de Compilação**: `compile_applet` garantindo integridade de build.
+3. **Verificação Funcional**:
+   - Abrir a personalização de checkout a partir da lista de produtos e verificar uploads e temas.
+   - Testar o formulário de alteração de senha no perfil.
+   - Verificar a nova pulseira de borracha azul e o cálculo de percentual restante em Conquistas.

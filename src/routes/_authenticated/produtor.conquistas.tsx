@@ -1,25 +1,11 @@
-import wristbandImg from "@/assets/images/infropay_wristband_first_sale_1792134398670.jpg";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  Trophy,
-  Lock,
-  Flame,
-  Rocket,
-  Crown,
-  Star,
-  Medal,
-  Award,
-  Sparkles,
-  Bell,
-} from "lucide-react";
+import { Trophy, Lock, Flame, Rocket, Crown, Star, Medal, Award, Sparkles } from "lucide-react";
 import { getMyAchievements } from "@/lib/profile.functions";
 import { LEVELS, levelFor } from "@/lib/legends.functions";
 import { kz } from "@/components/finance/FeeBanner";
-import { showPlaqueUnlockToast } from "@/components/notifications/PlaqueUnlockToast";
 import { usePlaqueWatcher } from "@/hooks/usePlaqueWatcher";
-import { PushSalesNotificationBanner } from "@/components/notifications/PushSalesNotificationBanner";
 
 export const Route = createFileRoute("/_authenticated/produtor/conquistas")({
   head: () => ({
@@ -37,6 +23,20 @@ function Page() {
   // Monitora e celebra quando novas placas forem desbloqueadas
   usePlaqueWatcher(revenue);
 
+  // Cálculo de progresso para a próxima placa
+  const currentIdx = LEVELS.findIndex((l) => l.key === current.key);
+  const nextLevel = LEVELS[currentIdx + 1];
+  let pctRemaining = 0;
+  let remainingCents = 0;
+  let pctAchieved = 100;
+  if (nextLevel) {
+    const span = nextLevel.min_cents - (current.min_cents || 0);
+    const currentProgress = Math.max(0, revenue - (current.min_cents || 0));
+    pctAchieved = Math.min(99, Math.max(1, Math.round((currentProgress / span) * 100)));
+    pctRemaining = 100 - pctAchieved;
+    remainingCents = Math.max(0, nextLevel.min_cents - revenue);
+  }
+
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
       <div>
@@ -47,41 +47,77 @@ function Page() {
         </p>
       </div>
 
-      {/* BANNER DE NOTIFICAÇÕES PUSH MESMO COM NAVEGADOR FECHADO */}
-      <PushSalesNotificationBanner variant="card" />
+      {/* Nível atual & Acompanhamento de Faturamento */}
+      <div
+        className="rounded-2xl border p-6 relative overflow-hidden bg-gradient-to-br from-card via-[#111827]/90 to-card shadow-card"
+        style={{ borderColor: current.color + "60" }}
+      >
+        <div
+          className="absolute -right-16 -top-16 w-64 h-64 rounded-full opacity-15 blur-3xl pointer-events-none"
+          style={{ background: current.color }}
+        />
 
-      <div className="rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card p-6">
-        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-          Nível atual
-        </div>
-        <div className="mt-2 flex items-end gap-3 flex-wrap justify-between">
-          <div>
-            <div className="font-display text-4xl font-bold" style={{ color: current.color }}>
+        <div className="relative">
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+            Nível atual de faturamento
+          </div>
+
+          <div className="mt-2 flex items-baseline gap-3 flex-wrap">
+            <div
+              className="font-display text-3xl sm:text-4xl font-bold"
+              style={{ color: current.color }}
+            >
               {current.name}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">
-              — {kz(revenue)} faturados · {data?.sales_count ?? 0} vendas
+            <div className="text-sm text-muted-foreground">
+              — <strong className="text-foreground">{kz(revenue)}</strong> faturados ·{" "}
+              {data?.sales_count ?? 0} vendas concluídas
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => showPlaqueUnlockToast(current)}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gold/40 bg-gold/10 text-gold hover:bg-gold/20 text-xs font-semibold transition shadow-sm"
-          >
-            <Trophy className="h-4 w-4" />
-            Testar Notificação da Minha Placa
-          </button>
+          {nextLevel ? (
+            <div className="mt-5 space-y-2 max-w-2xl">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-muted-foreground">
+                  Próxima meta: <strong className="text-foreground">{nextLevel.name}</strong> (
+                  {nextLevel.goal_label})
+                </span>
+                <span className="text-gold font-semibold">
+                  Faltam {pctRemaining}% ({kz(remainingCents)})
+                </span>
+              </div>
+
+              {/* Barra de progresso */}
+              <div className="h-2.5 w-full rounded-full bg-black/40 border border-white/10 overflow-hidden p-0.5">
+                <div
+                  className="h-full rounded-full transition-all duration-500 shadow-glow"
+                  style={{
+                    width: `${pctAchieved}%`,
+                    background: `linear-gradient(90deg, ${current.color}, ${nextLevel.color})`,
+                  }}
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-0.5">
+                <span>{pctAchieved}% concluído</span>
+                <span>Meta: {nextLevel.goal_label}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-4 p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-400 font-semibold max-w-md">
+              👑 Parabéns! Alcançaste o patamar máximo de produtor InfroPay (Black Elite)!
+            </div>
+          )}
         </div>
       </div>
 
-      {/* CARD SIMPLES: PULSEIRA PRIMEIRA VENDA */}
-      <div className="rounded-2xl border border-gold/40 bg-card/90 p-5 shadow-card">
+      {/* CARD: PULSEIRA OFICIAL DE BORRACHA AZUL */}
+      <div className="rounded-2xl border border-blue-500/40 bg-card/90 p-5 shadow-card">
         <div className="flex flex-col sm:flex-row items-center gap-5">
-          <div className="shrink-0 w-36 sm:w-44 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
+          <div className="shrink-0 w-36 sm:w-44 aspect-[4/3] rounded-xl overflow-hidden border border-blue-500/40 bg-black/50 shadow-md">
             <img
-              src={wristbandImg}
-              alt="Pulseira Primeira Venda"
+              src="/src/assets/images/infropay_blue_rubber_wristband_1792339247732.jpg"
+              alt="Pulseira de Borracha Azul InfroPay"
               width={400}
               height={300}
               loading="lazy"
@@ -90,18 +126,20 @@ function Page() {
             />
           </div>
           <div className="space-y-1.5 text-center sm:text-left flex-1">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               Pulseira da Primeira Venda
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
               {data && data.sales_count > 0 ? (
                 <span className="text-emerald-400 font-medium">
-                  Parabéns! Já realizou {data.sales_count} venda(s) na plataforma. Fale com o nosso
-                  suporte para receber a sua pulseira de primeira venda.
+                  Parabéns! Já realizaste {data.sales_count} venda(s) na plataforma. Fale com o
+                  nosso suporte oficial para receber a tua pulseira de borracha de silicone azul
+                  InfroPay.
                 </span>
               ) : (
                 <span>
-                  Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
+                  Faça a sua primeira venda e receba a pulseira de borracha de silicone azul com a
+                  marca oficial da InfroPay.
                 </span>
               )}
             </p>
@@ -147,7 +185,7 @@ function Page() {
                     Meta: {l.goal_label}
                   </div>
                   <div
-                    className="text-[10px] mt-1.5 font-semibold uppercase tracking-wider"
+                    className="text-[10px] mt-2 font-semibold uppercase tracking-wider"
                     style={{
                       color: unlocked ? "hsl(var(--success))" : "hsl(var(--muted-foreground))",
                     }}
@@ -156,31 +194,37 @@ function Page() {
                   </div>
                 </div>
               </div>
-
-              {/* Botão de demonstração / celebração da placa com troféu */}
-              <button
-                type="button"
-                onClick={() => showPlaqueUnlockToast(l)}
-                className={`mt-3 w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[11px] font-semibold transition border ${
-                  unlocked
-                    ? "bg-gold/15 hover:bg-gold/25 text-gold border-gold/40 shadow-sm"
-                    : "bg-white/5 hover:bg-white/10 text-muted-foreground border-border/40"
-                }`}
-              >
-                <Trophy className="h-3 w-3" style={{ color: l.color }} />
-                {unlocked ? "Ver Notificação" : "Prévia Notificação"}
-              </button>
             </div>
           );
         })}
       </div>
 
-      <div>
-        <h2 className="font-display text-2xl font-bold">Selos especiais</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Reconhecimentos extra pelo teu desempenho na plataforma.
-        </p>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-5">
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-card via-[#1c1917]/50 to-card p-5 shadow-card flex flex-col sm:flex-row items-center gap-5">
+          <div className="shrink-0 w-28 sm:w-36 aspect-square rounded-2xl overflow-hidden border border-gold/40 bg-black/60 shadow-lg shadow-gold/10 p-1">
+            <img
+              src="/src/assets/images/infropay_special_seals_badge_1792339262403.jpg"
+              alt="Selo Especial Oficial InfroPay"
+              width={400}
+              height={400}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover rounded-xl"
+            />
+          </div>
+          <div className="flex-1 text-center sm:text-left space-y-1.5">
+            <div className="text-xs font-semibold uppercase tracking-widest text-gold">
+              Emblemas de Mérito
+            </div>
+            <h2 className="font-display text-2xl font-bold">Selos especiais</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+              Reconhecimentos extra pelo teu volume e consistência na plataforma. Colecione cada
+              selo à medida que avança na jornada do produtor.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {SEALS.map((sl) => {
             const unlocked = sl.check({ revenue, sales: data?.sales_count ?? 0 });
             const Icon = sl.icon;

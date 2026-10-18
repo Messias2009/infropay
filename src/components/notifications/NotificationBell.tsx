@@ -137,8 +137,6 @@ export function NotificationBell() {
                 } catch {
                   /* Notification API failed or unsupported */
                 }
-              } else if (Notification.permission === "default") {
-                Notification.requestPermission();
               }
             }
             qc.invalidateQueries({ queryKey: ["notifications"] });

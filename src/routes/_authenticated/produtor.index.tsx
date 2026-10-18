@@ -1,4 +1,3 @@
-import assetFirst0 from "@/assets/images/infropay_wristband_first_sale_1792134398670.jpg";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -29,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { getMyFinanceOverview, getMyWallet } from "@/lib/finance.functions";
 import { getMyProductMetrics } from "@/lib/products.functions";
 import { FeeBanner, kz } from "@/components/finance/FeeBanner";
-import { PushSalesNotificationBanner } from "@/components/notifications/PushSalesNotificationBanner";
 import { usePlaqueWatcher } from "@/hooks/usePlaqueWatcher";
 
 export const Route = createFileRoute("/_authenticated/produtor/")({
@@ -43,7 +41,7 @@ function Dashboard() {
   const { data: w } = useQuery({ queryKey: ["producer", "wallet"], queryFn: () => walletFn() });
 
   // Monitora e celebra desbloqueio de novas placas com base no faturamento total
-  usePlaqueWatcher(o?.totalGross);
+  usePlaqueWatcher(o?.total_revenue_cents);
 
   return (
     <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">
@@ -73,45 +71,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* BANNER DE NOTIFICAÇÕES PUSH MESMO COM NAVEGADOR FECHADO */}
-      <PushSalesNotificationBanner variant="card" />
-
-      {/* CARD SIMPLES: PULSEIRA DE PRIMEIRA VENDA */}
-      <div className="rounded-2xl border border-gold/40 bg-card/90 p-4 sm:p-5 shadow-card">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
-          <div className="shrink-0 w-32 sm:w-40 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
-            <img
-              src={assetFirst0}
-              alt="Pulseira Primeira Venda InfroPay"
-              width={320}
-              height={240}
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="space-y-1 text-center sm:text-left flex-1">
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
-              Pulseira da Primeira Venda
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-xl">
-              Faça a sua primeira venda e receba a pulseira de primeira venda da InfroPay.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-              <Link to="/produtor/conquistas">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-gold/40 text-gold hover:bg-gold/10 text-xs"
-                >
-                  Ver Conquistas
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Wallet strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <WalletCard
@@ -137,31 +96,31 @@ function Dashboard() {
         />
       </div>
 
-      {/* KPI grid */}
+      {/* KPI grid: Vendas de hoje, Vendas pagas e Vendas pendentes */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Kpi
           icon={DollarSign}
-          label="Hoje"
+          label="Vendas de hoje"
           value={kz(o?.today.gross ?? 0)}
-          sub={`${o?.today.count ?? 0} vendas`}
+          sub={`${o?.today.count ?? 0} vendas hoje`}
         />
         <Kpi
           icon={TrendingUp}
-          label="Últimos 7 dias"
-          value={kz(o?.week.gross ?? 0)}
-          sub={`${o?.week.count ?? 0} vendas`}
+          label="Vendas pagas"
+          value={kz(o?.totalGross ?? 0)}
+          sub={`${o?.salesCount ?? 0} vendas aprovadas`}
         />
         <Kpi
-          icon={TrendingUp}
-          label="Este mês"
-          value={kz(o?.month.gross ?? 0)}
-          sub={`${o?.month.count ?? 0} vendas`}
+          icon={Clock}
+          label="Vendas pendentes"
+          value={kz(o?.pending?.gross ?? 0)}
+          sub={`${o?.pending?.count ?? 0} a aguardar`}
         />
         <Kpi
           icon={Package}
           label="Ticket médio"
           value={kz(o?.avgTicket ?? 0)}
-          sub={`${o?.salesCount ?? 0} totais`}
+          sub="por venda paga"
         />
       </div>
 

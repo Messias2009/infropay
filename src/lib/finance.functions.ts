@@ -95,6 +95,10 @@ export const getMyFinanceOverview = createServerFn({ method: "GET" })
     const totalFees = sum(paid, "platform_fee_cents");
     const salesCount = paid.length;
 
+    const pending = rows.filter((r) => r.status === "pendente");
+    const pendingGross = sum(pending, "gross_cents");
+    const pendingCount = pending.length;
+
     const { data: prodRows } = await (context.supabase as any)
       .from("products")
       .select("views_count")
@@ -107,6 +111,10 @@ export const getMyFinanceOverview = createServerFn({ method: "GET" })
       month: {
         count: inRange(startOfMonth).length,
         gross: sum(inRange(startOfMonth), "gross_cents"),
+      },
+      pending: {
+        count: pendingCount,
+        gross: pendingGross,
       },
       totalGross,
       totalNet,

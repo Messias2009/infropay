@@ -14,6 +14,7 @@ import {
   Share2,
   Trash2,
   Copy as CopyIcon,
+  Palette,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -218,10 +219,24 @@ function MeusProdutos() {
                 </div>
 
                 <div className="p-4 flex gap-2 flex-wrap">
-                  <Link to="/produtor/editar/$id" params={{ id: p.id }} className="flex-1 min-w-24">
+                  <Link to="/produtor/editar/$id" params={{ id: p.id }} className="flex-1 min-w-20">
                     <Button size="sm" variant="outline" className="w-full">
                       <Pencil className="h-3.5 w-3.5 mr-1" />
                       Editar
+                    </Button>
+                  </Link>
+                  <Link
+                    to="/produtor/checkout/$id"
+                    params={{ id: p.id }}
+                    className="flex-1 min-w-32"
+                  >
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-primary/40 text-primary-glow hover:bg-primary/10"
+                    >
+                      <Palette className="h-3.5 w-3.5 mr-1 text-primary-glow" />
+                      Personalizar Checkout
                     </Button>
                   </Link>
                   {(p.status === "rascunho" || p.status === "pausado") && (

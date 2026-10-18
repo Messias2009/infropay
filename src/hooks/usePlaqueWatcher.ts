@@ -25,16 +25,10 @@ export function usePlaqueWatcher(currentRevenueCents: number | undefined) {
 
     const lastUnlockedKey = localStorage.getItem(STORAGE_KEY);
 
-    // Se é a primeira vez que deteta ou se o nível atual é superior ao anterior registrado
+    // Se é a primeira vez, apenas armazena o nível base sem disparar toast inesperado
     if (!lastUnlockedKey) {
-      // Guarda o nível atual sem spammar se o utilizador já tinha o marco no carregamento inicial,
-      // mas se estivermos na página de conquistas ou dashboard e for novo, disparamos.
       localStorage.setItem(STORAGE_KEY, currentLevel.key);
-      if (!hasCheckedRef.current) {
-        hasCheckedRef.current = true;
-        // Se acabou de atingir, podemos celebrar
-        showPlaqueUnlockToast(currentLevel);
-      }
+      hasCheckedRef.current = true;
       return;
     }
 

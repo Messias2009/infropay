@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Trophy, User } from "lucide-react";
+import { Trophy, User, Lock, KeyRound, Bell, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,8 @@ import { MediaUpload } from "@/components/MediaUpload";
 import { getMyAchievements, getMyProfile, updateMyProfile } from "@/lib/profile.functions";
 import { LEVELS, levelFor } from "@/lib/legends.functions";
 import { kz } from "@/components/finance/FeeBanner";
+import { supabase } from "@/integrations/supabase/client";
+import { PushSalesNotificationBanner } from "@/components/notifications/PushSalesNotificationBanner";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   head: () => ({
@@ -43,6 +45,34 @@ function Page() {
         Math.round(((revenue - level.min_cents) / (next.min_cents - level.min_cents)) * 100),
       )
     : 100;
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingPassword, setSavingPassword] = useState(false);
+
+  async function handleUpdatePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newPassword || newPassword.length < 6) {
+      toast.error("A palavra-passe deve ter no mínimo 6 caracteres.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("As palavras-passe não coincidem.");
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Palavra-passe alterada com sucesso!");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atualizar palavra-passe.");
+    } finally {
+      setSavingPassword(false);
+    }
+  }
 
   async function save() {
     try {
@@ -199,6 +229,75 @@ function Page() {
             Guardar alterações
           </Button>
         </div>
+      </div>
+
+      {/* Alterar Palavra-passe */}
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gold/15 text-gold border border-gold/30">
+            <KeyRound className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold">Segurança & Palavra-passe</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Atualize a sua palavra-passe para manter a sua conta de produtor segura.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-xl">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="new-pw">Nova palavra-passe</Label>
+              <Input
+                id="new-pw"
+                type="password"
+                minLength={6}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Mínimo 6 caracteres"
+                className="mt-1"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="confirm-pw">Confirmar palavra-passe</Label>
+              <Input
+                id="confirm-pw"
+                type="password"
+                minLength={6}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Repita a palavra-passe"
+                className="mt-1"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              disabled={savingPassword || !newPassword}
+              variant="outline"
+              className="border-primary/40 text-primary-glow hover:bg-primary/10"
+            >
+              <Lock className="h-3.5 w-3.5 mr-1.5" />
+              {savingPassword ? "A atualizar..." : "Atualizar palavra-passe"}
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Preferências de Notificações Push */}
+      <div className="space-y-3">
+        <div>
+          <div className="text-xs uppercase tracking-widest text-gold font-semibold">
+            Preferências
+          </div>
+          <h2 className="text-xl font-bold mt-1">Notificações do Produtor</h2>
+        </div>
+        <PushSalesNotificationBanner variant="card" />
       </div>
     </div>
   );

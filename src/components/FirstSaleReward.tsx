@@ -8,7 +8,7 @@ export function FirstSaleReward() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    if (!["/", "/auth", "/produtor"].includes(pathname)) return;
+    if (!["/", "/auth"].includes(pathname)) return;
     try {
       if (!sessionStorage.getItem("infropay-first-sale-dismissed")) setOpen(true);
     } catch {
