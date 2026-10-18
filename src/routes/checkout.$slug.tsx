@@ -103,6 +103,7 @@ const METHODS = [
     desc: "Pagamento instantâneo no seu telefone",
     badge: "Mais Rápido",
     icon: Smartphone,
+    tile: "bg-mcx-orange",
   },
   {
     id: "referencia",
@@ -110,6 +111,7 @@ const METHODS = [
     desc: "Pague no ATM, Internet Banking ou Multicaixa Express",
     badge: "Multicaixa",
     icon: CreditCard,
+    tile: "bg-mcx-blue",
   },
 ] as const;
 
@@ -365,7 +367,7 @@ function Checkout() {
                       }`}
                     >
                       <div
-                        className={`h-12 w-16 rounded-xl grid place-items-center shrink-0 bg-primary ${
+                        className={`h-12 w-16 rounded-xl grid place-items-center shrink-0 ${m.tile} ${
                           active ? "ring-2 ring-gold" : ""
                         }`}
                       >
@@ -433,7 +435,7 @@ function Checkout() {
                 className={`w-full h-14 text-base rounded-xl cursor-pointer ${actionButtonClass}`}
               >
                 <Lock className="h-5 w-5 mr-2" />
-                {loading ? "A processar..." : `Pagar Agora — ${fmt(price, p.currency)}`}
+                {loading ? "A processar..." : "Confirmar compra"}
               </Button>
 
               <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground text-center mt-3.5">

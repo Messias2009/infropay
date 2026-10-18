@@ -316,3 +316,10 @@
     scroll-behavior: auto !important;
   }
 }
+
+@utility bg-mcx-orange {
+  background-color: #ff7e12;
+}
+@utility bg-mcx-blue {
+  background-color: #0066cc;
+}
