@@ -1,3 +1,9 @@
+import assetSilver0 from "@/assets/images/infropay_plaque_silver_100k_1792134414511.jpg";
+import assetGold1 from "@/assets/images/infropay_plaque_gold_500k_1792134428623.jpg";
+import assetPlatinum2 from "@/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg";
+import assetDiamond3 from "@/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg";
+import assetBlack4 from "@/assets/images/infropay_plaque_black_10m_1792134467200.jpg";
+import assetFirst5 from "@/assets/images/infropay_wristband_first_sale_1792134398670.jpg";
 import { useState, useEffect } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
@@ -312,31 +318,31 @@ function Home() {
               {
                 name: "Placa de Prata",
                 goal: "100k Kz",
-                img: "/src/assets/images/infropay_plaque_silver_100k_1792134414511.jpg",
+                img: assetSilver0,
                 color: "#C0C0C0",
               },
               {
                 name: "Placa de Ouro",
                 goal: "500k Kz",
-                img: "/src/assets/images/infropay_plaque_gold_500k_1792134428623.jpg",
+                img: assetGold1,
                 color: "#F9A825",
               },
               {
                 name: "Placa de Platina",
                 goal: "1M Kz",
-                img: "/src/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg",
+                img: assetPlatinum2,
                 color: "#E5E4E2",
               },
               {
                 name: "Placa de Diamante",
                 goal: "5M Kz",
-                img: "/src/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg",
+                img: assetDiamond3,
                 color: "#4FC3F7",
               },
               {
                 name: "Placa Black Elite",
                 goal: "10M Kz",
-                img: "/src/assets/images/infropay_plaque_black_10m_1792134467200.jpg",
+                img: assetBlack4,
                 color: "#D4AF37",
               },
             ].map((b) => (
@@ -640,7 +646,7 @@ function Home() {
       <WristbandModal
         isOpen={showWristbandModal}
         onClose={handleCloseWristband}
-        wristbandImage="/src/assets/images/infropay_wristband_first_sale_1792134398670.jpg"
+        wristbandImage={assetFirst5}
       />
     </SiteLayout>
   );

@@ -1,3 +1,4 @@
+import assetFirst0 from "@/assets/images/infropay_wristband_first_sale_1792134398670.jpg";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -80,7 +81,7 @@ function Dashboard() {
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
           <div className="shrink-0 w-32 sm:w-40 aspect-[4/3] rounded-xl overflow-hidden border border-gold/40 bg-card shadow-md">
             <img
-              src="/src/assets/images/infropay_wristband_first_sale_1792134398670.jpg"
+              src={assetFirst0}
               alt="Pulseira Primeira Venda InfroPay"
               width={320}
               height={240}
