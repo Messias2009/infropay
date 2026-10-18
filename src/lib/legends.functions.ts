@@ -1,4 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import img_0 from "@/assets/images/infropay_plaque_silver_100k_1792134414511.jpg";
+import img_1 from "@/assets/images/infropay_plaque_gold_500k_1792134428623.jpg";
+import img_2 from "@/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg";
+import img_3 from "@/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg";
+import img_4 from "@/assets/images/infropay_plaque_black_10m_1792134467200.jpg";
 import { createServerPublicClient } from "@/lib/public-client.server";
 
 export type Level = {
@@ -19,7 +24,7 @@ export const LEVELS: Level[] = [
     goal_label: "100.000 Kz",
     color: "#C0C0C0",
     gradient: "linear-gradient(135deg,#7C7C7C,#E8E8E8)",
-    image: "/src/assets/images/infropay_plaque_silver_100k_1792134414511.jpg",
+    image: img_0,
   },
   {
     key: "ouro",
@@ -28,7 +33,7 @@ export const LEVELS: Level[] = [
     goal_label: "500.000 Kz",
     color: "#F9A825",
     gradient: "linear-gradient(135deg,#B8860B,#FFD700)",
-    image: "/src/assets/images/infropay_plaque_gold_500k_1792134428623.jpg",
+    image: img_1,
   },
   {
     key: "platina",
@@ -37,7 +42,7 @@ export const LEVELS: Level[] = [
     goal_label: "1.000.000 Kz",
     color: "#E5E4E2",
     gradient: "linear-gradient(135deg,#8FA6B3,#E5E4E2)",
-    image: "/src/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg",
+    image: img_2,
   },
   {
     key: "diamante",
@@ -46,7 +51,7 @@ export const LEVELS: Level[] = [
     goal_label: "5.000.000 Kz",
     color: "#4FC3F7",
     gradient: "linear-gradient(135deg,#00838F,#4DD0E1)",
-    image: "/src/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg",
+    image: img_3,
   },
   {
     key: "black",
@@ -55,7 +60,7 @@ export const LEVELS: Level[] = [
     goal_label: "10.000.000 Kz",
     color: "#D4AF37",
     gradient: "linear-gradient(135deg,#1A1A1A,#D4AF37)",
-    image: "/src/assets/images/infropay_plaque_black_10m_1792134467200.jpg",
+    image: img_4,
   },
 ];
 
