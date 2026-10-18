@@ -365,11 +365,11 @@ function Checkout() {
                       }`}
                     >
                       <div
-                        className={`h-11 w-12 rounded-xl grid place-items-center shrink-0 bg-primary ${
+                        className={`h-12 w-16 rounded-xl grid place-items-center shrink-0 bg-primary ${
                           active ? "ring-2 ring-gold" : ""
                         }`}
                       >
-                        <img src={multicaixaLogo} alt="Multicaixa" className="h-4 w-auto max-w-[2.1rem] object-contain" />
+                        <img src={multicaixaLogo} alt="Multicaixa" className="w-12 h-auto object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -416,7 +416,7 @@ function Checkout() {
 
               <div className="mt-4 flex items-center justify-center gap-3 rounded-xl border border-border bg-card/60 p-3">
                 <div className="rounded-lg bg-foreground px-2.5 py-1.5">
-                  <img src={emisLogo} alt="EMIS" className="h-4 w-auto" />
+                  <img src={emisLogo} alt="EMIS" className="h-6 w-auto" />
                 </div>
                 <p className="text-[11px] leading-snug text-muted-foreground text-left">
                   Pagamentos processados na rede Multicaixa, gerida pela EMIS — Empresa Interbancária de Serviços.
