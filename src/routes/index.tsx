@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -29,6 +29,12 @@ import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
 import dashboardImg from "@/assets/dashboard-preview.jpg";
+import plaqueSilver from "@/assets/images/infropay_plaque_silver_100k_1792134414511.jpg";
+import plaqueGold from "@/assets/images/infropay_plaque_gold_500k_1792134428623.jpg";
+import plaquePlatinum from "@/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg";
+import plaqueDiamond from "@/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg";
+import plaqueBlack from "@/assets/images/infropay_plaque_black_10m_1792134467200.jpg";
+import wristbandImg from "@/assets/infropay-wristband.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,23 +62,8 @@ function Home() {
   const { user, loading } = useAuth();
   const [showWristbandModal, setShowWristbandModal] = useState(false);
 
-  useEffect(() => {
-    // Show wristband popup once per session if not dismissed
-    if (typeof window === "undefined") return;
-    const dismissed = window.sessionStorage.getItem("infropay_wristband_dismissed");
-    if (!dismissed) {
-      const timer = setTimeout(() => {
-        setShowWristbandModal(true);
-      }, 1400);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
   const handleCloseWristband = () => {
     setShowWristbandModal(false);
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem("infropay_wristband_dismissed", "true");
-    }
   };
 
   if (loading)
@@ -312,31 +303,31 @@ function Home() {
               {
                 name: "Placa de Prata",
                 goal: "100k Kz",
-                img: "/src/assets/images/infropay_plaque_silver_100k_1792134414511.jpg",
+                img: plaqueSilver,
                 color: "#C0C0C0",
               },
               {
                 name: "Placa de Ouro",
                 goal: "500k Kz",
-                img: "/src/assets/images/infropay_plaque_gold_500k_1792134428623.jpg",
+                img: plaqueGold,
                 color: "#F9A825",
               },
               {
                 name: "Placa de Platina",
                 goal: "1M Kz",
-                img: "/src/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg",
+                img: plaquePlatinum,
                 color: "#E5E4E2",
               },
               {
                 name: "Placa de Diamante",
                 goal: "5M Kz",
-                img: "/src/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg",
+                img: plaqueDiamond,
                 color: "#4FC3F7",
               },
               {
                 name: "Placa Black Elite",
                 goal: "10M Kz",
-                img: "/src/assets/images/infropay_plaque_black_10m_1792134467200.jpg",
+                img: plaqueBlack,
                 color: "#D4AF37",
               },
             ].map((b) => (
@@ -640,7 +631,7 @@ function Home() {
       <WristbandModal
         isOpen={showWristbandModal}
         onClose={handleCloseWristband}
-        wristbandImage="/src/assets/images/infropay_blue_rubber_wristband_1792339247732.jpg"
+        wristbandImage={wristbandImg}
       />
     </SiteLayout>
   );

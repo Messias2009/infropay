@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import rewards from "@/assets/infropay-rewards-clean.jpg";
+import wristband from "@/assets/infropay-wristband.jpg";
 
 export function FirstSaleReward() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
@@ -32,8 +32,8 @@ export function FirstSaleReward() {
     >
       <DialogContent className="max-w-[min(440px,calc(100vw-32px))] max-h-[calc(100dvh-32px)] overflow-y-auto rounded-lg p-5">
         <img
-          src={rewards}
-          alt="Conceito visual da pulseira e das quatro placas InfroPay"
+          src={wristband}
+          alt="Pulseira de borracha azul InfroPay"
           className="w-full aspect-[3/2] object-cover rounded-md"
         />
         <DialogTitle className="text-2xl leading-tight text-gold">
@@ -42,8 +42,7 @@ export function FirstSaleReward() {
         <DialogDescription>
           A primeira venda paga marca o início das suas conquistas InfroPay.
         </DialogDescription>
-        <p className="text-xs text-muted-foreground">Imagem ilustrativa dos prémios.</p>
-        <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2">
           <Button asChild onClick={dismiss}>
             <Link to="/produtor/novo">Começar a vender</Link>
           </Button>

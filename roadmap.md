@@ -19,3 +19,6 @@
 - [ ] Emails automáticos — aguarda domínio de email do utilizador.
 - [ ] 15 criativos para redes — 3 feitos; restantes aguardam créditos.
 - [x] Checkout personalizado (marca, logo, banner, cor) no editor de produto.
+- [x] Página "Checkout personalizado" no menu do produtor.
+- [x] Pulseira única de borracha azul com logo InfroPay em todos os avisos.
+- [x] Corrigir imagens e erro de compilação vindos do GitHub que partiam o site publicado.
