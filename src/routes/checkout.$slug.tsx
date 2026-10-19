@@ -234,18 +234,27 @@ function Checkout() {
           {/* TOPO CENTRALIZADO: IMAGEM DO PRODUTO, NOME, SELO DE VERIFICAÇÃO E PREÇO */}
           <div className="flex flex-col items-center text-center mb-8">
             {p.cover_url && (
-              <div className="w-full max-w-sm aspect-video sm:aspect-[16/10] rounded-2xl overflow-hidden border border-border shadow-card bg-card/80 mb-5 relative group">
-                <img
-                  src={p.cover_url}
-                  alt={p.title}
-                  className="w-full h-full object-cover object-center transition duration-300 group-hover:scale-105"
-                />
-                <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                  <span className="rounded-full bg-black/75 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider border border-white/20">
+              <div className="w-full max-w-sm mb-5">
+                {/* A imagem aparece sempre inteira (object-contain); o fundo desfocado preenche o espaço livre */}
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-border shadow-card bg-card">
+                  <img
+                    src={p.cover_url}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 h-full w-full object-cover scale-110 blur-2xl opacity-40"
+                  />
+                  <img
+                    src={p.cover_url}
+                    alt={p.title}
+                    className="relative h-full w-full object-contain"
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-center gap-1.5">
+                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold text-secondary-foreground uppercase tracking-wider border border-border">
                     {p.product_type || "Infoproduto"}
                   </span>
-                  <span className="rounded-full bg-emerald-600/90 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white flex items-center gap-1 shadow-xs">
-                    <Zap className="h-3 w-3" /> Imediato
+                  <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary flex items-center gap-1 border border-primary/30">
+                    <Zap className="h-3 w-3" /> Acesso imediato
                   </span>
                 </div>
               </div>
