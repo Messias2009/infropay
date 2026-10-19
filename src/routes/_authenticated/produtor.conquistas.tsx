@@ -6,6 +6,8 @@ import { getMyAchievements } from "@/lib/profile.functions";
 import { LEVELS, levelFor } from "@/lib/legends.functions";
 import { kz } from "@/components/finance/FeeBanner";
 import { usePlaqueWatcher } from "@/hooks/usePlaqueWatcher";
+import wristbandImg from "@/assets/infropay-wristband.jpg";
+import sealsImg from "@/assets/images/infropay_special_seals_badge_1792339262403.jpg";
 
 export const Route = createFileRoute("/_authenticated/produtor/conquistas")({
   head: () => ({
@@ -116,7 +118,7 @@ function Page() {
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="shrink-0 w-36 sm:w-44 aspect-[4/3] rounded-xl overflow-hidden border border-blue-500/40 bg-black/50 shadow-md">
             <img
-              src="/src/assets/images/infropay_blue_rubber_wristband_1792339247732.jpg"
+              src={wristbandImg}
               alt="Pulseira de Borracha Azul InfroPay"
               width={400}
               height={300}
@@ -203,7 +205,7 @@ function Page() {
         <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-card via-[#1c1917]/50 to-card p-5 shadow-card flex flex-col sm:flex-row items-center gap-5">
           <div className="shrink-0 w-28 sm:w-36 aspect-square rounded-2xl overflow-hidden border border-gold/40 bg-black/60 shadow-lg shadow-gold/10 p-1">
             <img
-              src="/src/assets/images/infropay_special_seals_badge_1792339262403.jpg"
+              src={sealsImg}
               alt="Selo Especial Oficial InfroPay"
               width={400}
               height={400}

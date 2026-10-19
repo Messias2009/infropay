@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import wristbandImg from "@/assets/infropay-wristband.jpg";
 
 type Props = {
   isOpen: boolean;
@@ -12,7 +13,7 @@ type Props = {
 export function WristbandModal({
   isOpen,
   onClose,
-  wristbandImage = "/src/assets/images/infropay_blue_rubber_wristband_1792339247732.jpg",
+  wristbandImage = wristbandImg,
 }: Props) {
   useEffect(() => {
     if (!isOpen) return;
