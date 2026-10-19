@@ -15,3 +15,5 @@
 - Buyer token reads must remove delivery URLs server-side unless the sale is paid; hiding links in the UI is not authorization.
 - Follow PAYMENT_READINESS.md before enabling automatic payments; its additive design keeps provider attempts, event deduplication, accounting and alert delivery separate for safe retries.
 - First-sale reward announcements live in one shared component, limited to entry pages and dismissed per browser session so checkout stays uninterrupted.
+- Reference bundled images only through ES imports from src/assets; string paths like "/src/assets/..." work in dev but 404 in production builds (Lovable and Vercel).
+- Changes pushed from external tools must keep the typecheck green; a TypeScript error from an external push blocks every deploy.
