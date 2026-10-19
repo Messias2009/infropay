@@ -231,69 +231,61 @@ function Checkout() {
               className="w-full aspect-[3/1] object-cover rounded-2xl border border-border mb-6"
             />
           )}
-          {/* TOPO CENTRALIZADO: IMAGEM DO PRODUTO, NOME, SELO DE VERIFICAÇÃO E PREÇO */}
-          <div className="flex flex-col items-center text-center mb-8">
-            {p.cover_url && (
-              <div className="w-full max-w-sm mb-5">
-                {/* A imagem aparece sempre inteira (object-contain); o fundo desfocado preenche o espaço livre */}
-                <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-border shadow-card bg-card">
-                  <img
-                    src={p.cover_url}
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-0 h-full w-full object-cover scale-110 blur-2xl opacity-40"
-                  />
+          {/* RESUMO DO PRODUTO: CARTÃO COMPACTO COM MINIATURA, NOME, SELO E PREÇO */}
+          <section
+            aria-label="Resumo do pedido"
+            className="mb-6 rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-card"
+          >
+            <div className="flex items-start gap-4">
+              {p.cover_url && (
+                <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-2xl border border-border bg-secondary">
                   <img
                     src={p.cover_url}
                     alt={p.title}
-                    className="relative h-full w-full object-contain"
+                    className="h-full w-full object-contain"
                   />
                 </div>
-                <div className="mt-3 flex items-center justify-center gap-1.5">
-                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold text-secondary-foreground uppercase tracking-wider border border-border">
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground border border-border">
                     {p.product_type || "Infoproduto"}
                   </span>
-                  <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary flex items-center gap-1 border border-primary/30">
-                    <Zap className="h-3 w-3" /> Acesso imediato
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/25">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Vendedor verificado
                   </span>
                 </div>
+                <h1 className="mt-2 text-base sm:text-lg font-bold leading-snug text-foreground line-clamp-3">
+                  {p.title}
+                </h1>
               </div>
-            )}
-
-            {/* NOME DO PRODUTO */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground max-w-md px-2 leading-tight">
-              {p.title}
-            </h1>
-
-            {/* SELO DE VERIFICAÇÃO (APENAS SELO DE VERIFICAÇÃO, SEM NOME DO VENDEDOR) */}
-            <div className="mt-3 flex items-center justify-center">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shadow-xs">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                Vendedor Verificado
-              </span>
             </div>
 
-            {/* PREÇO CENTRALIZADO */}
-            <div className="mt-4">
-              {hasPromo ? (
-                <div className="space-y-0.5">
-                  <span className="text-sm text-muted-foreground line-through font-mono">
-                    {fmt(p.price_cents, p.currency)}
-                  </span>
-                  <div className="text-3xl sm:text-4xl font-extrabold text-gradient-gold font-mono tabular-nums">
-                    {fmt(price, p.currency)}
+            <div className="mt-4 flex items-end justify-between gap-3 border-t border-border pt-4">
+              <div className="min-w-0">
+                {hasPromo && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground line-through tabular-nums">
+                      {fmt(p.price_cents, p.currency)}
+                    </span>
+                    <span className="rounded-md bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary">
+                      -{Math.round((1 - price / p.price_cents) * 100)}%
+                    </span>
                   </div>
-                </div>
-              ) : (
-                <div className="text-3xl sm:text-4xl font-extrabold text-gradient-gold font-mono tabular-nums">
+                )}
+                <div className="text-2xl sm:text-3xl font-extrabold text-gradient-gold tabular-nums leading-tight">
                   {fmt(price, p.currency)}
                 </div>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">
-                Pagamento único · Acesso 100% digital liberado imediatamente
-              </p>
+              </div>
+              <div className="text-right text-[11px] leading-tight text-muted-foreground">
+                <div className="font-semibold text-foreground">Pagamento único</div>
+                <div className="mt-0.5 inline-flex items-center gap-1">
+                  <Zap className="h-3 w-3 text-primary" /> Acesso imediato
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
 
           {/* FORMULÁRIO DE PAGAMENTO (EM COLUNA ÚNICA) */}
           <form
