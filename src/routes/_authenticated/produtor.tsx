@@ -20,6 +20,7 @@ import {
   Handshake,
   LogOut,
   Headphones,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,6 +42,7 @@ const items = [
   { to: "/produtor", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/produtor/produtos", icon: Package, label: "Produtos" },
   { to: "/produtor/novo", icon: Plus, label: "Novo produto" },
+  { to: "/produtor/checkout", icon: Palette, label: "Checkout personalizado" },
   { to: "/produtor/funil", icon: TrendingUp, label: "Funil de vendas" },
   { to: "/membros", icon: GraduationCap, label: "Área de membros" },
   { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
