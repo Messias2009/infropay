@@ -3,6 +3,7 @@ import {
   ArrowDown,
   ArrowUp,
   Copy,
+  Eye,
   GripVertical,
   Image as ImageIcon,
   LayoutTemplate,
@@ -15,12 +16,19 @@ import {
   Trash2,
   Type,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
   defaultQuizTheme,
@@ -203,7 +211,12 @@ function StepItem({
           <Button size="sm" variant="ghost" onClick={() => onMove(-1)} disabled={index === 0}>
             <ArrowUp className="h-3.5 w-3.5" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => onMove(1)} disabled={index === total - 1}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onMove(1)}
+            disabled={index === total - 1}
+          >
             <ArrowDown className="h-3.5 w-3.5" />
           </Button>
           <Button size="sm" variant="ghost" onClick={onRemove}>
@@ -491,7 +504,10 @@ export function QuizEditor({
             <TabsContent value="templates" className="mt-4">
               <div className="grid md:grid-cols-3 gap-4">
                 {TEMPLATES.map((tpl) => (
-                  <div key={tpl.id} className="rounded-xl border border-border bg-card overflow-hidden">
+                  <div
+                    key={tpl.id}
+                    className="rounded-xl border border-border bg-card overflow-hidden"
+                  >
                     <div className="p-5">
                       <div className="font-semibold">{tpl.name}</div>
                       <p className="text-sm text-muted-foreground mt-1">{tpl.desc}</p>
@@ -524,7 +540,10 @@ export function QuizEditor({
                       onChange={(e) =>
                         setDefinition({
                           ...definition,
-                          theme: { ...(definition.theme || defaultQuizTheme()), primary: e.target.value },
+                          theme: {
+                            ...(definition.theme || defaultQuizTheme()),
+                            primary: e.target.value,
+                          },
                         })
                       }
                       className="mt-1 h-10"
@@ -538,7 +557,10 @@ export function QuizEditor({
                       onChange={(e) =>
                         setDefinition({
                           ...definition,
-                          theme: { ...(definition.theme || defaultQuizTheme()), background: e.target.value },
+                          theme: {
+                            ...(definition.theme || defaultQuizTheme()),
+                            background: e.target.value,
+                          },
                         })
                       }
                       className="mt-1 h-10"
@@ -555,7 +577,10 @@ export function QuizEditor({
                     onCheckedChange={(checked) =>
                       setDefinition({
                         ...definition,
-                        theme: { ...(definition.theme || defaultQuizTheme()), show_progress: checked },
+                        theme: {
+                          ...(definition.theme || defaultQuizTheme()),
+                          show_progress: checked,
+                        },
                       })
                     }
                   />
@@ -571,13 +596,19 @@ export function QuizEditor({
                 </div>
                 <div>
                   <Label className="text-xs">Nome do quiz</Label>
-                  <Input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1" />
+                  <Input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="mt-1"
+                  />
                 </div>
                 <div>
                   <Label className="text-xs">ID da primeira etapa</Label>
                   <Input
                     value={definition.start_step_id}
-                    onChange={(e) => setDefinition({ ...definition, start_step_id: e.target.value })}
+                    onChange={(e) =>
+                      setDefinition({ ...definition, start_step_id: e.target.value })
+                    }
                     className="mt-1"
                   />
                 </div>
@@ -590,8 +621,16 @@ export function QuizEditor({
               <Eye className="h-4 w-4 mr-2" />
               {preview ? "Fechar pré-visualização" : "Pré-visualizar no telemóvel"}
             </Button>
-            <Button onClick={() => onSave(definition, title)} disabled={saving} className="gradient-brand text-primary-foreground">
-              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+            <Button
+              onClick={() => onSave(definition, title)}
+              disabled={saving}
+              className="gradient-brand text-primary-foreground"
+            >
+              {saving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
               Guardar quiz
             </Button>
           </div>

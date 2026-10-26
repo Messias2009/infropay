@@ -1,14 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { requireSupabaseEnv } from "@/integrations/supabase/env";
 
 function publicClient() {
-  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+  const { url, key } = requireSupabaseEnv();
+  return createClient<Database>(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     global: {
       fetch: (input, init) => {
         const headers = new Headers(init?.headers);
-        const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
         if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`)
           headers.delete("Authorization");
         headers.set("apikey", key);

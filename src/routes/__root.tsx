@@ -129,18 +129,9 @@ function RootComponent() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if ("caches" in window) {
-        caches
-          .keys()
-          .then((keys) => {
-            keys.forEach((key) => {
-              if (key !== "infropay-cache-v3") {
-                caches.delete(key);
-              }
-            });
-          })
-          .catch(() => {});
-      }
+      // Limpeza de caches antigos é responsabilidade do próprio service worker
+      // (handler "activate" em /sw.js usa o CACHE_NAME actual). Apagar aqui uma
+      // versão diferente da que o sw.js usa apagava sempre o cache novo.
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker
           .register("/sw.js")

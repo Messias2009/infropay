@@ -8,6 +8,9 @@ import { z } from "zod";
 
 export type QuizMediaType = "image" | "video";
 
+export type QuizStepType =
+  "multi_choice" | "yes_no" | "text_input" | "lead_capture" | "info_media" | "offer";
+
 export type QuizMedia = {
   type: QuizMediaType;
   url: string;

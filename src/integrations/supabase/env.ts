@@ -90,3 +90,28 @@ export function getSupabaseServiceRoleKey(): string | undefined {
   }
   return undefined;
 }
+
+/**
+ * Require Supabase URL and publishable key from environment variables.
+ * Throws a clear error naming the missing variable(s) instead of
+ * "supabaseUrl is required".
+ */
+export function requireSupabaseEnv(): { url: string; key: string } {
+  const url = cleanValue(process.env?.SUPABASE_URL) || cleanValue(process.env?.VITE_SUPABASE_URL);
+  const key =
+    cleanValue(process.env?.SUPABASE_PUBLISHABLE_KEY) ||
+    cleanValue(process.env?.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+  const missing: string[] = [];
+  if (!url) missing.push("SUPABASE_URL (or VITE_SUPABASE_URL)");
+  if (!key) missing.push("SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY)");
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing Supabase environment variable(s): ${missing.join(", ")}. ` +
+        "Set them in Settings > Environment Variables on Vercel (Production and Preview).",
+    );
+  }
+
+  return { url: url!, key: key! };
+}

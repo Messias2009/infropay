@@ -1,17 +1,8 @@
 const CACHE_NAME = "infropay-cache-v4";
-const ASSETS_TO_CACHE = [
-  "/manifest.webmanifest",
-  "/pwa-192x192.png",
-  "/pwa-512x512.png",
-  "/apple-touch-icon.png",
-];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
-    }),
-  );
+self.addEventListener("install", () => {
+  // Sem precaching de ficheiros com nome fixo: tudo o que não é asset com hash
+  // vem sempre da rede para o site nunca mostrar uma versão antiga.
   self.skipWaiting();
 });
 
@@ -170,23 +161,21 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Static assets: cache-first
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
-      return fetch(event.request).then((networkResponse) => {
-        if (
-          networkResponse &&
-          networkResponse.status === 200 &&
-          url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|woff2?)$/)
-        ) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
+  // Assets do build com hash (/assets/nome-hash.ext) são imutáveis: cache-first.
+  // Todo o resto (HTML, ícones, manifest) vai sempre à rede — nunca fica velho.
+  if (url.pathname.startsWith("/assets/")) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          return fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
           });
-        }
-        return networkResponse;
-      });
-    }),
-  );
+        }),
+      ),
+    );
+  }
 });

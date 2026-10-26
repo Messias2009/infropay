@@ -2,7 +2,20 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { BarChart3, Check, Clock, Eye, FileText, Loader2, Lock, Plus, Rocket, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
+import {
+  BarChart3,
+  Check,
+  Clock,
+  Eye,
+  FileText,
+  Loader2,
+  Lock,
+  Plus,
+  Rocket,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,9 +152,7 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <div className="inline-flex items-center gap-2 rounded-full bg-gold/10 border border-gold/30 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold">
             <Sparkles className="h-3.5 w-3.5" /> Quiz Funnel · Premium
           </div>
-          <h1 className="font-display text-2xl md:text-4xl font-bold mt-3">
-            Os seus quizzes
-          </h1>
+          <h1 className="font-display text-2xl md:text-4xl font-bold mt-3">Os seus quizzes</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Crie, edite e publique quizzes interativos para gerar vendas.
           </p>
@@ -211,8 +222,16 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
               placeholder="Nome do quiz (ex.: Vendas de Curso)"
               className="sm:w-80"
             />
-            <Button onClick={create} disabled={creating} className="gradient-brand text-primary-foreground">
-              {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+            <Button
+              onClick={create}
+              disabled={creating}
+              className="gradient-brand text-primary-foreground"
+            >
+              {creating ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4 mr-2" />
+              )}
               Criar quiz
             </Button>
           </div>
@@ -224,7 +243,9 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <div>
             <div className="text-lg font-semibold">Meus quizzes</div>
             <p className="text-sm text-muted-foreground">
-              {items.length === 0 ? "Ainda não criou nenhum quiz" : `${items.length} quiz(es) criado(s)`}
+              {items.length === 0
+                ? "Ainda não criou nenhum quiz"
+                : `${items.length} quiz(es) criado(s)`}
             </p>
           </div>
         </div>
@@ -239,7 +260,10 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
         ) : (
           <div className="divide-y divide-border">
             {items.map((quiz: any) => (
-              <div key={quiz.id} className="p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-4">
+              <div
+                key={quiz.id}
+                className="p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-4"
+              >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <div className="font-semibold truncate">{quiz.title}</div>
@@ -263,13 +287,11 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                     <div className="flex items-center gap-1">
                       <FileText className="h-3.5 w-3.5" /> {quiz.steps} etapas
                     </div>
-                    <div>
-                      Conversão: {(quiz.conversion * 100).toFixed(1)}%
-                    </div>
+                    <div>Conversão: {(quiz.conversion * 100).toFixed(1)}%</div>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Link to={`/produtor/quiz/editor/${quiz.id}`}>
+                  <Link to="/produtor/quiz/editor/$quizId" params={{ quizId: quiz.id }}>
                     <Button size="sm">Editar quiz</Button>
                   </Link>
                   <Link to="/quiz/preview">

@@ -55,6 +55,7 @@ import { Route as AuthenticatedProdutorEditarIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedProdutorSucessoIdRouteImport } from './routes/_authenticated/produtor.sucesso.$id'
 import { Route as ApiPublicWebhooksMulticaixaRouteImport } from './routes/api/public/webhooks/multicaixa'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
+import { Route as AuthenticatedProdutorQuizEditorQuizIdRouteImport } from './routes/_authenticated/produtor.quiz.editor.$quizId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -306,6 +307,12 @@ const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
   path: '/api/public/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProdutorQuizEditorQuizIdRoute =
+  AuthenticatedProdutorQuizEditorQuizIdRouteImport.update({
+    id: '/editor/$quizId',
+    path: '/editor/$quizId',
+    getParentRoute: () => AuthenticatedProdutorQuizRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -341,7 +348,7 @@ export interface FileRoutesByFullPath {
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/pedidos': typeof AuthenticatedProdutorPedidosRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
-  '/produtor/quiz': typeof AuthenticatedProdutorQuizRoute
+  '/produtor/quiz': typeof AuthenticatedProdutorQuizRouteWithChildren
   '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm/': typeof AuthenticatedAdmIndexRoute
   '/membros/': typeof AuthenticatedMembrosIndexRoute
@@ -353,6 +360,7 @@ export interface FileRoutesByFullPath {
   '/api/public/webhooks/multicaixa': typeof ApiPublicWebhooksMulticaixaRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/produtor/checkout/': typeof AuthenticatedProdutorCheckoutIndexRoute
+  '/produtor/quiz/editor/$quizId': typeof AuthenticatedProdutorQuizEditorQuizIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -386,7 +394,7 @@ export interface FileRoutesByTo {
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/produtor/pedidos': typeof AuthenticatedProdutorPedidosRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
-  '/produtor/quiz': typeof AuthenticatedProdutorQuizRoute
+  '/produtor/quiz': typeof AuthenticatedProdutorQuizRouteWithChildren
   '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm': typeof AuthenticatedAdmIndexRoute
   '/membros': typeof AuthenticatedMembrosIndexRoute
@@ -398,6 +406,7 @@ export interface FileRoutesByTo {
   '/api/public/webhooks/multicaixa': typeof ApiPublicWebhooksMulticaixaRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/produtor/checkout': typeof AuthenticatedProdutorCheckoutIndexRoute
+  '/produtor/quiz/editor/$quizId': typeof AuthenticatedProdutorQuizEditorQuizIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -435,7 +444,7 @@ export interface FileRoutesById {
   '/_authenticated/produtor/novo': typeof AuthenticatedProdutorNovoRoute
   '/_authenticated/produtor/pedidos': typeof AuthenticatedProdutorPedidosRoute
   '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
-  '/_authenticated/produtor/quiz': typeof AuthenticatedProdutorQuizRoute
+  '/_authenticated/produtor/quiz': typeof AuthenticatedProdutorQuizRouteWithChildren
   '/_authenticated/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/_authenticated/adm/': typeof AuthenticatedAdmIndexRoute
   '/_authenticated/membros/': typeof AuthenticatedMembrosIndexRoute
@@ -447,6 +456,7 @@ export interface FileRoutesById {
   '/api/public/webhooks/multicaixa': typeof ApiPublicWebhooksMulticaixaRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/_authenticated/produtor/checkout/': typeof AuthenticatedProdutorCheckoutIndexRoute
+  '/_authenticated/produtor/quiz/editor/$quizId': typeof AuthenticatedProdutorQuizEditorQuizIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/api/public/webhooks/multicaixa'
     | '/api/public/webhooks/stripe'
     | '/produtor/checkout/'
+    | '/produtor/quiz/editor/$quizId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -541,6 +552,7 @@ export interface FileRouteTypes {
     | '/api/public/webhooks/multicaixa'
     | '/api/public/webhooks/stripe'
     | '/produtor/checkout'
+    | '/produtor/quiz/editor/$quizId'
   id:
     | '__root__'
     | '/'
@@ -589,6 +601,7 @@ export interface FileRouteTypes {
     | '/api/public/webhooks/multicaixa'
     | '/api/public/webhooks/stripe'
     | '/_authenticated/produtor/checkout/'
+    | '/_authenticated/produtor/quiz/editor/$quizId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -936,6 +949,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/produtor/quiz/editor/$quizId': {
+      id: '/_authenticated/produtor/quiz/editor/$quizId'
+      path: '/editor/$quizId'
+      fullPath: '/produtor/quiz/editor/$quizId'
+      preLoaderRoute: typeof AuthenticatedProdutorQuizEditorQuizIdRouteImport
+      parentRoute: typeof AuthenticatedProdutorQuizRoute
+    }
   }
 }
 
@@ -962,6 +982,21 @@ const AuthenticatedAdmRouteChildren: AuthenticatedAdmRouteChildren = {
 const AuthenticatedAdmRouteWithChildren =
   AuthenticatedAdmRoute._addFileChildren(AuthenticatedAdmRouteChildren)
 
+interface AuthenticatedProdutorQuizRouteChildren {
+  AuthenticatedProdutorQuizEditorQuizIdRoute: typeof AuthenticatedProdutorQuizEditorQuizIdRoute
+}
+
+const AuthenticatedProdutorQuizRouteChildren: AuthenticatedProdutorQuizRouteChildren =
+  {
+    AuthenticatedProdutorQuizEditorQuizIdRoute:
+      AuthenticatedProdutorQuizEditorQuizIdRoute,
+  }
+
+const AuthenticatedProdutorQuizRouteWithChildren =
+  AuthenticatedProdutorQuizRoute._addFileChildren(
+    AuthenticatedProdutorQuizRouteChildren,
+  )
+
 interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorConquistasRoute: typeof AuthenticatedProdutorConquistasRoute
   AuthenticatedProdutorFinanceiroRoute: typeof AuthenticatedProdutorFinanceiroRoute
@@ -970,7 +1005,7 @@ interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorNovoRoute: typeof AuthenticatedProdutorNovoRoute
   AuthenticatedProdutorPedidosRoute: typeof AuthenticatedProdutorPedidosRoute
   AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
-  AuthenticatedProdutorQuizRoute: typeof AuthenticatedProdutorQuizRoute
+  AuthenticatedProdutorQuizRoute: typeof AuthenticatedProdutorQuizRouteWithChildren
   AuthenticatedProdutorSaquesRoute: typeof AuthenticatedProdutorSaquesRoute
   AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
   AuthenticatedProdutorCheckoutIdRoute: typeof AuthenticatedProdutorCheckoutIdRoute
@@ -988,7 +1023,7 @@ const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
   AuthenticatedProdutorNovoRoute: AuthenticatedProdutorNovoRoute,
   AuthenticatedProdutorPedidosRoute: AuthenticatedProdutorPedidosRoute,
   AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
-  AuthenticatedProdutorQuizRoute: AuthenticatedProdutorQuizRoute,
+  AuthenticatedProdutorQuizRoute: AuthenticatedProdutorQuizRouteWithChildren,
   AuthenticatedProdutorSaquesRoute: AuthenticatedProdutorSaquesRoute,
   AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,
   AuthenticatedProdutorCheckoutIdRoute: AuthenticatedProdutorCheckoutIdRoute,

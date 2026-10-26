@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
+import { requireSupabaseEnv } from "@/integrations/supabase/env";
 
 /** Publishable-key Supabase client for public (anon) reads inside server functions. */
 export function createServerPublicClient() {
-  return createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_PUBLISHABLE_KEY"]!, {
+  const { url, key } = requireSupabaseEnv();
+  return createClient(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
   });
 }
