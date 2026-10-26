@@ -771,6 +771,203 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_events: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json
+          producer_id: string
+          quiz_id: string
+          session_id: string
+          step_id: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          producer_id: string
+          quiz_id: string
+          session_id: string
+          step_id?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          producer_id?: string
+          quiz_id?: string
+          session_id?: string
+          step_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_events_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_leads: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string | null
+          producer_id: string
+          quiz_id: string
+          score: number
+          session_id: string | null
+          source_step_id: string | null
+          tags: string[]
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome?: string | null
+          producer_id: string
+          quiz_id: string
+          score?: number
+          session_id?: string | null
+          source_step_id?: string | null
+          tags?: string[]
+          whatsapp: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string | null
+          producer_id?: string
+          quiz_id?: string
+          score?: number
+          session_id?: string | null
+          source_step_id?: string | null
+          tags?: string[]
+          whatsapp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_leads_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_leads_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_sessions: {
+        Row: {
+          completed_at: string | null
+          current_step_id: string | null
+          id: string
+          producer_id: string
+          quiz_id: string
+          score: number
+          started_at: string
+          status: string
+          tags: string[]
+          updated_at: string
+          utm_medium: string | null
+          utm_source: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          current_step_id?: string | null
+          id?: string
+          producer_id: string
+          quiz_id: string
+          score?: number
+          started_at?: string
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          utm_medium?: string | null
+          utm_source?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          current_step_id?: string | null
+          id?: string
+          producer_id?: string
+          quiz_id?: string
+          score?: number
+          started_at?: string
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          utm_medium?: string | null
+          utm_source?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_sessions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          created_at: string
+          definition: Json
+          id: string
+          producer_id: string
+          slug: string
+          starts_count: number
+          status: string
+          title: string
+          updated_at: string
+          visits_count: number
+        }
+        Insert: {
+          created_at?: string
+          definition?: Json
+          id?: string
+          producer_id: string
+          slug: string
+          starts_count?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          visits_count?: number
+        }
+        Update: {
+          created_at?: string
+          definition?: Json
+          id?: string
+          producer_id?: string
+          slug?: string
+          starts_count?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          visits_count?: number
+        }
+        Relationships: []
+      }
       sales: {
         Row: {
           access_token: string

@@ -28,6 +28,7 @@ import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
+import { Route as QuizPreviewRouteImport } from './routes/quiz.preview'
 import { Route as AuthenticatedAdmIndexRouteImport } from './routes/_authenticated/adm.index'
 import { Route as AuthenticatedAdmLogsRouteImport } from './routes/_authenticated/adm.logs'
 import { Route as AuthenticatedAdmPedidosRouteImport } from './routes/_authenticated/adm.pedidos'
@@ -147,6 +148,11 @@ const PedidoTokenRoute = PedidoTokenRouteImport.update({
 const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
   id: '/produto/$slug',
   path: '/produto/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizPreviewRoute = QuizPreviewRouteImport.update({
+  id: '/quiz/preview',
+  path: '/quiz/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdmIndexRoute = AuthenticatedAdmIndexRouteImport.update({
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/p/$slug': typeof PSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/quiz/preview': typeof QuizPreviewRoute
   '/adm/logs': typeof AuthenticatedAdmLogsRoute
   '/adm/pedidos': typeof AuthenticatedAdmPedidosRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
@@ -364,6 +371,7 @@ export interface FileRoutesByTo {
   '/p/$slug': typeof PSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/quiz/preview': typeof QuizPreviewRoute
   '/adm/logs': typeof AuthenticatedAdmLogsRoute
   '/adm/pedidos': typeof AuthenticatedAdmPedidosRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
@@ -412,6 +420,7 @@ export interface FileRoutesById {
   '/p/$slug': typeof PSlugRoute
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/quiz/preview': typeof QuizPreviewRoute
   '/_authenticated/adm/logs': typeof AuthenticatedAdmLogsRoute
   '/_authenticated/adm/pedidos': typeof AuthenticatedAdmPedidosRoute
   '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
@@ -460,6 +469,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/pedido/$token'
     | '/produto/$slug'
+    | '/quiz/preview'
     | '/adm/logs'
     | '/adm/pedidos'
     | '/adm/produtos'
@@ -504,6 +514,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/pedido/$token'
     | '/produto/$slug'
+    | '/quiz/preview'
     | '/adm/logs'
     | '/adm/pedidos'
     | '/adm/produtos'
@@ -551,6 +562,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/pedido/$token'
     | '/produto/$slug'
+    | '/quiz/preview'
     | '/_authenticated/adm/logs'
     | '/_authenticated/adm/pedidos'
     | '/_authenticated/adm/produtos'
@@ -595,6 +607,7 @@ export interface RootRouteChildren {
   PSlugRoute: typeof PSlugRoute
   PedidoTokenRoute: typeof PedidoTokenRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
+  QuizPreviewRoute: typeof QuizPreviewRoute
   ApiPublicWebhooksMulticaixaRoute: typeof ApiPublicWebhooksMulticaixaRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
 }
@@ -732,6 +745,13 @@ declare module '@tanstack/react-router' {
       path: '/produto/$slug'
       fullPath: '/produto/$slug'
       preLoaderRoute: typeof ProdutoSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz/preview': {
+      id: '/quiz/preview'
+      path: '/quiz/preview'
+      fullPath: '/quiz/preview'
+      preLoaderRoute: typeof QuizPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/adm/': {
@@ -1021,6 +1041,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSlugRoute: PSlugRoute,
   PedidoTokenRoute: PedidoTokenRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
+  QuizPreviewRoute: QuizPreviewRoute,
   ApiPublicWebhooksMulticaixaRoute: ApiPublicWebhooksMulticaixaRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
 }

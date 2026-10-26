@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, Clock, Loader2, Lock, Rocket, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, Clock, Eye, Loader2, Lock, Rocket, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
@@ -155,9 +155,16 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
             </li>
           ))}
         </ul>
-        <Button variant="outline" className="mt-5" onClick={onChanged}>
-          <Loader2 className="h-4 w-4 mr-2" /> Actualizar estado do plano
-        </Button>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link to="/quiz/preview">
+            <Button variant="outline">
+              <Eye className="h-4 w-4 mr-2" /> Pré-visualizar o renderizador
+            </Button>
+          </Link>
+          <Button variant="outline" onClick={onChanged}>
+            <Loader2 className="h-4 w-4 mr-2" /> Actualizar estado do plano
+          </Button>
+        </div>
       </div>
     </div>
   );

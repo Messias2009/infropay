@@ -93,6 +93,17 @@ function safeName(name: string) {
   return cleaned.slice(-80) || "comprovativo";
 }
 
+/** Verdadeiro quando existe um plano activo (trial, 7d ou 30d). */
+export async function hasActivePlan(supabaseAdmin: any, userId: string): Promise<boolean> {
+  const { data, error } = await supabaseAdmin
+    .from("subscriptions")
+    .select("id, estado, data_fim")
+    .eq("user_id", userId)
+    .eq("estado", "ativo");
+  if (error) return false;
+  return ((data ?? []) as any[]).some((s) => new Date(s.data_fim).getTime() > Date.now());
+}
+
 function labelFor(plano: string | null) {
   if (!plano) return null;
   if (plano === "trial") return "Teste grátis (1 dia)";
