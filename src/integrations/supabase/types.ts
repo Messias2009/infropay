@@ -796,6 +796,13 @@ export type Database = {
           producer_id: string
           product_id: string
           provider: string | null
+          receipt_kind: string | null
+          receipt_note: string | null
+          receipt_path: string | null
+          receipt_reviewed_at: string | null
+          receipt_reviewed_by: string | null
+          receipt_status: string
+          receipt_submitted_at: string | null
           release_at: string | null
           released: boolean
           status: Database["public"]["Enums"]["sale_status"]
@@ -826,6 +833,13 @@ export type Database = {
           producer_id: string
           product_id: string
           provider?: string | null
+          receipt_kind?: string | null
+          receipt_note?: string | null
+          receipt_path?: string | null
+          receipt_reviewed_at?: string | null
+          receipt_reviewed_by?: string | null
+          receipt_status?: string
+          receipt_submitted_at?: string | null
           release_at?: string | null
           released?: boolean
           status?: Database["public"]["Enums"]["sale_status"]
@@ -856,6 +870,13 @@ export type Database = {
           producer_id?: string
           product_id?: string
           provider?: string | null
+          receipt_kind?: string | null
+          receipt_note?: string | null
+          receipt_path?: string | null
+          receipt_reviewed_at?: string | null
+          receipt_reviewed_by?: string | null
+          receipt_status?: string
+          receipt_submitted_at?: string | null
           release_at?: string | null
           released?: boolean
           status?: Database["public"]["Enums"]["sale_status"]

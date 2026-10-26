@@ -1,11 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, queryOptions, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clock, Download, ExternalLink, Copy } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getOrderByToken } from "@/lib/checkout.functions";
 import { referenceForMethod } from "@/lib/payments.config";
+import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
+import { ReceiptUpload } from "@/components/payments/ReceiptUpload";
 
 import { getOrderTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
@@ -53,6 +55,8 @@ const METHOD_LABEL: Record<string, string> = {
 function Pedido() {
   const { token } = Route.useParams();
   const { data: o } = useSuspenseQuery(opt(token));
+  const queryClient = useQueryClient();
+  const refresh = () => queryClient.invalidateQueries({ queryKey: ["order", token] });
   const paid = o?.status === "pago";
 
   // Purchase é disparado uma única vez por pedido (guardado em localStorage).
@@ -191,29 +195,21 @@ function Pedido() {
         </div>
 
         {!paid && payRef && (
-          <div className="mt-6 rounded-2xl border border-gold/40 bg-gold/5 p-6">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="text-xs font-semibold uppercase tracking-widest text-gold">
-                Pagar por {payRef.provider}
-              </div>
-              {payRef.mode === "test" && (
-                <span className="rounded-full border border-warning/40 bg-warning/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-warning">
-                  Modo de teste
-                </span>
-              )}
-            </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <RefBox label="Entidade" value={payRef.entity} />
-              <RefBox label="Referência" value={payRef.reference} />
-              <RefBox label="Valor" value={fmt(o.gross_cents, o.currency)} />
-            </div>
-            <ol className="mt-5 space-y-1.5 text-xs text-muted-foreground list-decimal list-inside">
-              {payRef.instructions.map((i) => (
-                <li key={i}>{i}</li>
-              ))}
-            </ol>
+          <div className="mt-6">
+            <ReferenceGeneration reference={payRef} amountLabel={fmt(o.gross_cents, o.currency)} />
           </div>
         )}
+
+        <div className="mt-6">
+          <ReceiptUpload
+            token={token}
+            receiptStatus={(o as any).receipt_status ?? "sem_comprovativo"}
+            receiptKind={(o as any).receipt_kind}
+            receiptNote={(o as any).receipt_note}
+            orderStatus={o.status}
+            onSubmitted={refresh}
+          />
+        </div>
 
         <div className="mt-8 text-center">
           <Link to="/loja">
@@ -231,23 +227,5 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
       <dt className="text-muted-foreground">{k}</dt>
       <dd className="font-medium text-right min-w-0 truncate">{v}</dd>
     </div>
-  );
-}
-
-function RefBox({ label, value }: { label: string; value: string }) {
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        navigator.clipboard.writeText(value);
-        toast.success(`${label} copiada`);
-      }}
-      className="rounded-xl border border-border bg-card p-3 text-left hover:border-gold/50 transition"
-    >
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
-      <div className="mt-1 font-mono font-bold text-base flex items-center gap-2">
-        {value} <Copy className="h-3 w-3 opacity-60" />
-      </div>
-    </button>
   );
 }

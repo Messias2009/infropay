@@ -21,6 +21,7 @@ import {
   LogOut,
   Headphones,
   Palette,
+  Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +47,7 @@ const items = [
   { to: "/produtor/funil", icon: TrendingUp, label: "Funil de vendas" },
   { to: "/membros", icon: GraduationCap, label: "Área de membros" },
   { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
+  { to: "/produtor/pedidos", icon: Receipt, label: "Pedidos" },
   { to: "/produtor/saques", icon: Banknote, label: "Saques" },
   { to: "/produtor/conquistas", icon: Trophy, label: "Conquistas" },
   { to: "/afiliados", icon: Handshake, label: "Afiliados" },

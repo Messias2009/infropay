@@ -30,6 +30,7 @@ import { Route as PedidoTokenRouteImport } from './routes/pedido.$token'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as AuthenticatedAdmIndexRouteImport } from './routes/_authenticated/adm.index'
 import { Route as AuthenticatedAdmLogsRouteImport } from './routes/_authenticated/adm.logs'
+import { Route as AuthenticatedAdmPedidosRouteImport } from './routes/_authenticated/adm.pedidos'
 import { Route as AuthenticatedAdmProdutosRouteImport } from './routes/_authenticated/adm.produtos'
 import { Route as AuthenticatedAdmRelatoriosRouteImport } from './routes/_authenticated/adm.relatorios'
 import { Route as AuthenticatedAdmSaquesRouteImport } from './routes/_authenticated/adm.saques'
@@ -42,6 +43,7 @@ import { Route as AuthenticatedProdutorFinanceiroRouteImport } from './routes/_a
 import { Route as AuthenticatedProdutorFunilRouteImport } from './routes/_authenticated/produtor.funil'
 import { Route as AuthenticatedProdutorIntegracoesRouteImport } from './routes/_authenticated/produtor.integracoes'
 import { Route as AuthenticatedProdutorNovoRouteImport } from './routes/_authenticated/produtor.novo'
+import { Route as AuthenticatedProdutorPedidosRouteImport } from './routes/_authenticated/produtor.pedidos'
 import { Route as AuthenticatedProdutorProdutosRouteImport } from './routes/_authenticated/produtor.produtos'
 import { Route as AuthenticatedProdutorSaquesRouteImport } from './routes/_authenticated/produtor.saques'
 import { Route as AuthenticatedProdutorCheckoutIndexRouteImport } from './routes/_authenticated/produtor.checkout.index'
@@ -156,6 +158,11 @@ const AuthenticatedAdmLogsRoute = AuthenticatedAdmLogsRouteImport.update({
   path: '/logs',
   getParentRoute: () => AuthenticatedAdmRoute,
 } as any)
+const AuthenticatedAdmPedidosRoute = AuthenticatedAdmPedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
+  getParentRoute: () => AuthenticatedAdmRoute,
+} as any)
 const AuthenticatedAdmProdutosRoute =
   AuthenticatedAdmProdutosRouteImport.update({
     id: '/produtos',
@@ -225,6 +232,12 @@ const AuthenticatedProdutorNovoRoute =
   AuthenticatedProdutorNovoRouteImport.update({
     id: '/novo',
     path: '/novo',
+    getParentRoute: () => AuthenticatedProdutorRoute,
+  } as any)
+const AuthenticatedProdutorPedidosRoute =
+  AuthenticatedProdutorPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
     getParentRoute: () => AuthenticatedProdutorRoute,
   } as any)
 const AuthenticatedProdutorProdutosRoute =
@@ -301,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/logs': typeof AuthenticatedAdmLogsRoute
+  '/adm/pedidos': typeof AuthenticatedAdmPedidosRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/adm/relatorios': typeof AuthenticatedAdmRelatoriosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
@@ -311,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/produtor/funil': typeof AuthenticatedProdutorFunilRoute
   '/produtor/integracoes': typeof AuthenticatedProdutorIntegracoesRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
+  '/produtor/pedidos': typeof AuthenticatedProdutorPedidosRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
   '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm/': typeof AuthenticatedAdmIndexRoute
@@ -342,6 +357,7 @@ export interface FileRoutesByTo {
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/adm/logs': typeof AuthenticatedAdmLogsRoute
+  '/adm/pedidos': typeof AuthenticatedAdmPedidosRoute
   '/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/adm/relatorios': typeof AuthenticatedAdmRelatoriosRoute
   '/adm/saques': typeof AuthenticatedAdmSaquesRoute
@@ -352,6 +368,7 @@ export interface FileRoutesByTo {
   '/produtor/funil': typeof AuthenticatedProdutorFunilRoute
   '/produtor/integracoes': typeof AuthenticatedProdutorIntegracoesRoute
   '/produtor/novo': typeof AuthenticatedProdutorNovoRoute
+  '/produtor/pedidos': typeof AuthenticatedProdutorPedidosRoute
   '/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
   '/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/adm': typeof AuthenticatedAdmIndexRoute
@@ -387,6 +404,7 @@ export interface FileRoutesById {
   '/pedido/$token': typeof PedidoTokenRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/adm/logs': typeof AuthenticatedAdmLogsRoute
+  '/_authenticated/adm/pedidos': typeof AuthenticatedAdmPedidosRoute
   '/_authenticated/adm/produtos': typeof AuthenticatedAdmProdutosRoute
   '/_authenticated/adm/relatorios': typeof AuthenticatedAdmRelatoriosRoute
   '/_authenticated/adm/saques': typeof AuthenticatedAdmSaquesRoute
@@ -397,6 +415,7 @@ export interface FileRoutesById {
   '/_authenticated/produtor/funil': typeof AuthenticatedProdutorFunilRoute
   '/_authenticated/produtor/integracoes': typeof AuthenticatedProdutorIntegracoesRoute
   '/_authenticated/produtor/novo': typeof AuthenticatedProdutorNovoRoute
+  '/_authenticated/produtor/pedidos': typeof AuthenticatedProdutorPedidosRoute
   '/_authenticated/produtor/produtos': typeof AuthenticatedProdutorProdutosRoute
   '/_authenticated/produtor/saques': typeof AuthenticatedProdutorSaquesRoute
   '/_authenticated/adm/': typeof AuthenticatedAdmIndexRoute
@@ -432,6 +451,7 @@ export interface FileRouteTypes {
     | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/logs'
+    | '/adm/pedidos'
     | '/adm/produtos'
     | '/adm/relatorios'
     | '/adm/saques'
@@ -442,6 +462,7 @@ export interface FileRouteTypes {
     | '/produtor/funil'
     | '/produtor/integracoes'
     | '/produtor/novo'
+    | '/produtor/pedidos'
     | '/produtor/produtos'
     | '/produtor/saques'
     | '/adm/'
@@ -473,6 +494,7 @@ export interface FileRouteTypes {
     | '/pedido/$token'
     | '/produto/$slug'
     | '/adm/logs'
+    | '/adm/pedidos'
     | '/adm/produtos'
     | '/adm/relatorios'
     | '/adm/saques'
@@ -483,6 +505,7 @@ export interface FileRouteTypes {
     | '/produtor/funil'
     | '/produtor/integracoes'
     | '/produtor/novo'
+    | '/produtor/pedidos'
     | '/produtor/produtos'
     | '/produtor/saques'
     | '/adm'
@@ -517,6 +540,7 @@ export interface FileRouteTypes {
     | '/pedido/$token'
     | '/produto/$slug'
     | '/_authenticated/adm/logs'
+    | '/_authenticated/adm/pedidos'
     | '/_authenticated/adm/produtos'
     | '/_authenticated/adm/relatorios'
     | '/_authenticated/adm/saques'
@@ -527,6 +551,7 @@ export interface FileRouteTypes {
     | '/_authenticated/produtor/funil'
     | '/_authenticated/produtor/integracoes'
     | '/_authenticated/produtor/novo'
+    | '/_authenticated/produtor/pedidos'
     | '/_authenticated/produtor/produtos'
     | '/_authenticated/produtor/saques'
     | '/_authenticated/adm/'
@@ -710,6 +735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmLogsRouteImport
       parentRoute: typeof AuthenticatedAdmRoute
     }
+    '/_authenticated/adm/pedidos': {
+      id: '/_authenticated/adm/pedidos'
+      path: '/pedidos'
+      fullPath: '/adm/pedidos'
+      preLoaderRoute: typeof AuthenticatedAdmPedidosRouteImport
+      parentRoute: typeof AuthenticatedAdmRoute
+    }
     '/_authenticated/adm/produtos': {
       id: '/_authenticated/adm/produtos'
       path: '/produtos'
@@ -794,6 +826,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutorNovoRouteImport
       parentRoute: typeof AuthenticatedProdutorRoute
     }
+    '/_authenticated/produtor/pedidos': {
+      id: '/_authenticated/produtor/pedidos'
+      path: '/pedidos'
+      fullPath: '/produtor/pedidos'
+      preLoaderRoute: typeof AuthenticatedProdutorPedidosRouteImport
+      parentRoute: typeof AuthenticatedProdutorRoute
+    }
     '/_authenticated/produtor/produtos': {
       id: '/_authenticated/produtor/produtos'
       path: '/produtos'
@@ -862,6 +901,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdmRouteChildren {
   AuthenticatedAdmLogsRoute: typeof AuthenticatedAdmLogsRoute
+  AuthenticatedAdmPedidosRoute: typeof AuthenticatedAdmPedidosRoute
   AuthenticatedAdmProdutosRoute: typeof AuthenticatedAdmProdutosRoute
   AuthenticatedAdmRelatoriosRoute: typeof AuthenticatedAdmRelatoriosRoute
   AuthenticatedAdmSaquesRoute: typeof AuthenticatedAdmSaquesRoute
@@ -871,6 +911,7 @@ interface AuthenticatedAdmRouteChildren {
 
 const AuthenticatedAdmRouteChildren: AuthenticatedAdmRouteChildren = {
   AuthenticatedAdmLogsRoute: AuthenticatedAdmLogsRoute,
+  AuthenticatedAdmPedidosRoute: AuthenticatedAdmPedidosRoute,
   AuthenticatedAdmProdutosRoute: AuthenticatedAdmProdutosRoute,
   AuthenticatedAdmRelatoriosRoute: AuthenticatedAdmRelatoriosRoute,
   AuthenticatedAdmSaquesRoute: AuthenticatedAdmSaquesRoute,
@@ -887,6 +928,7 @@ interface AuthenticatedProdutorRouteChildren {
   AuthenticatedProdutorFunilRoute: typeof AuthenticatedProdutorFunilRoute
   AuthenticatedProdutorIntegracoesRoute: typeof AuthenticatedProdutorIntegracoesRoute
   AuthenticatedProdutorNovoRoute: typeof AuthenticatedProdutorNovoRoute
+  AuthenticatedProdutorPedidosRoute: typeof AuthenticatedProdutorPedidosRoute
   AuthenticatedProdutorProdutosRoute: typeof AuthenticatedProdutorProdutosRoute
   AuthenticatedProdutorSaquesRoute: typeof AuthenticatedProdutorSaquesRoute
   AuthenticatedProdutorIndexRoute: typeof AuthenticatedProdutorIndexRoute
@@ -903,6 +945,7 @@ const AuthenticatedProdutorRouteChildren: AuthenticatedProdutorRouteChildren = {
   AuthenticatedProdutorFunilRoute: AuthenticatedProdutorFunilRoute,
   AuthenticatedProdutorIntegracoesRoute: AuthenticatedProdutorIntegracoesRoute,
   AuthenticatedProdutorNovoRoute: AuthenticatedProdutorNovoRoute,
+  AuthenticatedProdutorPedidosRoute: AuthenticatedProdutorPedidosRoute,
   AuthenticatedProdutorProdutosRoute: AuthenticatedProdutorProdutosRoute,
   AuthenticatedProdutorSaquesRoute: AuthenticatedProdutorSaquesRoute,
   AuthenticatedProdutorIndexRoute: AuthenticatedProdutorIndexRoute,

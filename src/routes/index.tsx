@@ -292,7 +292,6 @@ function Home() {
               onClick={() => setShowWristbandModal(true)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gold/40 bg-gold/5 hover:bg-gold/10 text-xs font-semibold text-foreground transition-all cursor-pointer shadow-xs"
             >
-              <Trophy className="w-4 h-4 text-gold" />
               <span>Ver Prémio Oficial da 1ª Venda: Pulseira Colecionável</span>
             </button>
           </div>

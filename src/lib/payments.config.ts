@@ -18,7 +18,7 @@ export const PAYPAY_REFERENCE: PaymentReference = {
   provider: "Referência PayPay",
   entity: env.VITE_PAYPAY_ENTITY || "10116",
   reference: env.VITE_PAYPAY_REFERENCE || "951946549",
-  mode: (env.VITE_PAYPAY_MODE as "test" | "live") || "test",
+  mode: (env.VITE_PAYPAY_MODE as "test" | "live") || "live",
   instructions: [
     "Abra o Multicaixa Express, ATM ou Internet Banking.",
     "Escolha Pagamentos → Pagamento por referência.",

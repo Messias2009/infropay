@@ -11,6 +11,7 @@ import {
   Users,
   BarChart3,
   ScrollText,
+  Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isAdmin, bootstrapAdmin } from "@/lib/admin.functions";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/adm")({
 
 const items = [
   { to: "/adm", icon: ShieldCheck, label: "Aprovações", exact: true },
+  { to: "/adm/pedidos", icon: Receipt, label: "Pedidos" },
   { to: "/adm/produtos", icon: Package, label: "Todos os produtos" },
   { to: "/adm/usuarios", icon: Users, label: "Usuários" },
   { to: "/adm/relatorios", icon: BarChart3, label: "Relatórios" },
