@@ -22,11 +22,14 @@ import {
   Headphones,
   Palette,
   Receipt,
+  Sparkles,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import logoMark from "@/assets/infropay-mark.png";
 import { isAdmin } from "@/lib/admin.functions";
+import { getMyPlan } from "@/lib/plans.functions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { SupportModal } from "@/components/site/SupportModal";
@@ -45,6 +48,7 @@ const items = [
   { to: "/produtor/novo", icon: Plus, label: "Novo produto" },
   { to: "/produtor/checkout", icon: Palette, label: "Checkout personalizado" },
   { to: "/produtor/funil", icon: TrendingUp, label: "Funil de vendas" },
+  { to: "/produtor/quiz", icon: Sparkles, label: "Quiz" },
   { to: "/membros", icon: GraduationCap, label: "Área de membros" },
   { to: "/produtor/financeiro", icon: Wallet, label: "Financeiro" },
   { to: "/produtor/pedidos", icon: Receipt, label: "Pedidos" },
@@ -58,11 +62,13 @@ const items = [
 function NavBody({
   pathname,
   admin,
+  premium,
   onNav,
   onOpenSupport,
 }: {
   pathname: string;
   admin?: boolean;
+  premium?: boolean;
   onNav?: () => void;
   onOpenSupport?: () => void;
 }) {
@@ -83,6 +89,7 @@ function NavBody({
           const isActive = i.exact
             ? pathname === i.to
             : pathname === i.to || pathname.startsWith(i.to + "/");
+          const locked = i.to === "/produtor/quiz" && premium === false;
           return (
             <Link
               key={i.to}
@@ -92,6 +99,11 @@ function NavBody({
             >
               <i.icon className="h-4 w-4" />
               {i.label}
+              {locked && (
+                <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-muted-foreground">
+                  <Lock className="h-3.5 w-3.5" /> Premium
+                </span>
+              )}
             </Link>
           );
         })}
@@ -149,6 +161,13 @@ function ProdutorLayout() {
     queryFn: () => isAdminFn(),
     staleTime: 60_000,
   });
+  // Estado Premium do backend — controla o cadeado do menu "Quiz".
+  const planFn = useServerFn(getMyPlan);
+  const { data: plan } = useQuery({
+    queryKey: ["plan"],
+    queryFn: () => planFn(),
+    staleTime: 60_000,
+  });
   const [open, setOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
 
@@ -174,7 +193,12 @@ function ProdutorLayout() {
             <div className="text-[10px] text-muted-foreground mt-0.5">painel do produtor</div>
           </div>
         </Link>
-        <NavBody pathname={pathname} admin={admin} onOpenSupport={() => setSupportOpen(true)} />
+        <NavBody
+          pathname={pathname}
+          admin={admin}
+          premium={plan?.premium}
+          onOpenSupport={() => setSupportOpen(true)}
+        />
       </aside>
 
       <div className="flex-1 min-w-0 w-full flex flex-col">
@@ -212,6 +236,7 @@ function ProdutorLayout() {
                 <NavBody
                   pathname={pathname}
                   admin={admin}
+                  premium={plan?.premium}
                   onNav={() => setOpen(false)}
                   onOpenSupport={() => setSupportOpen(true)}
                 />

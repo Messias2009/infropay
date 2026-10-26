@@ -17,6 +17,11 @@ const BUCKET = "payment-receipts";
 const MAX_BYTES = 10 * 1024 * 1024;
 const ACCEPTED = ["image/png", "image/jpeg", "image/webp", "application/pdf"];
 
+type UploadArgs = {
+  data: { token: string; file_name: string; content_type: string; size: number };
+};
+type SubmitArgs = { data: { token: string; path: string } };
+
 type Props = {
   token: string;
   receiptStatus: string;
@@ -24,6 +29,9 @@ type Props = {
   receiptNote?: string | null;
   orderStatus: string;
   onSubmitted: () => void;
+  /** Usa o fluxo de comprovativo de venda por omissão; passar outro para planos. */
+  uploadFn?: (args: UploadArgs) => Promise<{ path: string; token: string }>;
+  submitFn?: (args: SubmitArgs) => Promise<unknown>;
 };
 
 /**
@@ -38,6 +46,8 @@ export function ReceiptUpload({
   receiptNote,
   orderStatus,
   onSubmitted,
+  uploadFn,
+  submitFn,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -78,7 +88,7 @@ export function ReceiptUpload({
     if (!file) return;
     try {
       setBusy("preparing");
-      const prepared = await createReceiptUpload({
+      const prepared = await (uploadFn ?? createReceiptUpload)({
         data: {
           token,
           file_name: file.name,
@@ -94,7 +104,7 @@ export function ReceiptUpload({
       if (upError) throw new Error(upError.message);
 
       setBusy("confirming");
-      await submitReceipt({ data: { token, path: prepared.path } });
+      await (submitFn ?? submitReceipt)({ data: { token, path: prepared.path } });
 
       setFile(null);
       toast.success("Comprovativo enviado! A aguardar verificação.");

@@ -893,6 +893,122 @@ export type Database = {
           },
         ]
       }
+      subscription_orders: {
+        Row: {
+          access_token: string
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          paid_at: string | null
+          payment_method: string
+          payment_ref: string | null
+          plano: string
+          provider: string | null
+          receipt_kind: string | null
+          receipt_note: string | null
+          receipt_path: string | null
+          receipt_reviewed_at: string | null
+          receipt_reviewed_by: string | null
+          receipt_status: string
+          receipt_submitted_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_ref?: string | null
+          plano: string
+          provider?: string | null
+          receipt_kind?: string | null
+          receipt_note?: string | null
+          receipt_path?: string | null
+          receipt_reviewed_at?: string | null
+          receipt_reviewed_by?: string | null
+          receipt_status?: string
+          receipt_submitted_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_ref?: string | null
+          plano?: string
+          provider?: string | null
+          receipt_kind?: string | null
+          receipt_note?: string | null
+          receipt_path?: string | null
+          receipt_reviewed_at?: string | null
+          receipt_reviewed_by?: string | null
+          receipt_status?: string
+          receipt_submitted_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          avisado_24h: boolean
+          created_at: string
+          data_fim: string
+          data_inicio: string
+          estado: string
+          id: string
+          order_id: string | null
+          plano: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avisado_24h?: boolean
+          created_at?: string
+          data_fim: string
+          data_inicio?: string
+          estado?: string
+          id?: string
+          order_id?: string | null
+          plano: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avisado_24h?: boolean
+          created_at?: string
+          data_fim?: string
+          data_inicio?: string
+          estado?: string
+          id?: string
+          order_id?: string | null
+          plano?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_integrations: {
         Row: {
           ga_measurement_id: string | null
@@ -1055,6 +1171,7 @@ export type Database = {
     Functions: {
       bootstrap_admin: { Args: never; Returns: boolean }
       ensure_wallet: { Args: { _uid: string }; Returns: undefined }
+      expire_stale_subscriptions: { Args: { _user_id: string }; Returns: undefined }
       fmt_kz: { Args: { _cents: number }; Returns: string }
       has_role: {
         Args: {
