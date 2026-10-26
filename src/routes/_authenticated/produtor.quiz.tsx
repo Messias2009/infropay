@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, Clock, Eye, Loader2, Lock, Rocket, ShieldCheck, Sparkles } from "lucide-react";
+import { BarChart3, Check, Clock, Eye, FileText, Loader2, Lock, Plus, Rocket, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
 import { ReceiptUpload } from "@/components/payments/ReceiptUpload";
 import {
@@ -16,6 +17,7 @@ import {
   startFreeTrial,
   submitPlanReceipt,
 } from "@/lib/plans.functions";
+import { createQuiz, deleteQuiz, listMyQuizzes } from "@/lib/quizzes.functions";
 import { PAYPAY_REFERENCE } from "@/lib/payments.config";
 
 export const Route = createFileRoute("/_authenticated/produtor/quiz")({
@@ -86,19 +88,74 @@ function ProdutorQuiz() {
 }
 
 function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }) {
+  const listFn = useServerFn(listMyQuizzes);
+  const createFn = useServerFn(createQuiz);
+  const deleteFn = useServerFn(deleteQuiz);
+  const queryClient = useQueryClient();
+  const [title, setTitle] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["my-quizzes"],
+    queryFn: () => listFn(),
+  });
+
+  async function create() {
+    if (!title.trim()) {
+      toast.error("Dê um nome ao seu quiz");
+      return;
+    }
+    setCreating(true);
+    try {
+      const quiz = await createFn({ data: { title: title.trim() } });
+      toast.success("Quiz criado com sucesso");
+      setTitle("");
+      queryClient.invalidateQueries({ queryKey: ["my-quizzes"] });
+      window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function remove(id: string) {
+    if (!confirm("Tem a certeza que deseja eliminar este quiz?")) return;
+    try {
+      await deleteFn({ data: { id } });
+      toast.success("Quiz eliminado");
+      queryClient.invalidateQueries({ queryKey: ["my-quizzes"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  const items = data?.items ?? [];
+
   return (
-    <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-4xl mx-auto space-y-6">
-      <div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-gold/10 border border-gold/30 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold">
-          <Sparkles className="h-3.5 w-3.5" /> Quiz Funnel · Premium
+    <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-6xl mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-gold/10 border border-gold/30 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold">
+            <Sparkles className="h-3.5 w-3.5" /> Quiz Funnel · Premium
+          </div>
+          <h1 className="font-display text-2xl md:text-4xl font-bold mt-3">
+            Os seus quizzes
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Crie, edite e publique quizzes interativos para gerar vendas.
+          </p>
         </div>
-        <h1 className="font-display text-2xl md:text-4xl font-bold mt-3">
-          O seu plano está activo
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          O editor de quizzes fica disponível na próxima etapa. Enquanto isso, o seu acesso está
-          garantido.
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link to="/quiz/preview">
+            <Button variant="outline">
+              <Eye className="h-4 w-4 mr-2" /> Pré-visualizar renderizador
+            </Button>
+          </Link>
+          <Button variant="outline" onClick={onChanged}>
+            <Loader2 className="h-4 w-4 mr-2" /> Actualizar plano
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/10 via-card to-card p-6">
@@ -133,38 +190,101 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <div className="mt-4 rounded-xl border border-warning/40 bg-warning/10 p-3 text-xs flex gap-2">
             <Clock className="h-4 w-4 text-warning shrink-0" />
             <span>
-              O seu plano expira em menos de 24 horas. Renove para manter o Quiz Funnel activo — os
-              quizzes guardados ficam sempre no seu painel.
+              O seu plano expira em menos de 24 horas. Renove para manter o Quiz Funnel activo.
             </span>
           </div>
         )}
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <div className="text-xs uppercase tracking-widest text-gold font-semibold">
-          A seguir no Quiz Funnel
-        </div>
-        <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-          {[
-            "Editor de etapas com lógica condicional e templates prontos",
-            "Página pública mobile-first com captura de leads",
-            "Analytics de visitas, conclusão, leads e conversão",
-          ].map((t) => (
-            <li key={t} className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-success mt-0.5 shrink-0" /> {t}
-            </li>
-          ))}
-        </ul>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Link to="/quiz/preview">
-            <Button variant="outline">
-              <Eye className="h-4 w-4 mr-2" /> Pré-visualizar o renderizador
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <div className="text-lg font-semibold">Criar novo quiz</div>
+            <p className="text-sm text-muted-foreground">
+              Comece com um nome e personalize com o editor completo.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Nome do quiz (ex.: Vendas de Curso)"
+              className="sm:w-80"
+            />
+            <Button onClick={create} disabled={creating} className="gradient-brand text-primary-foreground">
+              {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Criar quiz
             </Button>
-          </Link>
-          <Button variant="outline" onClick={onChanged}>
-            <Loader2 className="h-4 w-4 mr-2" /> Actualizar estado do plano
-          </Button>
+          </div>
         </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <div>
+            <div className="text-lg font-semibold">Meus quizzes</div>
+            <p className="text-sm text-muted-foreground">
+              {items.length === 0 ? "Ainda não criou nenhum quiz" : `${items.length} quiz(es) criado(s)`}
+            </p>
+          </div>
+        </div>
+        {isLoading ? (
+          <div className="p-10 text-center text-sm text-muted-foreground">
+            <Loader2 className="h-5 w-5 animate-spin mx-auto mb-3" /> A carregar quizzes…
+          </div>
+        ) : items.length === 0 ? (
+          <div className="p-10 text-center text-sm text-muted-foreground">
+            Crie o seu primeiro quiz para começar a vender com o Quiz Funnel.
+          </div>
+        ) : (
+          <div className="divide-y divide-border">
+            {items.map((quiz: any) => (
+              <div key={quiz.id} className="p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <div className="font-semibold truncate">{quiz.title}</div>
+                    <span
+                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border ${
+                        quiz.status === "publicado"
+                          ? "border-success/40 text-success bg-success/10"
+                          : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {quiz.status === "publicado" ? "Publicado" : "Rascunho"}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-3.5 w-3.5" /> {quiz.visits} visitas
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BarChart3 className="h-3.5 w-3.5" /> {quiz.leads} leads
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <FileText className="h-3.5 w-3.5" /> {quiz.steps} etapas
+                    </div>
+                    <div>
+                      Conversão: {(quiz.conversion * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link to={`/produtor/quiz/editor/${quiz.id}`}>
+                    <Button size="sm">Editar quiz</Button>
+                  </Link>
+                  <Link to="/quiz/preview">
+                    <Button size="sm" variant="outline">
+                      Pré-visualizar
+                    </Button>
+                  </Link>
+                  <Button size="sm" variant="ghost" onClick={() => remove(quiz.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

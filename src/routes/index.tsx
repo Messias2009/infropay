@@ -171,6 +171,65 @@ function Home() {
         </div>
       </section>
 
+      {/* QUIZ FUNNEL - BANNER TOP PREMIUM */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 -mt-4 md:-mt-6 mb-6">
+        <Link
+          to="/produtor/quiz"
+          className="group relative block overflow-hidden rounded-3xl border border-gold/40 shadow-gold/20 shadow-xl"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#1a1408] to-[#0a0a0a]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,_rgba(212,175,55,0.25)_0%,_transparent_60%)]" />
+          <div className="absolute -right-32 top-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-gold/15 blur-[120px]" />
+          <div className="relative px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+            <div className="flex-1 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 rounded-full bg-gold/15 border border-gold/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-gold">
+                <Crown className="h-3.5 w-3.5" />
+                Novo · Exclusivo para Produtores Premium
+              </div>
+              <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+                <span className="text-gradient-gold">Quiz Funnel</span>
+                <br />
+                Transforme perguntas em vendas
+              </h2>
+              <p className="mt-4 text-muted-foreground max-w-xl">
+                Crie quizzes interativos que capturam leads, qualificam clientes e direcionam direto
+                para o checkout da InfroPay. Com lógica condicional, templates prontos e analytics
+                completos.
+              </p>
+              <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gold group-hover:translate-x-1 transition">
+                Criar quiz agora
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="relative">
+              <div className="relative rounded-2xl border border-gold/40 bg-card/80 backdrop-blur p-4 shadow-[0_40px_120px_-60px_rgba(212,175,55,0.9)]">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="h-2 w-2 rounded-full bg-gold/60" />
+                  <span className="h-2 w-2 rounded-full bg-gold/40" />
+                  <span className="h-2 w-2 rounded-full bg-gold/20" />
+                  <div className="ml-2 text-[10px] text-muted-foreground">quiz.infropay.com</div>
+                </div>
+                <div className="space-y-2.5 w-[260px] sm:w-[320px]">
+                  <div className="h-3 w-2/3 rounded-full bg-gold/30" />
+                  <div className="h-2 w-full rounded-full bg-border/60" />
+                  <div className="h-2 w-5/6 rounded-full bg-border/40" />
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <div className="h-16 rounded-xl bg-gold/10 border border-gold/30" />
+                    <div className="h-16 rounded-xl bg-gold/10 border border-gold/30" />
+                  </div>
+                  <div className="h-10 rounded-xl bg-gradient-to-r from-gold to-amber-500" />
+                </div>
+              </div>
+              <div className="absolute -bottom-6 -right-6 hidden sm:block">
+                <div className="rounded-full bg-gold px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-background shadow-lg">
+                  Teste grátis 1 dia
+                </div>
+              </div>
+            </div>
+          </div>
+        </Link>
+      </section>
+
       {/* DASHBOARD PREVIEW */}
       <section className="relative mx-auto max-w-7xl px-4 sm:px-6 -mt-6 md:-mt-12">
         <div className="relative rounded-3xl border border-primary/25 overflow-hidden bg-card animate-fade-in shadow-card">

@@ -226,6 +226,26 @@ export const deleteQuiz = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+/** Obtém um quiz do próprio vendedor para edição. */
+export const getMyQuiz = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const supabaseAdmin = await adminClient();
+    const { data: quiz, error } = await supabaseAdmin
+      .from("quizzes")
+      .select("*")
+      .eq("id", data.id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
+    if (error) {
+      if (isSetupError(error)) throw new Error(SETUP_MESSAGE);
+      throw new Error(error.message);
+    }
+    if (!quiz) throw new Error("Quiz não encontrado ou sem permissão.");
+    return quiz as any;
+  });
+
 /**
  * Leitura pública do quiz por slug (usada pela página pública e pela
  * pré-visualização). Se o plano do vendedor expirar, o quiz publicado
