@@ -2,8 +2,8 @@
 // Handles client (Vite import.meta.env), server (Node/Nitro process.env),
 // and Vercel naming variations (VITE_*, SUPABASE_*, NEXT_PUBLIC_*).
 
-const DEFAULT_SUPABASE_URL = "https://dbiyvmjtxgholatsonbo.supabase.co";
-const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NFT-Qg1DBlJ3LBlo9FDM4A_SvxcA8UU";
+const DEFAULT_SUPABASE_URL = "https://joxysdxsrgvxljcvgjbr.supabase.co";
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_xjDImo-O9C1GEVEvFk5siQ_lzKfx2vO";
 
 function cleanValue(val: unknown): string | undefined {
   if (typeof val !== "string") return undefined;
