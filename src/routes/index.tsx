@@ -28,6 +28,7 @@ import { WristbandModal } from "@/components/marketing/WristbandModal";
 import bannerGanhe from "@/assets/banner-ganhe.jpg";
 import bannerProdutores from "@/assets/banner-produtores.jpg";
 import bannerLegends from "@/assets/banner-legends.jpg";
+import infropayMark from "@/assets/infropay-mark.png";
 import dashboardImg from "@/assets/dashboard-preview.jpg";
 import plaqueSilver from "@/assets/images/infropay_plaque_silver_100k_1792134414511.jpg";
 import plaqueGold from "@/assets/images/infropay_plaque_gold_500k_1792134428623.jpg";
@@ -171,59 +172,83 @@ function Home() {
         </div>
       </section>
 
-      {/* QUIZ FUNNEL - BANNER TOP PREMIUM */}
+      {/* QUIZ FUNNEL — banner compacto premium (letras e imagem reais) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 -mt-4 md:-mt-6 mb-6">
         <Link
           to="/produtor/quiz"
-          className="group relative block overflow-hidden rounded-3xl border border-gold/40 shadow-gold/20 shadow-xl"
+          className="group relative block overflow-hidden rounded-2xl border border-gold/30 bg-[#0b0b0e] shadow-[0_28px_70px_-38px_rgba(212,175,55,0.55)]"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#1a1408] to-[#0a0a0a]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,_rgba(212,175,55,0.25)_0%,_transparent_60%)]" />
-          <div className="absolute -right-32 top-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-gold/15 blur-[120px]" />
-          <div className="relative px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12 flex flex-col md:flex-row items-center gap-6 md:gap-10">
-            <div className="flex-1 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full bg-gold/15 border border-gold/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-gold">
-                <Crown className="h-3.5 w-3.5" />
-                Novo · Exclusivo para Produtores Premium
+          {/* Imagem real de fundo à direita com overlay para legibilidade */}
+          <img
+            src={bannerGanhe}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="pointer-events-none absolute inset-y-0 right-0 h-full w-[62%] object-cover object-center opacity-45 sm:w-[55%]"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0b0b0e] via-[#0b0b0e]/95 to-[#0b0b0e]/60 sm:to-[#0b0b0e]/30" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_left,_rgba(212,175,55,0.18)_0%,_transparent_55%)]" />
+
+          <div className="relative grid gap-7 p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:px-10 md:py-9">
+            {/* Texto */}
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-gold">
+                <Crown className="h-3 w-3" />
+                Novo · Quiz Funnel Premium
               </div>
-              <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-                <span className="text-gradient-gold">Quiz Funnel</span>
-                <br />
-                Transforme perguntas em vendas
+              <h2 className="mt-3 font-display text-2xl sm:text-3xl md:text-[2.5rem] md:leading-[1.12] font-bold">
+                <span className="text-gradient-gold">Quiz Funnel</span> — perguntas que vendem
               </h2>
-              <p className="mt-4 text-muted-foreground max-w-xl">
-                Crie quizzes interativos que capturam leads, qualificam clientes e direcionam direto
-                para o checkout da InfroPay. Com lógica condicional, templates prontos e analytics
+              <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Faça perguntas, responda dúvidas, capture o WhatsApp do cliente e leve-o direto ao
+                checkout da InfroPay. Com lógica condicional, templates prontos e analytics
                 completos.
               </p>
-              <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gold group-hover:translate-x-1 transition">
-                Criar quiz agora
-                <ArrowRight className="h-4 w-4" />
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-bold text-background transition group-hover:bg-amber-400">
+                  Criar quiz agora
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  Teste grátis 1 dia · sem cartão
+                </span>
               </div>
             </div>
-            <div className="relative">
-              <div className="relative rounded-2xl border border-gold/40 bg-card/80 backdrop-blur p-4 shadow-[0_40px_120px_-60px_rgba(212,175,55,0.9)]">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="h-2 w-2 rounded-full bg-gold/60" />
-                  <span className="h-2 w-2 rounded-full bg-gold/40" />
-                  <span className="h-2 w-2 rounded-full bg-gold/20" />
-                  <div className="ml-2 text-[10px] text-muted-foreground">quiz.infropay.com</div>
+
+            {/* Mockup real de um quiz em telemóvel */}
+            <div className="relative hidden justify-self-center sm:block md:justify-self-end">
+              <div className="w-[230px] rounded-[1.6rem] border border-gold/30 bg-card/95 p-3 shadow-[0_40px_90px_-45px_rgba(212,175,55,0.9)] backdrop-blur">
+                <div className="mb-2.5 flex items-center gap-1.5 px-1">
+                  <img src={infropayMark} alt="" aria-hidden="true" className="h-3.5 w-3.5" />
+                  <span className="text-[9px] font-medium text-muted-foreground">
+                    quiz.infropay.com
+                  </span>
                 </div>
-                <div className="space-y-2.5 w-[260px] sm:w-[320px]">
-                  <div className="h-3 w-2/3 rounded-full bg-gold/30" />
-                  <div className="h-2 w-full rounded-full bg-border/60" />
-                  <div className="h-2 w-5/6 rounded-full bg-border/40" />
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    <div className="h-16 rounded-xl bg-gold/10 border border-gold/30" />
-                    <div className="h-16 rounded-xl bg-gold/10 border border-gold/30" />
+                <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-border/70">
+                  <div className="h-full w-2/5 rounded-full bg-gradient-to-r from-gold to-amber-400" />
+                </div>
+                <div className="text-[9px] font-bold uppercase tracking-widest text-gold/80">
+                  Pergunta 2 de 5
+                </div>
+                <p className="mt-1.5 text-[13px] font-semibold leading-snug text-foreground">
+                  O que está a faltar nas suas vendas?
+                </p>
+                <div className="mt-2.5 space-y-1.5">
+                  <div className="flex items-center gap-2 rounded-lg border border-gold/50 bg-gold/10 px-2.5 py-2 text-[11px] font-semibold text-foreground">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-gold" />
+                    Tráfego qualificado
                   </div>
-                  <div className="h-10 rounded-xl bg-gradient-to-r from-gold to-amber-500" />
+                  <div className="flex items-center gap-2 rounded-lg border border-border/70 px-2.5 py-2 text-[11px] text-muted-foreground">
+                    <span className="h-2 w-2 shrink-0 rounded-full border border-border" />
+                    Tempo para publicar
+                  </div>
+                </div>
+                <div className="mt-3 rounded-lg bg-gradient-to-r from-gold to-amber-400 py-2 text-center text-[11px] font-bold text-background">
+                  Continuar
                 </div>
               </div>
-              <div className="absolute -bottom-6 -right-6 hidden sm:block">
-                <div className="rounded-full bg-gold px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-background shadow-lg">
-                  Teste grátis 1 dia
-                </div>
+              <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-success px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-background shadow-lg">
+                Lead capturado ✓
               </div>
             </div>
           </div>

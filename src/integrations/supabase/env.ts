@@ -102,16 +102,22 @@ export function requireSupabaseEnv(): { url: string; key: string } {
     cleanValue(process.env?.SUPABASE_PUBLISHABLE_KEY) ||
     cleanValue(process.env?.VITE_SUPABASE_PUBLISHABLE_KEY);
 
-  const missing: string[] = [];
-  if (!url) missing.push("SUPABASE_URL (or VITE_SUPABASE_URL)");
-  if (!key) missing.push("SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY)");
+  // Fallback garantido (projeto real já embutido acima): o publishable key é
+  // público e vive no bundle do browser, por isso o site nunca pode partir
+  // por falta de variáveis — só avisa nos logs da Vercel.
+  const resolvedUrl = url || getSupabaseUrl();
+  const resolvedKey = key || getSupabasePublishableKey();
 
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing Supabase environment variable(s): ${missing.join(", ")}. ` +
-        "Set them in Settings > Environment Variables on Vercel (Production and Preview).",
+  if (!url || !key) {
+    const missing = [
+      ...(!url ? ["SUPABASE_URL (or VITE_SUPABASE_URL)"] : []),
+      ...(!key ? ["SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY)"] : []),
+    ];
+    console.warn(
+      `[Supabase] Variável(s) em falta: ${missing.join(", ")}. ` +
+        "A usar o projeto embutido — adicione-as em Settings > Environment Variables na Vercel (Production e Preview).",
     );
   }
 
-  return { url: url!, key: key! };
+  return { url: resolvedUrl!, key: resolvedKey! };
 }
