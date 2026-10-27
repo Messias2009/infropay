@@ -107,7 +107,7 @@ function Page() {
             </div>
           ) : (
             <div className="mt-4 p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-400 font-semibold max-w-md">
-              👑 Parabéns! Alcançaste o patamar máximo de produtor InfroPay (Black Elite)!
+              👑 Parabéns! Alcançaste o patamar máximo de produtor InfroPay (Placa de Diamante)!
             </div>
           )}
         </div>
@@ -153,13 +153,13 @@ function Page() {
         <div className="text-xs font-semibold uppercase tracking-widest text-gold mb-1">
           Metas de Faturamento
         </div>
-        <h2 className="font-display text-2xl font-bold">5 Níveis de Placas Oficiais</h2>
+        <h2 className="font-display text-2xl font-bold">4 Níveis de Placas Oficiais</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Placas físicas exclusivas de reconhecimento entregues diretamente aos produtores InfroPay.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {LEVELS.map((l) => {
           const unlocked = revenue >= l.min_cents;
           return (

@@ -11,7 +11,17 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { Download, TrendingUp, Percent, Banknote, Wallet, Clock, Handshake } from "lucide-react";
+import {
+  Download,
+  TrendingUp,
+  Percent,
+  Banknote,
+  Wallet,
+  Clock,
+  Handshake,
+  Crown,
+  Landmark,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPlatformReport, exportCsv } from "@/lib/admin.functions";
 
@@ -60,6 +70,18 @@ function Page() {
       label: "Comissões retidas (2%)",
       value: kz(t.commissions_cents),
       accent: "text-primary-glow",
+    },
+    {
+      icon: Crown,
+      label: "Planos Premium (Quiz)",
+      value: kz(t.plan_revenue_cents ?? 0),
+      accent: "text-gold",
+    },
+    {
+      icon: Landmark,
+      label: "Lucro da plataforma",
+      value: kz(t.platform_profit_cents ?? 0),
+      accent: "text-success",
     },
     {
       icon: Handshake,

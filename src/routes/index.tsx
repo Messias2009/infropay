@@ -34,7 +34,6 @@ import plaqueSilver from "@/assets/images/infropay_plaque_silver_100k_1792134414
 import plaqueGold from "@/assets/images/infropay_plaque_gold_500k_1792134428623.jpg";
 import plaquePlatinum from "@/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg";
 import plaqueDiamond from "@/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg";
-import plaqueBlack from "@/assets/images/infropay_plaque_black_10m_1792134467200.jpg";
 import wristbandImg from "@/assets/infropay-wristband.jpg";
 
 export const Route = createFileRoute("/")({
@@ -380,8 +379,8 @@ function Home() {
             </button>
           </div>
 
-          {/* 5 NÍVEIS OFICIAIS DE PREMIAÇÃO DAS PLACAS */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {/* 4 NÍVEIS OFICIAIS DE PREMIAÇÃO DAS PLACAS */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
               {
                 name: "Placa de Prata",
@@ -406,12 +405,6 @@ function Home() {
                 goal: "5M Kz",
                 img: plaqueDiamond,
                 color: "#4FC3F7",
-              },
-              {
-                name: "Placa Black Elite",
-                goal: "10M Kz",
-                img: plaqueBlack,
-                color: "#D4AF37",
               },
             ].map((b) => (
               <div

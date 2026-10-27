@@ -255,17 +255,28 @@ export const getPlatformReport = createServerFn({ method: "GET" })
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const [{ data: sales }, { data: withdrawals }, { data: products }, { data: profiles }] =
-      await Promise.all([
-        supabaseAdmin
-          .from("sales")
-          .select(
-            "gross_cents, platform_fee_cents, net_cents, affiliate_commission_cents, status, created_at, paid_at, producer_id, product_id",
-          ),
-        supabaseAdmin.from("withdrawals").select("gross_cents, fee_cents, net_cents, status"),
-        supabaseAdmin.from("products").select("id, title, slug, sales_count, producer_id"),
-        supabaseAdmin.from("profiles").select("id, full_name, username"),
-      ]);
+    const [
+      { data: sales },
+      { data: withdrawals },
+      { data: products },
+      { data: profiles },
+      { data: planOrders },
+    ] = await Promise.all([
+      supabaseAdmin
+        .from("sales")
+        .select(
+          "gross_cents, platform_fee_cents, net_cents, affiliate_commission_cents, status, created_at, paid_at, producer_id, product_id",
+        ),
+      supabaseAdmin.from("withdrawals").select("gross_cents, fee_cents, net_cents, status"),
+      supabaseAdmin.from("products").select("id, title, slug, sales_count, producer_id"),
+      supabaseAdmin.from("profiles").select("id, full_name, username"),
+      // Assinaturas Premium (Quiz Funnel) — produto da plataforma, 100% da receita é lucro.
+      supabaseAdmin
+        .from("subscription_orders")
+        .select("amount_cents, status, plano, paid_at, created_at")
+        .eq("status", "pago"),
+    ]);
+    const planRevenue = (planOrders ?? []).reduce((a, o) => a + (o.amount_cents ?? 0), 0);
 
     const paid = (sales ?? []).filter((s) => s.status === "pago");
     const gross = paid.reduce((a, s) => a + s.gross_cents, 0);
@@ -312,6 +323,8 @@ export const getPlatformReport = createServerFn({ method: "GET" })
       totals: {
         gross_cents: gross,
         commissions_cents: commissions,
+        plan_revenue_cents: planRevenue,
+        platform_profit_cents: commissions + withdrawalFees + planRevenue,
         affiliate_commissions_cents: affiliateCommissions,
         withdrawal_fees_cents: withdrawalFees,
         withdrawn_cents: withdrawnNet,

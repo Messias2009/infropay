@@ -3,7 +3,6 @@ import img_0 from "@/assets/images/infropay_plaque_silver_100k_1792134414511.jpg
 import img_1 from "@/assets/images/infropay_plaque_gold_500k_1792134428623.jpg";
 import img_2 from "@/assets/images/infropay_plaque_platinum_1m_1792134441626.jpg";
 import img_3 from "@/assets/images/infropay_plaque_diamond_5m_1792134454131.jpg";
-import img_4 from "@/assets/images/infropay_plaque_black_10m_1792134467200.jpg";
 import { createServerPublicClient } from "@/lib/public-client.server";
 
 export type Level = {
@@ -52,15 +51,6 @@ export const LEVELS: Level[] = [
     color: "#4FC3F7",
     gradient: "linear-gradient(135deg,#00838F,#4DD0E1)",
     image: img_3,
-  },
-  {
-    key: "black",
-    name: "Placa Black Elite",
-    min_cents: 10_000_000_00,
-    goal_label: "10.000.000 Kz",
-    color: "#D4AF37",
-    gradient: "linear-gradient(135deg,#1A1A1A,#D4AF37)",
-    image: img_4,
   },
 ];
 
