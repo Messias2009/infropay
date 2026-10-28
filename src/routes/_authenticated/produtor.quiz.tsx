@@ -6,19 +6,29 @@ import {
   BarChart3,
   Check,
   Clock,
+  Copy,
   Eye,
   FileText,
+  Filter,
   Loader2,
   Lock,
+  MoreHorizontal,
   Plus,
   Rocket,
+  Search,
+  Share2,
   ShieldCheck,
   Sparkles,
   Trash2,
+  Users,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
 import { ReceiptUpload } from "@/components/payments/ReceiptUpload";
 import {
@@ -30,12 +40,14 @@ import {
   startFreeTrial,
   submitPlanReceipt,
 } from "@/lib/plans.functions";
-import { createQuiz, deleteQuiz, listMyQuizzes } from "@/lib/quizzes.functions";
+import { createQuiz, deleteQuiz, duplicateQuiz, listMyQuizzes, setQuizStatus } from "@/lib/quizzes.functions";
 import { PAYPAY_REFERENCE } from "@/lib/payments.config";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/_authenticated/produtor/quiz")({
   head: () => ({
-    meta: [{ title: "Quiz Funnel — InfroPay" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Quizzes — InfroPay" }, { name: "robots", content: "noindex" }],
   }),
   component: ProdutorQuiz,
 });
@@ -104,9 +116,13 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
   const listFn = useServerFn(listMyQuizzes);
   const createFn = useServerFn(createQuiz);
   const deleteFn = useServerFn(deleteQuiz);
+  const duplicateFn = useServerFn(duplicateQuiz);
+  const setStatusFn = useServerFn(setQuizStatus);
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [creating, setCreating] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("todos");
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["my-quizzes"],
@@ -133,7 +149,7 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
   }
 
   async function remove(id: string) {
-    if (!confirm("Tem a certeza que deseja eliminar este quiz?")) return;
+    if (!confirm("Tem a certeza que deseja eliminar este quiz? Esta ação não pode ser revertida.")) return;
     try {
       await deleteFn({ data: { id } });
       toast.success("Quiz eliminado");
@@ -143,175 +159,345 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
     }
   }
 
+  async function duplicate(id: string) {
+    try {
+      const quiz = await duplicateFn({ data: { id } });
+      toast.success("Quiz duplicado com sucesso");
+      queryClient.invalidateQueries({ queryKey: ["my-quizzes"] });
+      window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  async function toggleStatus(id: string, currentStatus: string) {
+    const newStatus = currentStatus === "publicado" ? "rascunho" : "publicado";
+    try {
+      await setStatusFn({ data: { id, status: newStatus } });
+      toast.success(newStatus === "publicado" ? "Quiz publicado" : "Quiz voltou a rascunho");
+      queryClient.invalidateQueries({ queryKey: ["my-quizzes"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
   const items = data?.items ?? [];
+  
+  const filteredItems = items.filter((quiz: any) => {
+    const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase());
+    if (activeTab === "todos") return matchesSearch;
+    if (activeTab === "publicados") return matchesSearch && quiz.status === "publicado";
+    if (activeTab === "rascunhos") return matchesSearch && quiz.status === "rascunho";
+    return matchesSearch;
+  });
+
+  const stats = {
+    total: items.length,
+    publicados: items.filter((q: any) => q.status === "publicado").length,
+    rascunhos: items.filter((q: any) => q.status === "rascunho").length,
+    totalViews: items.reduce((sum: number, q: any) => sum + (q.visits || 0), 0),
+    totalLeads: items.reduce((sum: number, q: any) => sum + (q.leads || 0), 0),
+    totalConversions: items.reduce((sum: number, q: any) => sum + Math.floor((q.visits || 0) * (q.conversion || 0)), 0),
+  };
 
   return (
-    <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-6xl mx-auto space-y-6">
+    <div className="w-full min-w-0 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-6">
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-gold/10 border border-gold/30 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-gold">
             <Sparkles className="h-3.5 w-3.5" /> Quiz Funnel · Premium
           </div>
-          <h1 className="font-display text-2xl md:text-4xl font-bold mt-3">Os seus quizzes</h1>
+          <h1 className="font-display text-2xl md:text-4xl font-bold mt-3">Gestão de Quizzes</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Crie, edite e publique quizzes interativos para gerar vendas.
+            Crie, personalize e analise quizzes interativos para gerar vendas e captar leads.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Link to="/quiz/preview">
-            <Button variant="outline">
-              <Eye className="h-4 w-4 mr-2" /> Pré-visualizar renderizador
-            </Button>
-          </Link>
-          <Button variant="outline" onClick={onChanged}>
-            <Loader2 className="h-4 w-4 mr-2" /> Actualizar plano
+          <Button
+            onClick={async () => {
+              if (!title.trim()) {
+                toast.error("Dê um nome ao seu quiz");
+                // Focus on input - just create with default name
+                const quiz = await createFn({ data: { title: "Novo Quiz" } });
+                toast.success("Quiz criado com sucesso");
+                window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+                return;
+              }
+              setCreating(true);
+              try {
+                const quiz = await createFn({ data: { title: title.trim() } });
+                toast.success("Quiz criado com sucesso");
+                setTitle("");
+                queryClient.invalidateQueries({ queryKey: ["my-quizzes"] });
+                window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+              } catch (e) {
+                toast.error((e as Error).message);
+              } finally {
+                setCreating(false);
+              }
+            }}
+            disabled={creating}
+            className="gradient-brand text-primary-foreground shadow-glow"
+          >
+            {creating ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Plus className="h-4 w-4 mr-2" />
+            )}
+            Criar novo Quiz
           </Button>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/10 via-card to-card p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground">
-              Plano actual
-            </div>
-            <div className="font-display text-2xl font-bold mt-1">{plan.plano_label}</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {plan.data_fim && (
-                <>
-                  Válido até{" "}
-                  <span className="text-foreground font-medium">
-                    {new Date(plan.data_fim).toLocaleString("pt-PT")}
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="font-display text-3xl font-bold text-gradient-gold tabular-nums">
-              {plan.dias_restantes}
-            </div>
-            <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
-              dias restantes
-            </div>
-          </div>
-        </div>
-
-        {plan.dias_restantes <= 1 && (
-          <div className="mt-4 rounded-xl border border-warning/40 bg-warning/10 p-3 text-xs flex gap-2">
-            <Clock className="h-4 w-4 text-warning shrink-0" />
-            <span>
-              O seu plano expira em menos de 24 horas. Renove para manter o Quiz Funnel activo.
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <div className="text-lg font-semibold">Criar novo quiz</div>
-            <p className="text-sm text-muted-foreground">
-              Comece com um nome e personalize com o editor completo.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Nome do quiz (ex.: Vendas de Curso)"
-              className="sm:w-80"
-            />
-            <Button
-              onClick={create}
-              disabled={creating}
-              className="gradient-brand text-primary-foreground"
-            >
-              {creating ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Plus className="h-4 w-4 mr-2" />
-              )}
-              Criar quiz
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="p-6 border-b border-border flex items-center justify-between">
-          <div>
-            <div className="text-lg font-semibold">Meus quizzes</div>
-            <p className="text-sm text-muted-foreground">
-              {items.length === 0
-                ? "Ainda não criou nenhum quiz"
-                : `${items.length} quiz(es) criado(s)`}
-            </p>
-          </div>
-        </div>
-        {isLoading ? (
-          <div className="p-10 text-center text-sm text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin mx-auto mb-3" /> A carregar quizzes…
-          </div>
-        ) : items.length === 0 ? (
-          <div className="p-10 text-center text-sm text-muted-foreground">
-            Crie o seu primeiro quiz para começar a vender com o Quiz Funnel.
-          </div>
-        ) : (
-          <div className="divide-y divide-border">
-            {items.map((quiz: any) => (
-              <div
-                key={quiz.id}
-                className="p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-4"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className="font-semibold truncate">{quiz.title}</div>
-                    <span
-                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border ${
-                        quiz.status === "publicado"
-                          ? "border-success/40 text-success bg-success/10"
-                          : "border-border text-muted-foreground"
-                      }`}
-                    >
-                      {quiz.status === "publicado" ? "Publicado" : "Rascunho"}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Eye className="h-3.5 w-3.5" /> {quiz.visits} visitas
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <BarChart3 className="h-3.5 w-3.5" /> {quiz.leads} leads
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FileText className="h-3.5 w-3.5" /> {quiz.steps} etapas
-                    </div>
-                    <div>Conversão: {(quiz.conversion * 100).toFixed(1)}%</div>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link to="/produtor/quiz/editor/$quizId" params={{ quizId: quiz.id }}>
-                    <Button size="sm">Editar quiz</Button>
-                  </Link>
-                  <Link to="/quiz/preview">
-                    <Button size="sm" variant="outline">
-                      Pré-visualizar
-                    </Button>
-                  </Link>
-                  <Button size="sm" variant="ghost" onClick={() => remove(quiz.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
               </div>
-            ))}
-          </div>
-        )}
+              <FileText className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Publicados</p>
+                <p className="text-2xl font-bold text-success">{stats.publicados}</p>
+              </div>
+              <Rocket className="h-8 w-8 text-success/50" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Rascunhos</p>
+                <p className="text-2xl font-bold text-muted-foreground">{stats.rascunhos}</p>
+              </div>
+              <Clock className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Visualizações</p>
+                <p className="text-2xl font-bold">{stats.totalViews}</p>
+              </div>
+              <Eye className="h-8 w-8 text-primary/50" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Leads</p>
+                <p className="text-2xl font-bold text-gold">{stats.totalLeads}</p>
+              </div>
+              <Users className="h-8 w-8 text-gold/50" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Conversões</p>
+                <p className="text-2xl font-bold text-success">{stats.totalConversions}</p>
+              </div>
+              <Zap className="h-8 w-8 text-success/50" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Plan Status */}
+      <Card className="border-gold/40 bg-gradient-to-br from-gold/10 via-card to-card">
+        <CardContent className="p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                Plano actual
+              </div>
+              <div className="font-display text-2xl font-bold mt-1">{plan.plano_label}</div>
+              <div className="text-sm text-muted-foreground mt-1">
+                {plan.data_fim && (
+                  <>
+                    Válido até{" "}
+                    <span className="text-foreground font-medium">
+                      {new Date(plan.data_fim).toLocaleString("pt-PT")}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="font-display text-3xl font-bold text-gradient-gold tabular-nums">
+                {plan.dias_restantes}
+              </div>
+              <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                dias restantes
+              </div>
+            </div>
+          </div>
+          {plan.dias_restantes <= 1 && (
+            <div className="mt-4 rounded-xl border border-warning/40 bg-warning/10 p-3 text-xs flex gap-2">
+              <Clock className="h-4 w-4 text-warning shrink-0" />
+              <span>
+                O seu plano expira em menos de 24 horas. Renove para manter o Quiz Funnel activo.
+              </span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Quizzes List */}
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle>Meus Quizzes</CardTitle>
+              <CardDescription>
+                Gerencie todos os seus quizzes desde este painel
+              </CardDescription>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Pesquisar quizzes..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-full sm:w-64"
+                />
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="todos">Todos ({items.length})</TabsTrigger>
+              <TabsTrigger value="publicados">Publicados ({stats.publicados})</TabsTrigger>
+              <TabsTrigger value="rascunhos">Rascunhos ({stats.rascunhos})</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value={activeTab} className="space-y-4">
+              {isLoading ? (
+                <div className="p-10 text-center text-sm text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin mx-auto mb-3" /> A carregar quizzes…
+                </div>
+              ) : filteredItems.length === 0 ? (
+                <div className="p-10 text-center space-y-4">
+                  <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                    <FileText className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Nenhum quiz encontrado</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {searchTerm ? "Tente ajustar a sua pesquisa" : "Crie o seu primeiro quiz para começar"}
+                    </p>
+                  </div>
+                  {!searchTerm && (
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const quiz = await createFn({ data: { title: "Meu Primeiro Quiz" } });
+                          toast.success("Quiz criado com sucesso");
+                          queryClient.invalidateQueries({ queryKey: ["my-quizzes"] });
+                          window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+                        } catch (e) {
+                          toast.error((e as Error).message);
+                        }
+                      }}
+                      className="gradient-brand text-primary-foreground"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar primeiro quiz
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredItems.map((quiz: any) => (
+                    <div
+                      key={quiz.id}
+                      className="flex flex-col lg:flex-row lg:items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Link
+                            to="/produtor/quiz/editor/$quizId"
+                            params={{ quizId: quiz.id }}
+                            className="font-semibold hover:text-primary transition-colors truncate"
+                          >
+                            {quiz.title}
+                          </Link>
+                          <Badge variant={quiz.status === "publicado" ? "default" : "secondary"}>
+                            {quiz.status === "publicado" ? "Publicado" : "Rascunho"}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Eye className="h-3.5 w-3.5" />
+                            {quiz.visits || 0} visualizações
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Users className="h-3.5 w-3.5" />
+                            {quiz.leads || 0} leads
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <BarChart3 className="h-3.5 w-3.5" />
+                            {((quiz.conversion || 0) * 100).toFixed(1)}% conversão
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <FileText className="h-3.5 w-3.5" />
+                            {quiz.steps || 0} etapas
+                          </div>
+                          <div>
+                            Actualizado {formatDistanceToNow(new Date(quiz.updated_at), { addSuffix: true, locale: ptBR })}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Link to="/produtor/quiz/editor/$quizId" params={{ quizId: quiz.id }}>
+                          <Button size="sm" variant="outline">
+                            Editar
+                          </Button>
+                        </Link>
+                        <Button size="sm" variant="outline" onClick={() => duplicate(quiz.id)}>
+                          <Copy className="h-3.5 w-3.5 mr-1" />
+                          Duplicar
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => toggleStatus(quiz.id, quiz.status)}>
+                          {quiz.status === "publicado" ? "Despublicar" : "Publicar"}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => remove(quiz.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
+// Keep existing UpgradeScreen and PlanPayment components (they're long but needed)
 function UpgradeScreen({
   onActivated,
   trialUsed,
@@ -331,7 +517,6 @@ function UpgradeScreen({
     amount_label: string;
   } | null>(null);
 
-  // Recupera um pedido de pagamento que ficou por concluir (ex.: após refresh).
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -359,7 +544,6 @@ function UpgradeScreen({
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function choose(plano: "7d" | "30d") {
@@ -537,7 +721,6 @@ function PlanPayment({
 
   useEffect(() => {
     if (paid) onDone();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paid]);
 
   return (

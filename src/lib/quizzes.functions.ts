@@ -131,6 +131,42 @@ export const createQuiz = createServerFn({ method: "POST" })
     if (error) {
       if (isSetupError(error)) throw new Error(SETUP_MESSAGE);
       throw new Error(error.message);
+    }  return created as any;
+});
+
+/** Duplica um quiz (apenas o dono). Exige plano activo. */
+export const duplicateQuiz = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const supabaseAdmin = await assertPremium(context.userId);
+    const { data: original, error } = await supabaseAdmin
+      .from("quizzes")
+      .select("*")
+      .eq("id", data.id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
+    if (error) {
+      if (isSetupError(error)) throw new Error(SETUP_MESSAGE);
+      throw new Error(error.message);
+    }
+    if (!original) throw new Error("Quiz não encontrado ou sem permissão.");
+    
+    const newSlug = await uniqueSlug(supabaseAdmin, `${original.title} (cópia)`);
+    const { data: created, error: createError } = await supabaseAdmin
+      .from("quizzes")
+      .insert({
+        producer_id: context.userId,
+        title: `${original.title} (cópia)`,
+        slug: newSlug,
+        definition: original.definition,
+        status: "rascunho",
+      })
+      .select("*")
+      .single();
+    if (createError) {
+      if (isSetupError(createError)) throw new Error(SETUP_MESSAGE);
+      throw new Error(createError.message);
     }
     return created as any;
   });
