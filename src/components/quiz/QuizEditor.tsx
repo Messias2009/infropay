@@ -15,6 +15,8 @@ import {
   Settings,
   Trash2,
   Type,
+  Video,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -244,51 +246,112 @@ function StepItem({
             />
           </div>
         )}
+        <div className="space-y-2">
+          <Label className="text-xs">Mídia (Imagem ou Vídeo)</Label>
+          <div className="flex gap-2">
+            <Input
+              value={(step as any).media?.url || ""}
+              onChange={(e) =>
+                onUpdate({
+                  ...step,
+                  media: e.target.value ? { type: (step as any).media?.type || "image", url: e.target.value } : null,
+                } as QuizStep)
+              }
+              placeholder="URL da imagem ou vídeo (https://...)"
+              className="flex-1"
+            />
+            <Select
+              value={(step as any).media?.type || "image"}
+              onValueChange={(value) =>
+                onUpdate({
+                  ...step,
+                  media: (step as any).media?.url ? { ...((step as any).media || {}), type: value } : null,
+                } as QuizStep)
+              }
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="image">Imagem</SelectItem>
+                <SelectItem value="video">Vídeo</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {(step as any).media?.url && (
+            <div className="mt-2 p-2 border rounded-lg">
+              {(step as any).media.type === "video" ? (
+                <video src={(step as any).media.url} className="w-full max-h-40 object-cover rounded" controls />
+              ) : (
+                <img src={(step as any).media.url} alt="" className="w-full max-h-40 object-cover rounded" />
+              )}
+            </div>
+          )}
+        </div>
         {(step.type === "multi_choice" || step.type === "yes_no") && (
           <div className="space-y-2">
             <Label className="text-xs">Opções</Label>
             {step.options.map((opt: any, i: number) => (
-              <div key={opt.id} className="flex items-center gap-2">
-                <Input
-                  value={opt.label}
-                  onChange={(e) => {
-                    const opts = [...(step as any).options];
-                    opts[i] = { ...opt, label: e.target.value };
-                    onUpdate({ ...step, options: opts } as QuizStep);
-                  }}
-                  className="flex-1"
-                />
-                <Input
-                  value={opt.next || ""}
-                  onChange={(e) => {
-                    const opts = [...(step as any).options];
-                    opts[i] = { ...opt, next: e.target.value };
-                    onUpdate({ ...step, options: opts } as QuizStep);
-                  }}
-                  placeholder="Próxima etapa ID"
-                  className="w-32"
-                />
-                <Input
-                  value={opt.score || 0}
-                  type="number"
-                  onChange={(e) => {
-                    const opts = [...(step as any).options];
-                    opts[i] = { ...opt, score: Number(e.target.value) };
-                    onUpdate({ ...step, options: opts } as QuizStep);
-                  }}
-                  placeholder="Pts"
-                  className="w-16"
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => {
-                    const opts = (step as any).options.filter((_: any, idx: number) => idx !== i);
-                    onUpdate({ ...step, options: opts } as QuizStep);
-                  }}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+              <div key={opt.id} className="space-y-2 p-2 border rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={opt.label}
+                    onChange={(e) => {
+                      const opts = [...(step as any).options];
+                      opts[i] = { ...opt, label: e.target.value };
+                      onUpdate({ ...step, options: opts } as QuizStep);
+                    }}
+                    placeholder="Texto da opção"
+                    className="flex-1"
+                  />
+                  <Input
+                    value={opt.next || ""}
+                    onChange={(e) => {
+                      const opts = [...(step as any).options];
+                      opts[i] = { ...opt, next: e.target.value };
+                      onUpdate({ ...step, options: opts } as QuizStep);
+                    }}
+                    placeholder="Próxima etapa ID"
+                    className="w-32"
+                  />
+                  <Input
+                    value={opt.score || 0}
+                    type="number"
+                    onChange={(e) => {
+                      const opts = [...(step as any).options];
+                      opts[i] = { ...opt, score: Number(e.target.value) };
+                      onUpdate({ ...step, options: opts } as QuizStep);
+                    }}
+                    placeholder="Pts"
+                    className="w-16"
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      const opts = (step as any).options.filter((_: any, idx: number) => idx !== i);
+                      onUpdate({ ...step, options: opts } as QuizStep);
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={opt.image_url || ""}
+                    onChange={(e) => {
+                      const opts = [...(step as any).options];
+                      opts[i] = { ...opt, image_url: e.target.value };
+                      onUpdate({ ...step, options: opts } as QuizStep);
+                    }}
+                    placeholder="URL da imagem da opção (opcional)"
+                    className="flex-1 text-xs"
+                  />
+                </div>
+                {opt.image_url && (
+                  <img src={opt.image_url} alt="" className="w-20 h-20 object-cover rounded" />
+                )}
               </div>
             ))}
             <Button
@@ -297,7 +360,7 @@ function StepItem({
               onClick={() => {
                 const opts = [
                   ...((step as any).options || []),
-                  { id: `opt_${Date.now()}`, label: "Nova opção", next: "", score: 0 },
+                  { id: `opt_${Date.now()}`, label: "Nova opção", next: "", score: 0, image_url: "" },
                 ];
                 onUpdate({ ...step, options: opts } as QuizStep);
               }}
