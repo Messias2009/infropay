@@ -458,7 +458,15 @@ export function QuizEditor({
     if (type === "offer") {
       newStep = { ...newStep, product_slug: "", price_label: "", cta_label: "Comprar agora" };
     }
-    setDefinition({ ...definition, steps: [...steps, newStep] });
+    const nextSteps = [...steps, newStep];
+    setDefinition({
+      ...definition,
+      steps: nextSteps,
+      // A primeira etapa criada passa automaticamente a ser a etapa inicial.
+      start_step_id: definition.start_step_id && steps.some((s) => s.id === definition.start_step_id)
+        ? definition.start_step_id
+        : id,
+    });
   }
 
   function updateStep(idx: number, step: QuizStep) {
@@ -470,7 +478,12 @@ export function QuizEditor({
   function removeStep(idx: number) {
     if (!confirm("Eliminar esta etapa?")) return;
     const arr = steps.filter((_, i) => i !== idx);
-    setDefinition({ ...definition, steps: arr });
+    const startStillExists = arr.some((s) => s.id === definition.start_step_id);
+    setDefinition({
+      ...definition,
+      steps: arr,
+      start_step_id: startStillExists ? definition.start_step_id : (arr[0]?.id ?? ""),
+    });
   }
 
   function moveStep(idx: number, dir: -1 | 1) {
