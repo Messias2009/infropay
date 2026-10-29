@@ -32,7 +32,7 @@ export const listPendingProducts = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("products")
       .select(
-        "id, slug, title, short_description, cover_url, price_cents, currency, product_type, created_at, producer_id, category:categories(name), producer:profiles!products_producer_id_fkey(full_name, username, avatar_url)",
+        "id, slug, title, short_description, cover_url, price_cents, currency, product_type, created_at, producer_id, category:categories(name), producer:profiles!products_producer_profile_fkey(full_name, username, avatar_url)",
       )
       .eq("status", "em_analise")
       .order("created_at", { ascending: true });
@@ -48,7 +48,7 @@ export const listAllProductsAdmin = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("products")
       .select(
-        "id, slug, title, status, cover_url, price_cents, currency, sales_count, created_at, producer:profiles!products_producer_id_fkey(full_name, username)",
+        "id, slug, title, status, cover_url, price_cents, currency, sales_count, created_at, producer:profiles!products_producer_profile_fkey(full_name, username)",
       )
       .order("created_at", { ascending: false })
       .limit(100);
