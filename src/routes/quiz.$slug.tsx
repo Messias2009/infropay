@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { QuizRenderer } from "@/components/quiz/QuizRenderer";
 import { getPublicQuiz } from "@/lib/quizzes.functions";
 
-export const Route = createFileRoute("/quiz/$slug" as any)({
+export const Route = createFileRoute("/quiz/$slug")({
   head: ({ params }) => ({
     meta: [
       { title: `Quiz - InfroPay` },
