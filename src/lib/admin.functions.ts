@@ -279,7 +279,10 @@ export const getPlatformReport = createServerFn({ method: "GET" })
     const planRevenue = (planOrders ?? []).reduce((a, o) => a + (o.amount_cents ?? 0), 0);
 
     const paid = (sales ?? []).filter((s) => s.status === "pago");
-    const gross = paid.reduce((a, s) => a + s.gross_cents, 0);
+    const salesGross = paid.reduce((a, s) => a + s.gross_cents, 0);
+    // As assinaturas Premium do Quiz são vendas próprias da plataforma:
+    // entram no faturamento global e também no lucro da plataforma.
+    const gross = salesGross + planRevenue;
     const commissions = paid.reduce((a, s) => a + s.platform_fee_cents, 0);
     const affiliateCommissions = paid.reduce((a, s) => a + (s.affiliate_commission_cents ?? 0), 0);
     const wd = withdrawals ?? [];
@@ -305,6 +308,15 @@ export const getPlatformReport = createServerFn({ method: "GET" })
       const i = idx.get(key);
       if (i !== undefined) {
         days[i].total += s.gross_cents;
+        days[i].count += 1;
+      }
+    }
+    // Incluir assinaturas do Quiz no gráfico de faturamento global.
+    for (const order of planOrders ?? []) {
+      const key = (order.paid_at ?? order.created_at).slice(0, 10);
+      const i = idx.get(key);
+      if (i !== undefined) {
+        days[i].total += order.amount_cents ?? 0;
         days[i].count += 1;
       }
     }
