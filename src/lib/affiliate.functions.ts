@@ -17,7 +17,7 @@ export const listAffiliateOffers = createServerFn({ method: "GET" }).handler(asy
   const { data, error } = await pub()
     .from("products")
     .select(
-      "id, slug, title, cover_url, price_cents, promo_price_cents, currency, sales_count, affiliate_commission_percent, category:categories(name), producer:profiles!products_producer_id_fkey(full_name, username, avatar_url)",
+      "id, slug, title, cover_url, price_cents, promo_price_cents, currency, sales_count, affiliate_commission_percent, category:categories(name), producer:profiles!products_producer_profile_fkey(full_name, username, avatar_url)",
     )
     .eq("allow_affiliates", true)
     .eq("status", "publicado")
