@@ -451,7 +451,18 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                           <Copy className="h-3.5 w-3.5 mr-1" />
                           Duplicar
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => toggleStatus(quiz.id, quiz.status)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            if (quiz.status !== "publicado" && (!quiz.steps || quiz.steps < 1)) {
+                              toast.info("Adicione uma etapa antes de publicar. A abrir o editor.");
+                              window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+                              return;
+                            }
+                            void toggleStatus(quiz.id, quiz.status);
+                          }}
+                        >
                           {quiz.status === "publicado" ? "Despublicar" : "Publicar"}
                         </Button>
                         <Button size="sm" variant="ghost" onClick={() => remove(quiz.id)}>
