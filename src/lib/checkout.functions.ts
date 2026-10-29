@@ -64,10 +64,15 @@ export const createOrder = createServerFn({ method: "POST" })
 
     const useReference = data.payment_method === "referencia";
 
-    const { data: sale, error } = await supabase
+    // A criação da venda é uma operação confiável do servidor. Usar a chave
+    // pública aqui pode falhar quando a política RLS de INSERT não está aplicada
+    // no projeto; nunca expor o cliente service-role ao navegador.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: sale, error } = await supabaseAdmin
       .from("sales")
       .insert({
-        // Referência PayPay registada na venda para conferência na aprovação.
+        // Usar a mesma entidade/referência PayPay apresentada no checkout
+        // de assinatura do Quiz Funnel.
         provider: useReference ? PAYPAY_REFERENCE.provider : null,
         payment_ref: useReference
           ? `${PAYPAY_REFERENCE.entity}/${PAYPAY_REFERENCE.reference}`
