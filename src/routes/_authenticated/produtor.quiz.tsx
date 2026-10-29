@@ -217,11 +217,7 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <Button
             onClick={async () => {
               if (!title.trim()) {
-                toast.error("Dê um nome ao seu quiz");
-                // Focus on input - just create with default name
-                const quiz = await createFn({ data: { title: "Novo Quiz" } });
-                toast.success("Quiz criado com sucesso");
-                window.location.href = `/produtor/quiz/editor/${quiz.id}`;
+                toast.error("Introduza o nome do quiz no campo abaixo.");
                 return;
               }
               setCreating(true);
@@ -319,46 +315,6 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           </CardContent>
         </Card>
       </div>
-
-      {/* Plan Status */}
-      <Card className="border-gold/40 bg-gradient-to-br from-gold/10 via-card to-card">
-        <CardContent className="p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="text-xs uppercase tracking-widest text-muted-foreground">
-                Plano actual
-              </div>
-              <div className="font-display text-2xl font-bold mt-1">{plan.plano_label}</div>
-              <div className="text-sm text-muted-foreground mt-1">
-                {plan.data_fim && (
-                  <>
-                    Válido até{" "}
-                    <span className="text-foreground font-medium">
-                      {new Date(plan.data_fim).toLocaleString("pt-PT")}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="font-display text-3xl font-bold text-gradient-gold tabular-nums">
-                {plan.dias_restantes}
-              </div>
-              <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
-                dias restantes
-              </div>
-            </div>
-          </div>
-          {plan.dias_restantes <= 1 && (
-            <div className="mt-4 rounded-xl border border-warning/40 bg-warning/10 p-3 text-xs flex gap-2">
-              <Clock className="h-4 w-4 text-warning shrink-0" />
-              <span>
-                O seu plano expira em menos de 24 horas. Renove para manter o Quiz Funnel activo.
-              </span>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Quizzes List */}
       <Card>
