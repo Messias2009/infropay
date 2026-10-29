@@ -189,11 +189,14 @@ export const saveQuiz = createServerFn({ method: "POST" })
     const payload: Record<string, unknown> = { definition };
     if (data.title) payload.title = data.title;
 
-    // Escrita com o próprio cliente: a RLS obriga a ser o produtor dono.
-    const { data: updated, error } = await (context.supabase as any)
+    // A escrita ocorre no servidor. Verificamos explicitamente o proprietário
+    // antes de usar o cliente administrativo, sem expor a chave ao navegador.
+    const supabaseAdmin = await adminClient();
+    const { data: updated, error } = await supabaseAdmin
       .from("quizzes")
       .update(payload)
       .eq("id", data.id)
+      .eq("producer_id", context.userId)
       .select("id, slug, title, status");
     if (error) {
       if (isSetupError(error)) throw new Error(SETUP_MESSAGE);
@@ -231,10 +234,11 @@ export const setQuizStatus = createServerFn({ method: "POST" })
       }
     }
 
-    const { data: updated, error: upError } = await (context.supabase as any)
+    const { data: updated, error: upError } = await supabaseAdmin
       .from("quizzes")
       .update({ status: data.status })
       .eq("id", data.id)
+      .eq("producer_id", context.userId)
       .select("id, status");
     if (upError) {
       if (isSetupError(upError)) throw new Error(SETUP_MESSAGE);
