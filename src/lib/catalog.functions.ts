@@ -65,7 +65,7 @@ export const getProductBySlug = createServerFn({ method: "GET" })
     const { data: row, error } = await supabase
       .from("products")
       .select(
-        "*, category:categories(name, slug), producer:profiles!products_producer_id_fkey(full_name, username, avatar_url)",
+        "*, category:categories(name, slug), producer:profiles!products_producer_profile_fkey(full_name, username, avatar_url)",
       )
       .eq("slug", data.slug)
       .eq("status", "publicado")
