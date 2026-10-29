@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clock, Download, ExternalLink, Copy } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/pedido/$token")({
     <div className="p-10 text-center text-destructive text-sm">{(error as Error).message}</div>
   ),
   notFoundComponent: () => (
-    <SiteLayout>
+    <SiteLayout variant="checkout">
       <div className="p-10 text-center">Pedido não encontrado.</div>
     </SiteLayout>
   ),
@@ -86,7 +86,7 @@ function Pedido() {
   const payRef = referenceForMethod(o.payment_method);
 
   return (
-    <SiteLayout>
+    <SiteLayout variant="checkout">
       {shouldTrack && tracking && (
         <TrackingScripts
           config={tracking}
@@ -211,11 +211,6 @@ function Pedido() {
           />
         </div>
 
-        <div className="mt-8 text-center">
-          <Link to="/loja">
-            <Button variant="outline">Continuar a explorar</Button>
-          </Link>
-        </div>
       </div>
     </SiteLayout>
   );
