@@ -217,7 +217,8 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <Button
             onClick={async () => {
               if (!title.trim()) {
-                toast.error("Introduza o nome do quiz no campo abaixo.");
+                document.getElementById("quiz-create-title")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                document.getElementById("quiz-create-title")?.focus();
                 return;
               }
               setCreating(true);
@@ -245,6 +246,22 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           </Button>
         </div>
       </div>
+
+      <Card className="border-primary/20">
+        <CardContent className="p-4 space-y-3">
+          <div>
+            <h2 className="font-semibold">Criar novo quiz</h2>
+            <p className="text-sm text-muted-foreground">Dê um nome ao quiz para abrir o editor e adicionar etapas, imagens, vídeos e ofertas.</p>
+          </div>
+          <form className="flex flex-col sm:flex-row gap-2" onSubmit={(event) => { event.preventDefault(); void create(); }}>
+            <Input id="quiz-create-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Nome do quiz" maxLength={120} className="min-w-0 flex-1" />
+            <Button type="submit" disabled={creating} className="gradient-brand text-primary-foreground">
+              {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+              Criar quiz
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
