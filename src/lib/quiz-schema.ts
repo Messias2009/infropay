@@ -168,8 +168,8 @@ const definitionSchema = z.object({
   steps: z.array(stepSchema).max(60),
 });
 
-/** Valida a estrutura do quiz no servidor. Lança erro legível em PT. */
-export function validateDefinition(input: unknown): QuizDefinition {
+/** Valida a forma dos dados para permitir guardar rascunhos incompletos. */
+export function parseDraftDefinition(input: unknown): QuizDefinition {
   const parsed = definitionSchema.safeParse(input);
   if (!parsed.success) {
     const first = parsed.error.issues[0];
@@ -178,7 +178,12 @@ export function validateDefinition(input: unknown): QuizDefinition {
       `Estrutura do quiz inválida (${where}): ${first?.message ?? "dados inválidos"}`,
     );
   }
-  const def = parsed.data as QuizDefinition;
+  return parsed.data as QuizDefinition;
+}
+
+/** Valida a estrutura completa do quiz antes de publicar. Lança erro legível em PT. */
+export function validateDefinition(input: unknown): QuizDefinition {
+  const def = parseDraftDefinition(input);
   if (def.steps.length === 0) {
     throw new Error("Adicione pelo menos uma etapa antes de publicar o quiz.");
   }
