@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -330,6 +330,10 @@ function StepItem({
                     variant="ghost"
                     onClick={() => {
                       const opts = (step as any).options.filter((_: any, idx: number) => idx !== i);
+                      if (opts.length === 0) {
+                        toast.error("Adicione pelo menos uma opção.");
+                        return;
+                      }
                       onUpdate({ ...step, options: opts } as QuizStep);
                     }}
                   >
@@ -357,16 +361,17 @@ function StepItem({
             <Button
               size="sm"
               variant="outline"
+              disabled={step.type === "yes_no" || step.options.length >= 10}
               onClick={() => {
                 const opts = [
                   ...((step as any).options || []),
-                  { id: `opt_${Date.now()}`, label: "Nova opção", next: "", score: 0, image_url: "" },
+                  { id: `opt_${typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Date.now()}`, label: "Nova opção", score: 0, image_url: "" },
                 ];
                 onUpdate({ ...step, options: opts } as QuizStep);
               }}
             >
               <Plus className="h-3.5 w-3.5 mr-2" />
-              Adicionar opção
+              {step.type === "yes_no" ? "Sim/Não: duas opções fixas" : "Adicionar opção"}
             </Button>
           </div>
         )}
@@ -434,22 +439,47 @@ export function QuizEditor({
   onSave: (def: QuizDefinition, title?: string) => void;
   saving: boolean;
 }) {
-  const [definition, setDefinition] = useState<QuizDefinition>(
-    quiz.definition || emptyDefinition(),
-  );
-  const [title, setTitle] = useState(quiz.title);
+  const [definition, setDefinition] = useState<QuizDefinition>(() => {
+    const saved = quiz.definition && typeof quiz.definition === "object" ? quiz.definition : {};
+    return {
+      ...emptyDefinition(),
+      ...saved,
+      theme: { ...defaultQuizTheme(), ...(saved.theme ?? {}) },
+      steps: Array.isArray(saved.steps) ? saved.steps : [],
+      start_step_id: typeof saved.start_step_id === "string" ? saved.start_step_id : "",
+    } as QuizDefinition;
+  });
+  const [title, setTitle] = useState(quiz.title ?? "");
+
+  // Recarrega o estado apenas quando muda o quiz ou a versão guardada no servidor.
+  // Evita manter um editor vazio/antigo quando a query termina ou é actualizada.
+  useEffect(() => {
+    const saved = quiz.definition && typeof quiz.definition === "object" ? quiz.definition : {};
+    setDefinition({
+      ...emptyDefinition(),
+      ...saved,
+      theme: { ...defaultQuizTheme(), ...(saved.theme ?? {}) },
+      steps: Array.isArray(saved.steps) ? saved.steps : [],
+      start_step_id: typeof saved.start_step_id === "string" ? saved.start_step_id : "",
+    } as QuizDefinition);
+    setTitle(quiz.title ?? "");
+  }, [quiz.id, quiz.updated_at]);
   const [activeTab, setActiveTab] = useState("steps");
   const [preview, setPreview] = useState(false);
 
   const steps = definition.steps || [];
 
   function addStep(type: QuizStepType) {
-    const id = `step_${Date.now()}`;
+    if (steps.length >= 60) {
+      toast.error("Este quiz já atingiu o limite de 60 etapas.");
+      return;
+    }
+    const id = `step_${typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Date.now()}`;
     let newStep: any = { id, type, title: "Nova pergunta" };
     if (type === "multi_choice" || type === "yes_no") {
       newStep.options = [
-        { id: `opt_${Date.now()}_1`, label: "Opção 1", next: "", score: 0 },
-        { id: `opt_${Date.now()}_2`, label: "Opção 2", next: "", score: 0 },
+        { id: `opt_${id}_1`, label: "Opção 1", score: 0 },
+        { id: `opt_${id}_2`, label: "Opção 2", score: 0 },
       ];
     }
     if (type === "lead_capture") {
@@ -458,41 +488,59 @@ export function QuizEditor({
     if (type === "offer") {
       newStep = { ...newStep, product_slug: "", price_label: "", cta_label: "Comprar agora" };
     }
-    const nextSteps = [...steps, newStep];
-    setDefinition({
-      ...definition,
-      steps: nextSteps,
-      // A primeira etapa criada passa automaticamente a ser a etapa inicial.
-      start_step_id: definition.start_step_id && steps.some((s) => s.id === definition.start_step_id)
-        ? definition.start_step_id
-        : id,
+    setDefinition((current) => {
+      const currentSteps = Array.isArray(current.steps) ? current.steps : [];
+      return {
+        ...current,
+        steps: [...currentSteps, newStep],
+        start_step_id:
+          current.start_step_id && currentSteps.some((s) => s.id === current.start_step_id)
+            ? current.start_step_id
+            : id,
+      };
     });
   }
 
   function updateStep(idx: number, step: QuizStep) {
-    const arr = [...steps];
-    arr[idx] = step;
-    setDefinition({ ...definition, steps: arr });
+    setDefinition((current) => {
+      const arr = [...(current.steps || [])];
+      if (idx < 0 || idx >= arr.length) return current;
+      arr[idx] = step;
+      return { ...current, steps: arr };
+    });
   }
 
   function removeStep(idx: number) {
-    if (!confirm("Eliminar esta etapa?")) return;
-    const arr = steps.filter((_, i) => i !== idx);
-    const startStillExists = arr.some((s) => s.id === definition.start_step_id);
-    setDefinition({
-      ...definition,
-      steps: arr,
-      start_step_id: startStillExists ? definition.start_step_id : (arr[0]?.id ?? ""),
+    const removed = steps[idx];
+    if (!removed || !confirm("Eliminar esta etapa?")) return;
+    setDefinition((current) => {
+      const arr = (current.steps || [])
+        .filter((_, i) => i !== idx)
+        .map((step: any) => ({
+          ...step,
+          ...(step.next === removed.id ? { next: null } : {}),
+          ...(Array.isArray(step.options)
+            ? { options: step.options.map((option: any) => option.next === removed.id ? { ...option, next: null } : option) }
+            : {}),
+        }));
+      const startStillExists = arr.some((s) => s.id === current.start_step_id);
+      return {
+        ...current,
+        steps: arr,
+        start_step_id: startStillExists ? current.start_step_id : (arr[0]?.id ?? ""),
+      };
     });
   }
 
   function moveStep(idx: number, dir: -1 | 1) {
-    const arr = [...steps];
-    const target = idx + dir;
-    if (target < 0 || target >= arr.length) return;
-    const [item] = arr.splice(idx, 1);
-    arr.splice(target, 0, item);
-    setDefinition({ ...definition, steps: arr });
+    setDefinition((current) => {
+      const arr = [...(current.steps || [])];
+      const target = idx + dir;
+      if (target < 0 || target >= arr.length) return current;
+      const [item] = arr.splice(idx, 1);
+      arr.splice(target, 0, item);
+      return { ...current, steps: arr };
+    });
   }
 
   function applyTemplate(tpl: any) {
@@ -544,8 +592,10 @@ export function QuizEditor({
                   ].map((item) => (
                     <Button
                       key={item.label}
+                      type="button"
                       variant="outline"
                       size="sm"
+                      disabled={steps.length >= 60}
                       onClick={() => addStep(item.type)}
                       className="justify-start"
                     >
@@ -698,7 +748,25 @@ export function QuizEditor({
               {preview ? "Fechar pré-visualização" : "Pré-visualizar no telemóvel"}
             </Button>
             <Button
-              onClick={() => onSave(definition, title)}
+              type="button"
+              onClick={() => {
+                if (title.trim().length < 2) {
+                  toast.error("O nome do quiz deve ter pelo menos 2 caracteres.");
+                  setActiveTab("settings");
+                  return;
+                }
+                if (steps.length === 0) {
+                  toast.error("Adicione pelo menos uma etapa antes de guardar.");
+                  setActiveTab("steps");
+                  return;
+                }
+                if (!steps.some((step) => step.id === definition.start_step_id)) {
+                  toast.error("Escolha uma etapa inicial válida.");
+                  setActiveTab("settings");
+                  return;
+                }
+                onSave(definition, title.trim());
+              }}
               disabled={saving}
               className="gradient-brand text-primary-foreground"
             >
