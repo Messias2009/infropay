@@ -140,7 +140,7 @@ const stepSchema = z.discriminatedUnion("type", [
   z.object({
     ...base,
     type: z.literal("offer"),
-    product_slug: z.string().min(1).max(160),
+    product_slug: z.string().max(160),
     product_title: z.string().max(240).nullish(),
     price_label: z.string().max(60).nullish(),
     cta_label: z.string().max(80).nullish(),
@@ -165,7 +165,7 @@ const definitionSchema = z.object({
     radius: z.number().int().min(0).max(40),
   }),
   start_step_id: z.string().max(60),
-  steps: z.array(stepSchema).min(1).max(60),
+  steps: z.array(stepSchema).max(60),
 });
 
 /** Valida a estrutura do quiz no servidor. Lança erro legível em PT. */
@@ -179,10 +179,16 @@ export function validateDefinition(input: unknown): QuizDefinition {
     );
   }
   const def = parsed.data as QuizDefinition;
+  if (def.steps.length === 0) {
+    throw new Error("Adicione pelo menos uma etapa antes de publicar o quiz.");
+  }
   if (!def.steps.some((s) => s.id === def.start_step_id)) {
     throw new Error("A etapa inicial do quiz não existe.");
   }
   for (const step of def.steps) {
+    if (step.type === "offer" && !step.product_slug.trim()) {
+      throw new Error(`A etapa "${step.title}" precisa de um produto para a oferta.`);
+    }
     const targets = [
       ...(step.next ? [step.next] : []),
       ...("options" in step && Array.isArray(step.options)
