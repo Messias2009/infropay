@@ -5,6 +5,7 @@ import {
   defaultQuizTheme,
   emptyDefinition,
   slugify,
+  parseDraftDefinition,
   validateDefinition,
   type QuizDefinition,
 } from "@/lib/quiz-schema";
@@ -41,14 +42,12 @@ async function assertPremium(userId: string) {
 }
 
 function draftDefinition(input: any): QuizDefinition {
-  const steps = Array.isArray(input?.steps) ? input.steps : [];
-  if (steps.length > 0) return validateDefinition(input);
-  return {
+  return parseDraftDefinition({
     version: 1,
     theme: { ...defaultQuizTheme(), ...(input?.theme ?? {}) },
     start_step_id: typeof input?.start_step_id === "string" ? input.start_step_id : "",
-    steps: [],
-  };
+    steps: Array.isArray(input?.steps) ? input.steps : [],
+  });
 }
 
 async function uniqueSlug(supabaseAdmin: any, title: string) {
