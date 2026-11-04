@@ -250,7 +250,7 @@ export const reviewReceipt = createServerFn({ method: "POST" })
     const supabaseAdmin = await adminClient();
     const { data: sale, error } = await supabaseAdmin
       .from("sales")
-      .select("id, producer_id, status, receipt_path, receipt_status, buyer_user_id, buyer_email")
+      .select("id, producer_id, status, receipt_path, receipt_status, buyer_user_id, buyer_name, buyer_email, gross_cents, currency, access_token, product:products(title)")
       .eq("id", data.sale_id)
       .maybeSingle();
     if (error) {
@@ -296,6 +296,27 @@ export const reviewReceipt = createServerFn({ method: "POST" })
         throw new Error(upError.message);
       }
       if (!updated?.length) throw new Error("Este pedido já foi processado.");
+
+      // Enviar a confirmação após a transição pendente → pago.
+      // Uma falha no e-mail não desfaz a aprovação nem o crédito da venda.
+      if (sale.buyer_email && sale.access_token) {
+        try {
+          const { sendApprovedSaleEmail } = await import("./email.server");
+          await sendApprovedSaleEmail({
+            buyerName: sale.buyer_name ?? "Cliente",
+            buyerEmail: sale.buyer_email,
+            productTitle: (sale.product as { title?: string } | null)?.title ?? "Produto digital",
+            amountCents: sale.gross_cents,
+            currency: sale.currency ?? "AOA",
+            accessToken: sale.access_token,
+          });
+        } catch (emailError) {
+          console.error(
+            "[InfroPay] Pagamento aprovado, mas o e-mail de entrega falhou.",
+            emailError instanceof Error ? emailError.message : "Erro desconhecido",
+          );
+        }
+      }
     } else {
       const { data: updated, error: upError } = await supabaseAdmin
         .from("sales")
