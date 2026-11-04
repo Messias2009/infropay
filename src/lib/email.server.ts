@@ -28,7 +28,11 @@ export async function sendApprovedSaleEmail(sale: ApprovedSaleEmail) {
   if (!apiKey) throw new Error("RESEND_API_KEY não está configurada no servidor.");
 
   const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
-  const appUrl = (process.env.APP_URL || "https://infropay.com").replace(/\/$/, "");
+  const configuredAppUrl = process.env.APP_URL;
+  if (!configuredAppUrl) throw new Error("APP_URL não está configurada no servidor.");
+  const parsedAppUrl = new URL(configuredAppUrl);
+  if (parsedAppUrl.protocol !== "https:") throw new Error("APP_URL deve usar HTTPS.");
+  const appUrl = configuredAppUrl.replace(/\/$/, "");
   const accessUrl = `${appUrl}/pedido/${encodeURIComponent(sale.accessToken)}`;
   const amount = new Intl.NumberFormat("pt-PT", {
     style: "currency",
