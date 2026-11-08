@@ -155,6 +155,14 @@ export const getCheckoutOffers = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { createServerPublicClient } = await import("./public-client.server");
     const supabase = createServerPublicClient();
+    const { data: mainProduct, error: mainError } = await (supabase as any)
+      .from("products")
+      .select("producer_id, status")
+      .eq("id", data.product_id)
+      .maybeSingle();
+    if (mainError) throw mainError;
+    if (!mainProduct || mainProduct.status !== "publicado") return [];
+
     const { data: rows, error } = await (supabase as any)
       .from("product_offers")
       .select(
@@ -166,7 +174,7 @@ export const getCheckoutOffers = createServerFn({ method: "GET" })
       .order("sort_order", { ascending: true });
     if (error) throw error;
     return (rows ?? []).filter(
-      (row: any) => row.offer?.status === "publicado" && row.offer?.producer_id,
+      (row: any) => row.offer?.status === "publicado" && row.offer?.producer_id === mainProduct.producer_id,
     );
   });
 
@@ -230,6 +238,14 @@ export const getPostPurchaseOffers = createServerFn({ method: "GET" })
     if (saleError) throw saleError;
     if (!sale || sale.status !== "pago" || sale.parent_sale_id || (sale.origin ?? "principal") !== "principal")
       return { upsell: null, downsell: null };
+
+    const { data: acceptedOffer, error: acceptedError } = await supabaseAdmin
+      .from("sales")
+      .select("id")
+      .eq("parent_sale_id", sale.id)
+      .maybeSingle();
+    if (acceptedError) throw acceptedError;
+    if (acceptedOffer) return { upsell: null, downsell: null };
 
     const { createServerPublicClient } = await import("./public-client.server");
     const supabase = createServerPublicClient();
