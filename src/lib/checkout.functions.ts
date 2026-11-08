@@ -243,7 +243,7 @@ export const getOrderByToken = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const base =
-      "id, status, gross_cents, currency, payment_method, payment_ref, buyer_name, buyer_email, created_at, paid_at, origin, parent_sale_id, product:products(title, slug, cover_url, file_url, external_url), sale_items(id, kind, title_snapshot, price_cents, product:products(title, cover_url, file_url, external_url))";
+      "id, status, gross_cents, currency, payment_method, payment_ref, buyer_name, buyer_email, buyer_phone, created_at, paid_at, origin, parent_sale_id, product:products(title, slug, cover_url, file_url, external_url), sale_items(id, kind, title_snapshot, price_cents, product:products(title, cover_url, file_url, external_url))";
     const withReceipt = base + ", receipt_status, receipt_kind, receipt_submitted_at, receipt_note";
 
     let query = await supabaseAdmin
