@@ -97,6 +97,16 @@ function tiktokInstance(pixelId: string) {
   return window.ttq?.instance?.(pixelId) ?? window.ttq;
 }
 
+const TIKTOK_SUPPORTED_CURRENCIES = new Set([
+  "AED", "ARS", "AUD", "BDT", "BHD", "BIF", "BOB", "BRL", "CAD", "CHF",
+  "CLP", "CNY", "COP", "CRC", "CZK", "DKK", "DZD", "EGP", "EUR", "GBP",
+  "GTQ", "HKD", "HNL", "HUF", "IDR", "ILS", "INR", "ISK", "JPY", "KES",
+  "KHR", "KRW", "KWD", "KZT", "MAD", "MOP", "MXN", "MYR", "NGN", "NIO",
+  "NOK", "NZD", "OMR", "PEN", "PHP", "PKR", "PLN", "PYG", "QAR", "RON",
+  "RUB", "SAR", "SEK", "SGD", "THB", "TRY", "TWD", "UAH", "USD", "VES",
+  "VND", "ZAR",
+]);
+
 export type TrackEvent =
   | { type: "ViewContent"; id: string; eventId?: string; name: string; value: number; currency: string }
   | { type: "InitiateCheckout"; id: string; eventId?: string; name: string; value: number; currency: string }
@@ -206,6 +216,7 @@ export function TrackingScripts({
           : event.type === "InitiateCheckout"
             ? "InitiateCheckout"
             : "ViewContent";
+      const supportsValueCurrency = TIKTOK_SUPPORTED_CURRENCIES.has(event.currency.toUpperCase());
       tiktokInstance(tiktok_pixel_id)?.track?.(
         tiktokEvent,
         {
@@ -213,8 +224,7 @@ export function TrackingScripts({
           content_name: event.name,
           content_type: "product",
           quantity: 1,
-          value: event.value,
-          currency: event.currency,
+          ...(supportsValueCurrency ? { value: event.value, currency: event.currency } : {}),
         },
         { event_id: eventId },
       );
