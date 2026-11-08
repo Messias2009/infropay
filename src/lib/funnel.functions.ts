@@ -155,7 +155,7 @@ export const getCheckoutOffers = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { createServerPublicClient } = await import("./public-client.server");
     const supabase = createServerPublicClient();
-    const { data: rows } = await (supabase as any)
+    const { data: rows, error } = await (supabase as any)
       .from("product_offers")
       .select(
         "id, kind, headline, description, offer_price_cents, sort_order, offer:products!product_offers_offer_product_id_fkey(id, producer_id, title, slug, cover_url, price_cents, currency, short_description, status)",
