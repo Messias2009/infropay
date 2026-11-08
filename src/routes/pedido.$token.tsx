@@ -1,10 +1,11 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clock, Download, ExternalLink, Copy } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { getOrderByToken } from "@/lib/checkout.functions";
+import { getOrderByToken, createOrder } from "@/lib/checkout.functions";
+import { getPostPurchaseOffers } from "@/lib/funnel.functions";
 import { referenceForMethod } from "@/lib/payments.config";
 import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
 import { ReceiptUpload } from "@/components/payments/ReceiptUpload";
@@ -54,10 +55,56 @@ const METHOD_LABEL: Record<string, string> = {
 
 function Pedido() {
   const { token } = Route.useParams();
+  const router = useRouter();
   const { data: o } = useSuspenseQuery(opt(token));
   const queryClient = useQueryClient();
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["order", token] });
   const paid = o?.status === "pago";
+  const { data: postOffers } = useQuery({
+    queryKey: ["post-purchase-offers", token],
+    queryFn: () => getPostPurchaseOffers({ data: { token } }),
+    enabled: paid,
+    staleTime: Infinity,
+  });
+  const [showDownsell, setShowDownsell] = useState(false);
+  const [hideOffers, setHideOffers] = useState(false);
+  const [offerBusy, setOfferBusy] = useState(false);
+  const activeOffer = hideOffers
+    ? null
+    : showDownsell
+      ? postOffers?.downsell ?? null
+      : postOffers?.upsell ?? postOffers?.downsell ?? null;
+
+  async function acceptOffer() {
+    if (!activeOffer || !o) return;
+    setOfferBusy(true);
+    try {
+      const result = await createOrder({
+        data: {
+          product_slug: activeOffer.offer.slug,
+          buyer_name: o.buyer_name ?? "",
+          buyer_email: o.buyer_email ?? "",
+          buyer_phone: (o as any).buyer_phone ?? "",
+          payment_method: o.payment_method,
+          offer_id: activeOffer.id,
+          parent_token: token,
+        },
+      });
+      router.navigate({ to: "/pedido/$token", params: { token: result.token } });
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setOfferBusy(false);
+    }
+  }
+
+  function declineOffer() {
+    if (!showDownsell && postOffers?.upsell && postOffers?.downsell) {
+      setShowDownsell(true);
+    } else {
+      setHideOffers(true);
+    }
+  }
 
   // Purchase é disparado uma única vez por pedido (guardado em localStorage).
   const [firedOnce, setFiredOnce] = useState(true);
@@ -122,6 +169,42 @@ function Pedido() {
           </p>
         </div>
 
+        {paid && activeOffer && (
+          <section className="mt-6 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 sm:p-6">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">
+              Oferta exclusiva após a compra
+            </div>
+            <h2 className="text-xl font-bold">
+              {activeOffer.headline || (showDownsell ? "Uma última oferta especial para si" : "Aproveite esta oferta especial")}
+            </h2>
+            <div className="mt-4 flex items-center gap-4">
+              {activeOffer.offer?.cover_url && (
+                <img src={activeOffer.offer.cover_url} alt="" className="h-20 w-20 rounded-xl object-cover border border-border shrink-0" />
+              )}
+              <div className="min-w-0">
+                <div className="font-semibold">{activeOffer.offer?.title}</div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {activeOffer.description || activeOffer.offer?.short_description || "Adicione este produto à sua compra."}
+                </p>
+                <div className="mt-2 text-lg font-extrabold text-gradient-gold">
+                  {fmt(Number(activeOffer.offer_price_cents), activeOffer.offer?.currency || o.currency)}
+                </div>
+              </div>
+            </div>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <Button disabled={offerBusy} onClick={acceptOffer} className="gradient-brand text-primary-foreground">
+                {offerBusy ? "A preparar pedido..." : "Sim, quero aproveitar"}
+              </Button>
+              <Button disabled={offerBusy} variant="outline" onClick={declineOffer}>
+                Não, obrigado
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-3">
+              Ao aceitar, será criado um novo pedido com o preço especial. O acesso será liberado após a confirmação desse pagamento.
+            </p>
+          </section>
+        )}
+
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="text-xs font-semibold uppercase tracking-widest text-gold mb-3">
@@ -140,6 +223,31 @@ function Pedido() {
                 </div>
               </div>
             </div>
+            {paid && (o.sale_items ?? []).map((item: any) => (
+              <div key={item.id} className="mt-4 rounded-xl border border-border p-3">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                  Produto adicional incluído
+                </div>
+                <div className="font-semibold text-sm">{item.title_snapshot || item.product?.title}</div>
+                <div className="text-sm font-bold text-gradient-gold mt-1">
+                  {fmt(Number(item.price_cents), o.currency)}
+                </div>
+                {item.product?.file_url && (
+                  <a href={item.product.file_url} target="_blank" rel="noreferrer" className="block mt-3">
+                    <Button className="w-full gradient-brand text-primary-foreground">
+                      <Download className="h-4 w-4 mr-2" /> Baixar produto adicional
+                    </Button>
+                  </a>
+                )}
+                {item.product?.external_url && (
+                  <a href={item.product.external_url} target="_blank" rel="noreferrer" className="block mt-2">
+                    <Button variant="outline" className="w-full">
+                      <ExternalLink className="h-4 w-4 mr-2" /> Aceder ao produto adicional
+                    </Button>
+                  </a>
+                )}
+              </div>
+            ))}
             {paid && (
               <div className="mt-4 space-y-2">
                 {prod?.file_url && (
