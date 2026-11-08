@@ -28,6 +28,14 @@ const createOrderSchema = z.object({
     fbc: z.string().max(1000).optional().nullable(),
     ttp: z.string().max(500).optional().nullable(),
     ttclid: z.string().max(1200).optional().nullable(),
+    gclid: z.string().max(1200).optional().nullable(),
+    gbraid: z.string().max(1200).optional().nullable(),
+    wbraid: z.string().max(1200).optional().nullable(),
+    utm_source: z.string().max(500).optional().nullable(),
+    utm_medium: z.string().max(500).optional().nullable(),
+    utm_campaign: z.string().max(1000).optional().nullable(),
+    utm_content: z.string().max(1000).optional().nullable(),
+    utm_term: z.string().max(1000).optional().nullable(),
     user_agent: z.string().max(1000).optional().nullable(),
     page_url: z.string().url().max(2000).optional().nullable(),
     referrer: z.string().url().max(2000).optional().nullable(),
@@ -46,7 +54,7 @@ export const createOrder = createServerFn({ method: "POST" })
       if (!data.parent_token) throw new Error("Pedido original não identificado.");
       const { data: parent, error: parentError } = await supabase
         .from("sales")
-        .select("id, product_id, producer_id, status, origin, parent_sale_id, buyer_name, buyer_email, buyer_phone, payment_method, tracking_fbp, tracking_fbc, tracking_ttp, tracking_ttclid, tracking_user_agent, tracking_page_url, tracking_referrer")
+        .select("id, product_id, producer_id, status, origin, parent_sale_id, buyer_name, buyer_email, buyer_phone, payment_method, tracking_fbp, tracking_fbc, tracking_ttp, tracking_ttclid, tracking_gclid, tracking_gbraid, tracking_wbraid, tracking_utm_source, tracking_utm_medium, tracking_utm_campaign, tracking_utm_content, tracking_utm_term, tracking_user_agent, tracking_page_url, tracking_referrer")
         .eq("access_token", data.parent_token)
         .maybeSingle();
       if (parentError) throw parentError;
@@ -109,6 +117,14 @@ export const createOrder = createServerFn({ method: "POST" })
           tracking_fbc: parent.tracking_fbc,
           tracking_ttp: parent.tracking_ttp,
           tracking_ttclid: parent.tracking_ttclid,
+          tracking_gclid: parent.tracking_gclid,
+          tracking_gbraid: parent.tracking_gbraid,
+          tracking_wbraid: parent.tracking_wbraid,
+          tracking_utm_source: parent.tracking_utm_source,
+          tracking_utm_medium: parent.tracking_utm_medium,
+          tracking_utm_campaign: parent.tracking_utm_campaign,
+          tracking_utm_content: parent.tracking_utm_content,
+          tracking_utm_term: parent.tracking_utm_term,
           tracking_user_agent: parent.tracking_user_agent,
           tracking_page_url: parent.tracking_page_url,
           tracking_referrer: parent.tracking_referrer,
@@ -234,6 +250,14 @@ export const createOrder = createServerFn({ method: "POST" })
         tracking_fbc: data.tracking_context?.fbc ?? null,
         tracking_ttp: data.tracking_context?.ttp ?? null,
         tracking_ttclid: data.tracking_context?.ttclid ?? null,
+        tracking_gclid: data.tracking_context?.gclid ?? null,
+        tracking_gbraid: data.tracking_context?.gbraid ?? null,
+        tracking_wbraid: data.tracking_context?.wbraid ?? null,
+        tracking_utm_source: data.tracking_context?.utm_source ?? null,
+        tracking_utm_medium: data.tracking_context?.utm_medium ?? null,
+        tracking_utm_campaign: data.tracking_context?.utm_campaign ?? null,
+        tracking_utm_content: data.tracking_context?.utm_content ?? null,
+        tracking_utm_term: data.tracking_context?.utm_term ?? null,
         tracking_user_agent: data.tracking_context?.user_agent ?? null,
         tracking_page_url: data.tracking_context?.page_url ?? null,
         tracking_referrer: data.tracking_context?.referrer ?? null,
