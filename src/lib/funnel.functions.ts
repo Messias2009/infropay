@@ -230,7 +230,8 @@ export const getPostPurchaseOffers = createServerFn({ method: "GET" })
   .validator((d: unknown) => z.object({ token: z.string().min(10).max(120) }).parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: sale, error: saleError } = await supabaseAdmin
+    const db = supabaseAdmin as any;
+    const { data: sale, error: saleError } = await db
       .from("sales")
       .select("id, product_id, producer_id, status, origin, parent_sale_id")
       .eq("access_token", data.token)
@@ -239,7 +240,7 @@ export const getPostPurchaseOffers = createServerFn({ method: "GET" })
     if (!sale || sale.status !== "pago" || sale.parent_sale_id || (sale.origin ?? "principal") !== "principal")
       return { upsell: null, downsell: null };
 
-    const { data: acceptedOffer, error: acceptedError } = await supabaseAdmin
+    const { data: acceptedOffer, error: acceptedError } = await db
       .from("sales")
       .select("id")
       .eq("parent_sale_id", sale.id)
