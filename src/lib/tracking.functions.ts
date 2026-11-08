@@ -237,7 +237,7 @@ export async function dispatchSaleTracking(saleId: string, context?: TrackingCon
           event_source_id: tiktokPixelId,
           data: [
             {
-              event: "Purchase",
+              event: "CompletePayment",
               event_time: eventTime,
               event_id: sale.id,
               user: { ...tiktokUser, locale: "pt_AO" },
