@@ -48,6 +48,14 @@ export type TrackingContext = {
   fbc?: string | null;
   ttp?: string | null;
   ttclid?: string | null;
+  gclid?: string | null;
+  gbraid?: string | null;
+  wbraid?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
+  utm_term?: string | null;
   user_agent?: string | null;
   page_url?: string | null;
   referrer?: string | null;
@@ -275,6 +283,14 @@ export const getOrderTracking = createServerFn({ method: "GET" })
         fbc: z.string().max(1000).optional().nullable(),
         ttp: z.string().max(500).optional().nullable(),
         ttclid: z.string().max(1200).optional().nullable(),
+        gclid: z.string().max(1200).optional().nullable(),
+        gbraid: z.string().max(1200).optional().nullable(),
+        wbraid: z.string().max(1200).optional().nullable(),
+        utm_source: z.string().max(500).optional().nullable(),
+        utm_medium: z.string().max(500).optional().nullable(),
+        utm_campaign: z.string().max(1000).optional().nullable(),
+        utm_content: z.string().max(1000).optional().nullable(),
+        utm_term: z.string().max(1000).optional().nullable(),
         user_agent: z.string().max(1000).optional().nullable(),
         page_url: z.string().url().max(2000).optional().nullable(),
         referrer: z.string().url().max(2000).optional().nullable(),
