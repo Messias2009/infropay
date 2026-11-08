@@ -148,8 +148,11 @@ export const getOrderTracking = createServerFn({ method: "GET" })
       const hash = (value: string) =>
         createHash("sha256").update(value.trim().toLowerCase()).digest("hex");
       const emailHash = sale.buyer_email ? hash(sale.buyer_email) : null;
-      const phoneDigits = (sale.buyer_phone ?? "").replace(/\D/g, "");
-      const phoneHash = phoneDigits ? hash(phoneDigits) : null;
+      let phoneDigits = (sale.buyer_phone ?? "").replace(/\D/g, "");
+      if (phoneDigits.startsWith("0")) phoneDigits = phoneDigits.slice(1);
+      if (phoneDigits.length === 9) phoneDigits = `244${phoneDigits}`;
+      const phoneE164 = phoneDigits ? `+${phoneDigits}` : "";
+      const phoneHash = phoneE164 ? hash(phoneE164) : null;
       const ua = trackingContext.user_agent || "InfroPay";
       const tasks: Promise<unknown>[] = [];
 
@@ -235,24 +238,40 @@ export const getOrderTracking = createServerFn({ method: "GET" })
               "Access-Token": tiktokToken,
             },
             body: JSON.stringify({
-              pixel_code: cfg.tiktok_pixel_id,
-              event: "Purchase",
-              event_id: sale.id,
-              timestamp: new Date(eventTime * 1000).toISOString(),
-              context: {
-                user: tiktokUser,
-                page: { url: pageUrl, referrer: trackingContext.referrer || undefined },
-                user_agent: ua,
-              },
-              properties: {
-                value: cfg.value,
-                currency: cfg.currency,
-                content_type: "product",
-                content_id: cfg.content_id,
-                description: cfg.content_name,
-                order_id: sale.id,
-                quantity: 1,
-              },
+              event_source: "web",
+              event_source_id: cfg.tiktok_pixel_id,
+              data: [
+                {
+                  event: "Purchase",
+                  event_time: eventTime,
+                  event_id: sale.id,
+                  user: {
+                    ...tiktokUser,
+                    user_agent: ua,
+                    locale: "pt_AO",
+                  },
+                  page: {
+                    url: pageUrl,
+                    referrer: trackingContext.referrer || undefined,
+                  },
+                  properties: {
+                    value: cfg.value,
+                    currency: cfg.currency,
+                    content_type: "product",
+                    content_ids: [cfg.content_id],
+                    description: cfg.content_name,
+                    order_id: sale.id,
+                    contents: [
+                      {
+                        content_id: cfg.content_id,
+                        content_name: cfg.content_name,
+                        quantity: 1,
+                        price: cfg.value,
+                      },
+                    ],
+                  },
+                },
+              ],
             }),
           }),
         );
