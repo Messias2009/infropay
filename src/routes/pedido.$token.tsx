@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getOrderByToken, createOrder } from "@/lib/checkout.functions";
 import { getPostPurchaseOffers } from "@/lib/funnel.functions";
+import { readAttribution } from "@/lib/attribution";
 import { referenceForMethod } from "@/lib/payments.config";
 import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
 import { ReceiptUpload } from "@/components/payments/ReceiptUpload";
@@ -22,11 +23,20 @@ function readTrackingContext() {
     return item ? decodeURIComponent(item.slice(name.length + 1)) : null;
   };
   const params = new URLSearchParams(window.location.search);
+  const attribution = readAttribution();
   return {
     fbp: cookie("_fbp"),
     fbc: cookie("_fbc"),
     ttp: cookie("_ttp"),
-    ttclid: params.get("ttclid") || cookie("ttclid"),
+    ttclid: attribution.ttclid || params.get("ttclid") || cookie("ttclid"),
+    gclid: attribution.gclid || params.get("gclid"),
+    gbraid: attribution.gbraid || params.get("gbraid"),
+    wbraid: attribution.wbraid || params.get("wbraid"),
+    utm_source: attribution.utm_source || params.get("utm_source"),
+    utm_medium: attribution.utm_medium || params.get("utm_medium"),
+    utm_campaign: attribution.utm_campaign || params.get("utm_campaign"),
+    utm_content: attribution.utm_content || params.get("utm_content"),
+    utm_term: attribution.utm_term || params.get("utm_term"),
     user_agent: navigator.userAgent,
     page_url: window.location.href,
     referrer: document.referrer || null,
