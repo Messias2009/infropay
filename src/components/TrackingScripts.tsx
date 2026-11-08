@@ -5,9 +5,11 @@ declare global {
   interface Window {
     fbq?: (...args: any[]) => void;
     gtag?: (...args: any[]) => void;
+    ttq?: any;
     dataLayer?: any[];
-    _fbqLoaded?: boolean;
+    _fbqLoaded?: Record<string, boolean>;
     _gtagLoaded?: Record<string, boolean>;
+    _ttqLoaded?: Record<string, boolean>;
   }
 }
 
@@ -23,11 +25,8 @@ function loadScript(src: string, id: string) {
 function ensureMeta(pixelId: string) {
   if (!window.fbq) {
     const n: any = (...args: any[]) => {
-      if (n.callMethod) {
-        n.callMethod(...args);
-      } else {
-        n.queue.push(args);
-      }
+      if (n.callMethod) n.callMethod(...args);
+      else n.queue.push(args);
     };
     n.queue = [];
     n.loaded = true;
@@ -35,9 +34,10 @@ function ensureMeta(pixelId: string) {
     window.fbq = n;
     loadScript("https://connect.facebook.net/en_US/fbevents.js", "meta-pixel-src");
   }
-  if (!window._fbqLoaded) {
+  window._fbqLoaded = window._fbqLoaded || {};
+  if (!window._fbqLoaded[pixelId]) {
     window.fbq?.("init", pixelId);
-    window._fbqLoaded = true;
+    window._fbqLoaded[pixelId] = true;
   }
 }
 
@@ -57,10 +57,50 @@ function ensureGtag(id: string) {
   }
 }
 
+function ensureTikTok(pixelId: string) {
+  if (!window.ttq) {
+    const ttq: any = (window.ttq = []);
+    ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie"];
+    ttq.setAndDefer = (target: any, method: string) => {
+      target[method] = (...args: any[]) => target.push([method, ...args]);
+    };
+    for (const method of ttq.methods) ttq.setAndDefer(ttq, method);
+    ttq.instance = (id: string) => {
+      const instance = ttq._i?.[id] || [];
+      for (const method of ttq.methods) ttq.setAndDefer(instance, method);
+      return instance;
+    };
+    ttq.load = (id: string) => {
+      ttq._i = ttq._i || {};
+      ttq._i[id] = [];
+      ttq._i[id]._u = "https://analytics.tiktok.com/i18n/pixel/events.js";
+      ttq._t = ttq._t || {};
+      ttq._t[id] = Date.now();
+      ttq._o = ttq._o || {};
+      ttq._o[id] = {};
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.src = `https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=${id}&lib=ttq`;
+      const first = document.getElementsByTagName("script")[0];
+      first?.parentNode?.insertBefore(script, first);
+    };
+  }
+  window._ttqLoaded = window._ttqLoaded || {};
+  if (!window._ttqLoaded[pixelId]) {
+    window.ttq.load(pixelId);
+    window._ttqLoaded[pixelId] = true;
+  }
+}
+
+function tiktokInstance(pixelId: string) {
+  return window.ttq?.instance?.(pixelId) ?? window.ttq;
+}
+
 export type TrackEvent =
-  | { type: "ViewContent"; id: string; name: string; value: number; currency: string }
-  | { type: "InitiateCheckout"; id: string; name: string; value: number; currency: string }
-  | { type: "Purchase"; id: string; name: string; value: number; currency: string };
+  | { type: "ViewContent"; id: string; eventId?: string; name: string; value: number; currency: string }
+  | { type: "InitiateCheckout"; id: string; eventId?: string; name: string; value: number; currency: string }
+  | { type: "Purchase"; id: string; eventId?: string; name: string; value: number; currency: string };
 
 /** Guarda global (sobrevive a re-renders, refetch e navegação SPA). */
 const firedKeys = new Set<string>();
@@ -69,11 +109,11 @@ function alreadyFired(key: string, persist: boolean) {
   if (firedKeys.has(key)) return true;
   if (persist && typeof window !== "undefined") {
     try {
-      if (window.sessionStorage.getItem(key) === "1") {
+      if (window.localStorage.getItem(key) === "1") {
         firedKeys.add(key);
         return true;
       }
-      window.sessionStorage.setItem(key, "1");
+      window.localStorage.setItem(key, "1");
     } catch {
       /* storage indisponível */
     }
@@ -82,10 +122,7 @@ function alreadyFired(key: string, persist: boolean) {
   return false;
 }
 
-/**
- * Injects the producer's Meta Pixel / GA4 / Google Ads tags and fires
- * PageView + the given event exactly once per user action.
- */
+/** Instala Meta Pixel, GA4, Google Ads e TikTok Pixel e envia eventos normalizados. */
 export function TrackingScripts({
   config,
   event,
@@ -95,34 +132,48 @@ export function TrackingScripts({
 }) {
   useEffect(() => {
     if (!config) return;
-    const { meta_pixel_id, ga_measurement_id, google_ads_id, google_ads_label } = config;
-
+    const { meta_pixel_id, ga_measurement_id, google_ads_id, google_ads_label, tiktok_pixel_id } = config;
     const path = typeof window !== "undefined" ? window.location.pathname : "";
 
     if (meta_pixel_id) {
       ensureMeta(meta_pixel_id);
-      if (!alreadyFired(`ip_pv_${meta_pixel_id}_${path}`, false)) {
+      if (!alreadyFired(`ip_meta_pv_${meta_pixel_id}_${path}`, false)) {
         window.fbq?.("track", "PageView");
       }
     }
     if (ga_measurement_id) ensureGtag(ga_measurement_id);
     if (google_ads_id) ensureGtag(google_ads_id);
 
+    if (tiktok_pixel_id) {
+      ensureTikTok(tiktok_pixel_id);
+      if (!alreadyFired(`ip_tiktok_pv_${tiktok_pixel_id}_${path}`, false)) {
+        tiktokInstance(tiktok_pixel_id)?.page?.();
+      }
+    }
+
     if (!event) return;
 
-    // Purchase é único por pedido (persistido); os restantes, únicos por sessão de página.
+    const eventId = event.eventId || `${event.type}_${event.id}`;
     const persist = event.type === "Purchase";
-    if (alreadyFired(`ip_ev_${event.type}_${event.id}`, persist)) return;
+    if (alreadyFired(`ip_ev_${event.type}_${eventId}`, persist)) return;
+
+    const eventParams = {
+      content_ids: [event.id],
+      content_name: event.name,
+      content_type: "product",
+      value: event.value,
+      currency: event.currency,
+    };
 
     if (meta_pixel_id) {
-      window.fbq?.("track", event.type, {
-        content_ids: [event.id],
-        content_name: event.name,
-        content_type: "product",
-        value: event.value,
-        currency: event.currency,
-      });
+      window.fbq?.(
+        "track",
+        event.type,
+        eventParams,
+        { eventID: eventId },
+      );
     }
+
     if (ga_measurement_id) {
       const gaEvent =
         event.type === "Purchase"
@@ -132,22 +183,44 @@ export function TrackingScripts({
             : "view_item";
       window.gtag?.("event", gaEvent, {
         send_to: ga_measurement_id,
-        transaction_id: event.type === "Purchase" ? event.id : undefined,
+        transaction_id: event.type === "Purchase" ? eventId : undefined,
         value: event.value,
         currency: event.currency,
         items: [{ item_id: event.id, item_name: event.name, price: event.value }],
       });
     }
+
     if (event.type === "Purchase" && google_ads_id) {
       window.gtag?.("event", "conversion", {
         send_to: google_ads_label ? `${google_ads_id}/${google_ads_label}` : google_ads_id,
         value: event.value,
         currency: event.currency,
-        transaction_id: event.id,
+        transaction_id: eventId,
       });
     }
+
+    if (tiktok_pixel_id) {
+      const tiktokEvent =
+        event.type === "Purchase"
+          ? "Purchase"
+          : event.type === "InitiateCheckout"
+            ? "InitiateCheckout"
+            : "ViewContent";
+      tiktokInstance(tiktok_pixel_id)?.track?.(
+        tiktokEvent,
+        {
+          content_id: event.id,
+          content_name: event.name,
+          content_type: "product",
+          quantity: 1,
+          value: event.value,
+          currency: event.currency,
+        },
+        { event_id: eventId },
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config, event?.type, event?.id]);
+  }, [config, event?.type, event?.id, event?.eventId]);
 
   return null;
 }
