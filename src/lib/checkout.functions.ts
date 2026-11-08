@@ -79,7 +79,6 @@ export const createOrder = createServerFn({ method: "POST" })
         .from("sales")
         .select("id")
         .eq("parent_sale_id", parent.id)
-        .eq("origin", offer.kind)
         .maybeSingle();
       if (existingError) throw existingError;
       if (existing) throw new Error("Esta oferta já foi aceite anteriormente.");
