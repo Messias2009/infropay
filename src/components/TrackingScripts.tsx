@@ -212,7 +212,7 @@ export function TrackingScripts({
     if (tiktok_pixel_id) {
       const tiktokEvent =
         event.type === "Purchase"
-          ? "Purchase"
+          ? "CompletePayment"
           : event.type === "InitiateCheckout"
             ? "InitiateCheckout"
             : "ViewContent";
