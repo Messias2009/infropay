@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getProductBySlug } from "@/lib/catalog.functions";
 import { createOrder } from "@/lib/checkout.functions";
+import { getCheckoutOffers, validateCoupon } from "@/lib/funnel.functions";
 import multicaixaLogo from "@/assets/logo-multicaixa.svg";
 import emisLogo from "@/assets/logo-emis.svg";
 import { getRef } from "@/lib/affiliate-ref";
@@ -132,11 +133,21 @@ function Checkout() {
     queryFn: () => getProductTracking({ data: { slug } }),
     staleTime: 5 * 60_000,
   });
+  const { data: offers = [] } = useQuery({
+    queryKey: ["checkout-offers", p?.id],
+    queryFn: () => getCheckoutOffers({ data: { product_id: p.id } }),
+    enabled: Boolean(p?.id),
+    staleTime: 60_000,
+  });
   const [method, setMethod] = useState<(typeof METHODS)[number]["id"]>("multicaixa_express");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bumpSelected, setBumpSelected] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponBusy, setCouponBusy] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_cents: number } | null>(null);
 
   if (!p) return null;
 
@@ -147,6 +158,34 @@ function Checkout() {
       ? p.promo_price_cents
       : p.price_cents;
   const hasPromo = Boolean(p.promo_price_cents && p.promo_price_cents < p.price_cents);
+  const orderBump = offers.find((offer: any) => offer.kind === "order_bump");
+  const discountedPrice = Math.max(0, price - (appliedCoupon?.discount_cents ?? 0));
+  const checkoutTotal = discountedPrice + (bumpSelected && orderBump ? Number(orderBump.offer_price_cents) : 0);
+
+  async function applyCoupon() {
+    if (!couponInput.trim()) {
+      toast.error("Introduza o código do cupão.");
+      return;
+    }
+    setCouponBusy(true);
+    try {
+      const result = await validateCoupon({
+        data: { code: couponInput.trim(), product_id: p.id, amount_cents: price },
+      });
+      if (!result.valid) {
+        setAppliedCoupon(null);
+        toast.error(result.reason);
+        return;
+      }
+      setAppliedCoupon({ code: result.code, discount_cents: result.discount_cents });
+      toast.success("Cupão aplicado com sucesso.");
+    } catch (err) {
+      setAppliedCoupon(null);
+      toast.error((err as Error).message);
+    } finally {
+      setCouponBusy(false);
+    }
+  }
 
   // Botão estilizado conforme o tema escolhido pelo vendedor
   const actionButtonClass =
@@ -173,6 +212,8 @@ function Checkout() {
           buyer_phone: phone,
           payment_method: method,
           ref,
+          order_bump_offer_id: bumpSelected && orderBump ? orderBump.id : null,
+          coupon_code: appliedCoupon?.code ?? null,
         },
       });
       toast.success("Pedido criado! A aguardar pagamento.");
@@ -192,7 +233,7 @@ function Checkout() {
           type: "InitiateCheckout",
           id: p.id,
           name: p.title,
-          value: price / 100,
+          value: checkoutTotal / 100,
           currency: p.currency,
         }}
       />
@@ -287,6 +328,39 @@ function Checkout() {
             </div>
           </section>
 
+          {orderBump && (
+            <section className="mb-6 rounded-2xl border-2 border-primary/40 bg-primary/5 p-4 sm:p-5">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">
+                Oferta especial · Order Bump
+              </div>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={bumpSelected}
+                  onChange={(e) => setBumpSelected(e.target.checked)}
+                  className="mt-1 h-5 w-5 accent-primary shrink-0"
+                />
+                {orderBump.offer?.cover_url && (
+                  <img src={orderBump.offer.cover_url} alt="" className="h-16 w-16 rounded-xl object-cover border border-border shrink-0" />
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold text-sm text-foreground">
+                    {orderBump.headline || `Adicionar: ${orderBump.offer?.title ?? "produto complementar"}`}
+                  </span>
+                  <span className="block text-xs text-muted-foreground mt-1">
+                    {orderBump.description || orderBump.offer?.short_description || "Adicione este produto ao seu pedido por um preço especial."}
+                  </span>
+                  <span className="block mt-2 text-sm font-extrabold text-gradient-gold">
+                    + {fmt(Number(orderBump.offer_price_cents), p.currency)}
+                  </span>
+                </span>
+              </label>
+              <p className="text-[10px] text-muted-foreground mt-3">
+                Marque a caixa para incluir esta oferta no mesmo pedido.
+              </p>
+            </section>
+          )}
+
           {/* FORMULÁRIO DE PAGAMENTO (EM COLUNA ÚNICA) */}
           <form
             onSubmit={submit}
@@ -345,6 +419,32 @@ function Checkout() {
                   className="mt-1.5 h-11 w-full"
                 />
               </div>
+            </div>
+
+            <div className="border-t border-border pt-5">
+              <Label htmlFor="checkout-coupon" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Código de desconto
+              </Label>
+              <div className="mt-2 flex gap-2">
+                <Input
+                  id="checkout-coupon"
+                  value={couponInput}
+                  onChange={(e) => {
+                    setCouponInput(e.target.value.toUpperCase());
+                    setAppliedCoupon(null);
+                  }}
+                  placeholder="Introduza o cupão"
+                  className="h-11 min-w-0"
+                />
+                <Button type="button" variant="outline" disabled={couponBusy || !couponInput.trim()} onClick={applyCoupon}>
+                  {couponBusy ? "A validar..." : "Aplicar"}
+                </Button>
+              </div>
+              {appliedCoupon && (
+                <p className="text-xs text-emerald-500 mt-2">
+                  Cupão {appliedCoupon.code} aplicado: -{fmt(appliedCoupon.discount_cents, p.currency)}
+                </p>
+              )}
             </div>
 
             {/* MÉTODO DE PAGAMENTO */}
@@ -406,6 +506,18 @@ function Checkout() {
                   {fmt(price, p.currency)}
                 </span>
               </div>
+              {appliedCoupon && (
+                <div className="flex justify-between text-emerald-500">
+                  <span>Desconto ({appliedCoupon.code})</span>
+                  <span>-{fmt(appliedCoupon.discount_cents, p.currency)}</span>
+                </div>
+              )}
+              {bumpSelected && orderBump && (
+                <div className="flex justify-between text-muted-foreground">
+                  <span>{orderBump.offer?.title || "Produto adicional"}</span>
+                  <span>{fmt(Number(orderBump.offer_price_cents), p.currency)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-muted-foreground">
                 <span>Taxa de processamento</span>
                 <span className="text-emerald-400 font-semibold">Grátis</span>
@@ -413,7 +525,7 @@ function Checkout() {
               <div className="pt-2 border-t border-border flex justify-between text-sm font-bold">
                 <span className="text-foreground">Total a Pagar</span>
                 <span className="text-gradient-gold font-mono tabular-nums">
-                  {fmt(price, p.currency)}
+                  {fmt(checkoutTotal, p.currency)}
                 </span>
               </div>
 
