@@ -15,6 +15,24 @@ import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
+function readTrackingContext() {
+  if (typeof window === "undefined") return undefined;
+  const cookie = (name: string) => {
+    const item = document.cookie.split("; ").find((part) => part.startsWith(`${name}=`));
+    return item ? decodeURIComponent(item.slice(name.length + 1)) : null;
+  };
+  const params = new URLSearchParams(window.location.search);
+  return {
+    fbp: cookie("_fbp"),
+    fbc: cookie("_fbc"),
+    ttp: cookie("_ttp"),
+    ttclid: params.get("ttclid") || cookie("ttclid"),
+    user_agent: navigator.userAgent,
+    page_url: window.location.href,
+    referrer: document.referrer || null,
+  };
+}
+
 const opt = (token: string) =>
   queryOptions({
     queryKey: ["order", token],
@@ -116,7 +134,14 @@ function Pedido() {
   const shouldTrack = paid && !firedOnce;
   const { data: tracking } = useQuery({
     queryKey: ["tracking", "order", token, shouldTrack],
-    queryFn: () => getOrderTracking({ data: { token, notify: shouldTrack } }),
+    queryFn: () =>
+      getOrderTracking({
+        data: {
+          token,
+          notify: shouldTrack,
+          tracking_context: readTrackingContext(),
+        },
+      }),
     enabled: paid,
     staleTime: Infinity,
   });
@@ -140,6 +165,7 @@ function Pedido() {
           event={{
             type: "Purchase",
             id: tracking.content_id,
+            eventId: tracking.event_id,
             name: tracking.content_name,
             value: tracking.value,
             currency: tracking.currency,
