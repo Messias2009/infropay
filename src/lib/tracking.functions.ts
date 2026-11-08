@@ -118,9 +118,10 @@ export async function dispatchSaleTracking(saleId: string, context?: TrackingCon
   if (!((metaPixelId && metaToken) || (tiktokPixelId && tiktokToken) || utmifyToken))
     return { sent: false };
 
+  const claimTimestamp = new Date().toISOString();
   const { data: claimed, error: claimError } = await db
     .from("sales")
-    .update({ tracking_purchase_sent_at: new Date().toISOString() })
+    .update({ tracking_purchase_sent_at: claimTimestamp })
     .eq("id", sale.id)
     .is("tracking_purchase_sent_at", null)
     .select("id");
@@ -278,7 +279,7 @@ export async function dispatchSaleTracking(saleId: string, context?: TrackingCon
       .from("sales")
       .update({ tracking_purchase_sent_at: null })
       .eq("id", sale.id)
-      .eq("tracking_purchase_sent_at", sale.tracking_purchase_sent_at);
+      .eq("tracking_purchase_sent_at", claimTimestamp);
     return { sent: false, failed };
   }
 
