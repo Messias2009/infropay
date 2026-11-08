@@ -78,6 +78,22 @@ const INTEGRATIONS: Integ[] = [
     ),
   },
   {
+    key: "tiktok",
+    name: "TikTok Ads",
+    desc: "TikTok Pixel + Events API para eventos no navegador e no servidor",
+    color: "#111111",
+    fields: [
+      { id: "tiktok_pixel_id", label: "TikTok Pixel ID", placeholder: "CXXXXXXXXXXXXXXX" },
+      { id: "tiktok_events_api_token", label: "Events API Access Token (opcional)", placeholder: "Token gerado no TikTok Events Manager" },
+    ],
+    logo: (
+      <svg viewBox="0 0 40 40" className="h-8 w-8">
+        <rect width="40" height="40" rx="10" fill="#111111" />
+        <path d="M23 7v16.5a5.5 5.5 0 1 1-4-5.28V14a9.5 9.5 0 1 0 8 9.5V16c2 1.5 4.2 2.3 6 2.4v-4.2c-4.1-.3-7.1-2.8-7.6-7.2H23z" fill="#fff" />
+      </svg>
+    ),
+  },
+  {
     key: "utmify",
     name: "Utmify",
     desc: "Rastreamento de UTM e atribuição",
@@ -121,6 +137,8 @@ function Page() {
           google_ads_id: form.google_ads_id || null,
           google_ads_label: form.google_ads_label || null,
           ga_measurement_id: form.ga_measurement_id || null,
+          tiktok_pixel_id: form.tiktok_pixel_id || null,
+          tiktok_events_api_token: form.tiktok_events_api_token || null,
           utmify_token: form.utmify_token || null,
         },
       });
