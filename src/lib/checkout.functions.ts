@@ -265,11 +265,12 @@ export const getOrderByToken = createServerFn({ method: "GET" })
   .validator((d: { token: string }) => z.object({ token: z.string().min(10) }).parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const db = supabaseAdmin as any;
     const base =
       "id, status, gross_cents, currency, payment_method, payment_ref, buyer_name, buyer_email, buyer_phone, created_at, paid_at, origin, parent_sale_id, product:products(title, slug, cover_url, file_url, external_url), sale_items(id, kind, title_snapshot, price_cents, product:products(title, cover_url, file_url, external_url))";
     const withReceipt = base + ", receipt_status, receipt_kind, receipt_submitted_at, receipt_note";
 
-    let query = await supabaseAdmin
+    let query = await db
       .from("sales")
       .select(withReceipt)
       .eq("access_token", data.token)
@@ -278,7 +279,7 @@ export const getOrderByToken = createServerFn({ method: "GET" })
     // A migração de comprovativos ainda pode não ter sido aplicada: o pedido
     // continua a funcionar, apenas sem o estado do comprovativo.
     if (query.error && /receipt_/.test(query.error.message ?? "")) {
-      query = await supabaseAdmin
+      query = await db
         .from("sales")
         .select(base)
         .eq("access_token", data.token)
