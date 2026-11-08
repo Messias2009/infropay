@@ -44,6 +44,25 @@ export const createOffer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((d: unknown) => offerSchema.parse(d))
   .handler(async ({ data, context }) => {
+    const { data: main, error: mainError } = await (context.supabase as any)
+      .from("products")
+      .select("id, producer_id, status")
+      .eq("id", data.product_id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
+    if (mainError) throw mainError;
+    if (!main || main.status !== "publicado") throw new Error("Produto principal indisponível.");
+
+    const { data: offered, error: offeredError } = await (context.supabase as any)
+      .from("products")
+      .select("id, producer_id, status")
+      .eq("id", data.offer_product_id)
+      .eq("producer_id", context.userId)
+      .maybeSingle();
+    if (offeredError) throw offeredError;
+    if (!offered || offered.status !== "publicado") throw new Error("Produto da oferta indisponível.");
+    if (data.product_id === data.offer_product_id) throw new Error("Escolha dois produtos diferentes.");
+
     const { error } = await (context.supabase as any)
       .from("product_offers")
       .insert({ ...data, producer_id: context.userId });
@@ -139,12 +158,16 @@ export const getCheckoutOffers = createServerFn({ method: "GET" })
     const { data: rows } = await (supabase as any)
       .from("product_offers")
       .select(
-        "id, kind, headline, description, offer_price_cents, sort_order, offer:products!product_offers_offer_product_id_fkey(title, slug, cover_url, price_cents)",
+        "id, kind, headline, description, offer_price_cents, sort_order, offer:products!product_offers_offer_product_id_fkey(id, producer_id, title, slug, cover_url, price_cents, currency, short_description, status)",
       )
       .eq("product_id", data.product_id)
+      .eq("kind", "order_bump")
       .eq("active", true)
       .order("sort_order", { ascending: true });
-    return rows ?? [];
+    if (error) throw error;
+    return (rows ?? []).filter(
+      (row: any) => row.offer?.status === "publicado" && row.offer?.producer_id,
+    );
   });
 
 /** Public: validates a coupon code for a product and returns the discount in cents. */
@@ -161,14 +184,25 @@ export const validateCoupon = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { createServerPublicClient } = await import("./public-client.server");
     const supabase = createServerPublicClient();
-    const { data: rows } = await (supabase as any)
+    const { data: product, error: productError } = await (supabase as any)
+      .from("products")
+      .select("producer_id, status")
+      .eq("id", data.product_id)
+      .maybeSingle();
+    if (productError) throw productError;
+    if (!product || product.status !== "publicado")
+      return { valid: false as const, reason: "Produto indisponível." };
+
+    const { data: rows, error } = await (supabase as any)
       .from("coupons")
       .select(
-        "id, code, discount_kind, discount_value, max_uses, uses_count, product_id, expires_at, active",
+        "id, code, producer_id, discount_kind, discount_value, max_uses, uses_count, product_id, expires_at, active",
       )
+      .eq("producer_id", product.producer_id)
       .eq("code", data.code.toUpperCase())
       .eq("active", true)
       .limit(5);
+    if (error) throw error;
     const c = (rows ?? []).find((r: any) => !r.product_id || r.product_id === data.product_id);
     if (!c) return { valid: false as const, reason: "Cupão inválido." };
     if (c.expires_at && new Date(c.expires_at) < new Date())
@@ -180,4 +214,38 @@ export const validateCoupon = createServerFn({ method: "POST" })
         ? Math.min(data.amount_cents, Math.round((data.amount_cents * c.discount_value) / 100))
         : Math.min(data.amount_cents, c.discount_value * 100);
     return { valid: true as const, code: c.code, discount_cents: discount };
+  });
+
+
+/** Public: active post-purchase offers for a successfully paid main order. */
+export const getPostPurchaseOffers = createServerFn({ method: "GET" })
+  .validator((d: unknown) => z.object({ token: z.string().min(10).max(120) }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: sale, error: saleError } = await supabaseAdmin
+      .from("sales")
+      .select("id, product_id, producer_id, status, origin, parent_sale_id")
+      .eq("access_token", data.token)
+      .maybeSingle();
+    if (saleError) throw saleError;
+    if (!sale || sale.status !== "pago" || sale.parent_sale_id || (sale.origin ?? "principal") !== "principal")
+      return { upsell: null, downsell: null };
+
+    const { createServerPublicClient } = await import("./public-client.server");
+    const supabase = createServerPublicClient();
+    const { data: rows, error } = await (supabase as any)
+      .from("product_offers")
+      .select("id, kind, headline, description, offer_price_cents, offer:products!product_offers_offer_product_id_fkey(id, producer_id, title, slug, cover_url, currency, short_description, status)")
+      .eq("product_id", sale.product_id)
+      .in("kind", ["upsell", "downsell"])
+      .eq("active", true)
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    const eligible = (rows ?? []).filter(
+      (row: any) => row.offer?.status === "publicado" && row.offer?.producer_id === sale.producer_id,
+    );
+    return {
+      upsell: eligible.find((row: any) => row.kind === "upsell") ?? null,
+      downsell: eligible.find((row: any) => row.kind === "downsell") ?? null,
+    };
   });
