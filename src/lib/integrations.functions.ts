@@ -8,6 +8,8 @@ const schema = z.object({
   google_ads_id: z.string().trim().max(60).optional().nullable(),
   google_ads_label: z.string().trim().max(80).optional().nullable(),
   ga_measurement_id: z.string().trim().max(40).optional().nullable(),
+  tiktok_pixel_id: z.string().trim().max(80).optional().nullable(),
+  tiktok_events_api_token: z.string().trim().max(500).optional().nullable(),
   utmify_token: z.string().trim().max(200).optional().nullable(),
 });
 
@@ -27,6 +29,8 @@ export const getMyIntegrations = createServerFn({ method: "GET" })
         google_ads_id: null,
         google_ads_label: null,
         ga_measurement_id: null,
+        tiktok_pixel_id: null,
+        tiktok_events_api_token: null,
         utmify_token: null,
       }
     );
