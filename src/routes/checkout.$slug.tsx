@@ -124,6 +124,24 @@ function fmt(c: number, cur: string) {
   }
 }
 
+function readCheckoutTrackingContext() {
+  if (typeof window === "undefined") return undefined;
+  const cookie = (name: string) => {
+    const item = document.cookie.split("; ").find((part) => part.startsWith(`${name}=`));
+    return item ? decodeURIComponent(item.slice(name.length + 1)) : null;
+  };
+  const params = new URLSearchParams(window.location.search);
+  return {
+    fbp: cookie("_fbp"),
+    fbc: cookie("_fbc"),
+    ttp: cookie("_ttp"),
+    ttclid: params.get("ttclid") || cookie("ttclid"),
+    user_agent: navigator.userAgent,
+    page_url: window.location.href,
+    referrer: document.referrer || null,
+  };
+}
+
 function Checkout() {
   const { slug } = Route.useParams();
   const router = useRouter();
@@ -214,6 +232,7 @@ function Checkout() {
           ref,
           order_bump_offer_id: bumpSelected && orderBump ? orderBump.id : null,
           coupon_code: appliedCoupon?.code ?? null,
+          tracking_context: readCheckoutTrackingContext(),
         },
       });
       toast.success("Pedido criado! A aguardar pagamento.");
