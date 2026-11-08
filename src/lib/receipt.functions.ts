@@ -297,6 +297,15 @@ export const reviewReceipt = createServerFn({ method: "POST" })
       }
       if (!updated?.length) throw new Error("Este pedido já foi processado.");
 
+      // Enviar conversões de marketing no servidor assim que o pagamento é aprovado,
+      // mesmo que o comprador já tenha fechado a página de confirmação.
+      try {
+        const { dispatchSaleTracking } = await import("./tracking.functions");
+        await dispatchSaleTracking(sale.id);
+      } catch {
+        // A falha de um fornecedor de tracking nunca desfaz o pagamento aprovado.
+      }
+
       // Enviar a confirmação após a transição pendente → pago.
       // Uma falha no e-mail não desfaz a aprovação nem o crédito da venda.
       if (sale.buyer_email && sale.access_token) {
