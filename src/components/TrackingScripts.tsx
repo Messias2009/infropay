@@ -190,9 +190,9 @@ export function TrackingScripts({
       });
     }
 
-    if (event.type === "Purchase" && google_ads_id) {
+    if (event.type === "Purchase" && google_ads_id && google_ads_label) {
       window.gtag?.("event", "conversion", {
-        send_to: google_ads_label ? `${google_ads_id}/${google_ads_label}` : google_ads_id,
+        send_to: `${google_ads_id}/${google_ads_label}`,
         value: event.value,
         currency: event.currency,
         transaction_id: eventId,
