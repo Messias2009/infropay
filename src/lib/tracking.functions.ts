@@ -73,7 +73,7 @@ function sha256(value: string) {
  * approved and also from the order page as a safe fallback. The database claim
  * prevents duplicate server conversions across both paths.
  */
-export async function dispatchSaleTracking(saleId: string) {
+export async function dispatchSaleTracking(saleId: string, context?: TrackingContext) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
   const { data: sale, error: saleError } = await db
@@ -119,8 +119,13 @@ export async function dispatchSaleTracking(saleId: string) {
     ? Math.floor(new Date(sale.paid_at).getTime() / 1000)
     : Math.floor(Date.now() / 1000);
   const value = sale.gross_cents / 100;
-  const pageUrl = sale.tracking_page_url || `https://infropay.vercel.app/pedido/${sale.access_token}`;
-  const userAgent = sale.tracking_user_agent || "InfroPay";
+  const pageUrl = sale.tracking_page_url || context?.page_url || `https://infropay.vercel.app/pedido/${sale.access_token}`;
+  const userAgent = sale.tracking_user_agent || context?.user_agent || "InfroPay";
+  const fbp = sale.tracking_fbp || context?.fbp;
+  const fbc = sale.tracking_fbc || context?.fbc;
+  const ttp = sale.tracking_ttp || context?.ttp;
+  const ttclid = sale.tracking_ttclid || context?.ttclid;
+  const referrer = sale.tracking_referrer || context?.referrer;
   const tasks: Promise<unknown>[] = [];
 
   const post = async (url: string, init: RequestInit) => {
@@ -168,8 +173,8 @@ export async function dispatchSaleTracking(saleId: string) {
     const userData: Record<string, unknown> = { client_user_agent: userAgent };
     if (emailHash) userData.em = [emailHash];
     if (phoneHash) userData.ph = [phoneHash];
-    if (sale.tracking_fbp) userData.fbp = sale.tracking_fbp;
-    if (sale.tracking_fbc) userData.fbc = sale.tracking_fbc;
+    if (fbp) userData.fbp = fbp;
+    if (fbc) userData.fbc = fbc;
     tasks.push(
       post(`https://graph.facebook.com/v27.0/${metaPixelId}/events?access_token=${encodeURIComponent(metaToken)}`, {
         method: "POST",
@@ -202,8 +207,8 @@ export async function dispatchSaleTracking(saleId: string) {
     const tiktokUser: Record<string, unknown> = { user_agent: userAgent };
     if (emailHash) tiktokUser.email = emailHash;
     if (phoneHash) tiktokUser.phone = phoneHash;
-    if (sale.tracking_ttclid) tiktokUser.ttclid = sale.tracking_ttclid;
-    if (sale.tracking_ttp) tiktokUser.ttp = sale.tracking_ttp;
+    if (ttclid) tiktokUser.ttclid = ttclid;
+    if (ttp) tiktokUser.ttp = ttp;
     tasks.push(
       post("https://business-api.tiktok.com/open_api/v1.3/event/track/", {
         method: "POST",
@@ -219,7 +224,7 @@ export async function dispatchSaleTracking(saleId: string) {
               user: { ...tiktokUser, locale: "pt_AO" },
               page: {
                 url: pageUrl,
-                referrer: sale.tracking_referrer || undefined,
+                referrer: referrer || undefined,
               },
               properties: {
                 value,
@@ -299,7 +304,7 @@ export const getOrderTracking = createServerFn({ method: "GET" })
     };
 
     if (data.notify && sale.status === "pago") {
-      await dispatchSaleTracking(sale.id);
+      await dispatchSaleTracking(sale.id, data.tracking_context);
     }
 
     return cfg;
