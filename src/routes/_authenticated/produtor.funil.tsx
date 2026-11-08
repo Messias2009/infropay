@@ -140,7 +140,10 @@ function Page() {
         <div className="text-xs uppercase tracking-widest text-gold font-semibold">Conversão</div>
         <h1 className="font-display text-3xl md:text-4xl font-bold mt-2">Funil de vendas</h1>
         <p className="text-sm text-muted-foreground mt-2">
-          Crie order bumps, upsells e cupões para aumentar o valor médio de cada compra.
+          Crie order bumps, upsells, downsells e cupões para aumentar o valor médio de cada compra.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          O Order Bump aparece no checkout. O Upsell aparece depois da aprovação do pagamento; se o comprador recusar, o Downsell pode ser apresentado como segunda oferta.
         </p>
       </div>
 
