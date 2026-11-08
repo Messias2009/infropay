@@ -68,6 +68,16 @@ function sha256(value: string) {
   );
 }
 
+const TIKTOK_SUPPORTED_CURRENCIES = new Set([
+  "AED", "ARS", "AUD", "BDT", "BHD", "BIF", "BOB", "BRL", "CAD", "CHF",
+  "CLP", "CNY", "COP", "CRC", "CZK", "DKK", "DZD", "EGP", "EUR", "GBP",
+  "GTQ", "HKD", "HNL", "HUF", "IDR", "ILS", "INR", "ISK", "JPY", "KES",
+  "KHR", "KRW", "KWD", "KZT", "MAD", "MOP", "MXN", "MYR", "NGN", "NIO",
+  "NOK", "NZD", "OMR", "PEN", "PHP", "PKR", "PLN", "PYG", "QAR", "RON",
+  "RUB", "SAR", "SEK", "SGD", "THB", "TRY", "TWD", "UAH", "USD", "VES",
+  "VND", "ZAR",
+]);
+
 /**
  * Sends confirmed-sale events from the server. Called when a receipt is
  * approved and also from the order page as a safe fallback. The database claim
@@ -205,6 +215,7 @@ export async function dispatchSaleTracking(saleId: string, context?: TrackingCon
 
   if (tiktokPixelId && tiktokToken) {
     const tiktokUser: Record<string, unknown> = { user_agent: userAgent };
+    const tiktokSupportsValueCurrency = TIKTOK_SUPPORTED_CURRENCIES.has(String(sale.currency).toUpperCase());
     if (emailHash) tiktokUser.email = emailHash;
     if (phoneHash) tiktokUser.phone = phoneHash;
     if (ttclid) tiktokUser.ttclid = ttclid;
