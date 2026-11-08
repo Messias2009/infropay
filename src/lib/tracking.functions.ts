@@ -269,7 +269,20 @@ export async function dispatchSaleTracking(saleId: string, context?: TrackingCon
   }
 
   const results = await Promise.allSettled(tasks);
-  return { sent: true, failed: results.filter((result) => result.status === "rejected").length };
+  const failed = results.filter((result) => result.status === "rejected").length;
+
+  // Se algum fornecedor falhar, libertar a marca para permitir nova tentativa
+  // na próxima visita/consulta do pedido. Nunca marcar como enviado sem sucesso.
+  if (failed > 0) {
+    await db
+      .from("sales")
+      .update({ tracking_purchase_sent_at: null })
+      .eq("id", sale.id)
+      .eq("tracking_purchase_sent_at", sale.tracking_purchase_sent_at);
+    return { sent: false, failed };
+  }
+
+  return { sent: true, failed: 0 };
 }
 
 /** Public: tracking payload for the order page; dispatches server events as a fallback. */
