@@ -8,6 +8,7 @@ import { getProductBySlug } from "@/lib/catalog.functions";
 import { getProductTracking } from "@/lib/tracking.functions";
 import { registerAffiliateClick } from "@/lib/affiliate.functions";
 import { saveRef } from "@/lib/affiliate-ref";
+import { captureAttribution } from "@/lib/attribution";
 import { TrackingScripts } from "@/components/TrackingScripts";
 import { useQuery } from "@tanstack/react-query";
 
@@ -65,6 +66,7 @@ function Produto() {
   // Atribuição de afiliado: guarda o ?ref= e conta o clique uma vez por sessão.
   useEffect(() => {
     if (typeof window === "undefined") return;
+    captureAttribution();
     const ref = new URLSearchParams(window.location.search).get("ref");
     if (!ref) return;
     saveRef(slug, ref);
