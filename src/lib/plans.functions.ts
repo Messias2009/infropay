@@ -93,8 +93,22 @@ function safeName(name: string) {
   return cleaned.slice(-80) || "comprovativo";
 }
 
-/** Verdadeiro quando existe um plano activo (trial, 7d ou 30d). */
+/** Verifica o papel de administrador no servidor (nunca usa metadata editável pelo utilizador). */
+async function isAdminUser(client: any, userId: string): Promise<boolean> {
+  try {
+    const { data, error } = await client.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Verdadeiro para administradores ou quando existe um plano activo (trial, 7d ou 30d). */
 export async function hasActivePlan(supabaseAdmin: any, userId: string): Promise<boolean> {
+  if (await isAdminUser(supabaseAdmin, userId)) return true;
   const { data, error } = await supabaseAdmin
     .from("subscriptions")
     .select("id, estado, data_fim")
@@ -180,6 +194,18 @@ function buildState(rows: any[], avisado: boolean): PlanState {
 export const getMyPlan = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    // Administradores têm acesso permanente e gratuito ao Quiz Funnel.
+    if (await isAdminUser(context.supabase, context.userId)) {
+      return {
+        ...NO_PLAN,
+        premium: true,
+        plano: "admin",
+        estado: "ativo",
+        plano_label: "Acesso de administrador",
+        trial_available: false,
+      };
+    }
+
     // expiração avaliada no servidor, nunca só no frontend
     try {
       await (context.supabase as any).rpc("expire_stale_subscriptions", {
