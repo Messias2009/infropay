@@ -130,8 +130,9 @@ export const createQuiz = createServerFn({ method: "POST" })
     if (error) {
       if (isSetupError(error)) throw new Error(SETUP_MESSAGE);
       throw new Error(error.message);
-    }  return created as any;
-});
+    }
+    return created as any;
+  });
 
 /** Duplica um quiz (apenas o dono). Exige plano activo. */
 export const duplicateQuiz = createServerFn({ method: "POST" })
@@ -150,7 +151,7 @@ export const duplicateQuiz = createServerFn({ method: "POST" })
       throw new Error(error.message);
     }
     if (!original) throw new Error("Quiz não encontrado ou sem permissão.");
-    
+
     const newSlug = await uniqueSlug(supabaseAdmin, `${original.title} (cópia)`);
     const { data: created, error: createError } = await supabaseAdmin
       .from("quizzes")
@@ -185,7 +186,8 @@ export const saveQuiz = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertPremium(context.userId);
     const definition = draftDefinition(data.definition);
-    const payload: Record<string, unknown> = { definition };
+    // Tipos gerados do Supabase não cobrem a coluna jsonb `definition`.
+    const payload: any = { definition };
     if (data.title) payload.title = data.title;
 
     // A escrita ocorre no servidor. Verificamos explicitamente o proprietário

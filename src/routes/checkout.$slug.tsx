@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter, notFound, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ShieldCheck,
   Lock,
@@ -21,6 +21,7 @@ import { getCheckoutOffers, validateCoupon } from "@/lib/funnel.functions";
 import multicaixaLogo from "@/assets/logo-multicaixa.svg";
 import emisLogo from "@/assets/logo-emis.svg";
 import { getRef } from "@/lib/affiliate-ref";
+import { readQuizLead } from "@/lib/quiz-links";
 import { readAttribution } from "@/lib/attribution";
 import { getProductTracking } from "@/lib/tracking.functions";
 import { TrackingScripts } from "@/components/TrackingScripts";
@@ -163,7 +164,7 @@ function Checkout() {
   });
   const { data: offers = [] } = useQuery({
     queryKey: ["checkout-offers", p?.id],
-    queryFn: () => getCheckoutOffers({ data: { product_id: p.id } }),
+    queryFn: () => (p ? getCheckoutOffers({ data: { product_id: p.id } }) : Promise.resolve([])),
     enabled: Boolean(p?.id),
     staleTime: 60_000,
   });
@@ -175,7 +176,23 @@ function Checkout() {
   const [bumpSelected, setBumpSelected] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [couponBusy, setCouponBusy] = useState(false);
-  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_cents: number } | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount_cents: number;
+  } | null>(null);
+  const prefilled = useRef(false);
+
+  // Quem chega do quiz já deixou nome + WhatsApp: pré-preenche sem expor
+  // esses dados no URL (chegam por sessionStorage, no mesmo separador).
+  useEffect(() => {
+    if (prefilled.current) return;
+    prefilled.current = true;
+    const lead = readQuizLead();
+    if (!lead) return;
+    if (lead.product_slug && lead.product_slug !== slug) return;
+    setName((current) => current || lead.nome);
+    setPhone((current) => current || lead.whatsapp);
+  }, [slug]);
 
   if (!p) return null;
 
@@ -188,9 +205,11 @@ function Checkout() {
   const hasPromo = Boolean(p.promo_price_cents && p.promo_price_cents < p.price_cents);
   const orderBump = offers.find((offer: any) => offer.kind === "order_bump");
   const discountedPrice = Math.max(0, price - (appliedCoupon?.discount_cents ?? 0));
-  const checkoutTotal = discountedPrice + (bumpSelected && orderBump ? Number(orderBump.offer_price_cents) : 0);
+  const checkoutTotal =
+    discountedPrice + (bumpSelected && orderBump ? Number(orderBump.offer_price_cents) : 0);
 
   async function applyCoupon() {
+    if (!p) return;
     if (!couponInput.trim()) {
       toast.error("Introduza o código do cupão.");
       return;
@@ -309,11 +328,7 @@ function Checkout() {
             <div className="flex items-start gap-4">
               {p.cover_url && (
                 <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-2xl border border-border bg-secondary">
-                  <img
-                    src={p.cover_url}
-                    alt={p.title}
-                    className="h-full w-full object-contain"
-                  />
+                  <img src={p.cover_url} alt={p.title} className="h-full w-full object-contain" />
                 </div>
               )}
               <div className="min-w-0 flex-1">
@@ -370,14 +385,21 @@ function Checkout() {
                   className="mt-1 h-5 w-5 accent-primary shrink-0"
                 />
                 {orderBump.offer?.cover_url && (
-                  <img src={orderBump.offer.cover_url} alt="" className="h-16 w-16 rounded-xl object-cover border border-border shrink-0" />
+                  <img
+                    src={orderBump.offer.cover_url}
+                    alt=""
+                    className="h-16 w-16 rounded-xl object-cover border border-border shrink-0"
+                  />
                 )}
                 <span className="min-w-0 flex-1">
                   <span className="block font-bold text-sm text-foreground">
-                    {orderBump.headline || `Adicionar: ${orderBump.offer?.title ?? "produto complementar"}`}
+                    {orderBump.headline ||
+                      `Adicionar: ${orderBump.offer?.title ?? "produto complementar"}`}
                   </span>
                   <span className="block text-xs text-muted-foreground mt-1">
-                    {orderBump.description || orderBump.offer?.short_description || "Adicione este produto ao seu pedido por um preço especial."}
+                    {orderBump.description ||
+                      orderBump.offer?.short_description ||
+                      "Adicione este produto ao seu pedido por um preço especial."}
                   </span>
                   <span className="block mt-2 text-sm font-extrabold text-gradient-gold">
                     + {fmt(Number(orderBump.offer_price_cents), p.currency)}
@@ -451,7 +473,10 @@ function Checkout() {
             </div>
 
             <div className="border-t border-border pt-5">
-              <Label htmlFor="checkout-coupon" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <Label
+                htmlFor="checkout-coupon"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+              >
                 Código de desconto
               </Label>
               <div className="mt-2 flex gap-2">
@@ -465,13 +490,19 @@ function Checkout() {
                   placeholder="Introduza o cupão"
                   className="h-11 min-w-0"
                 />
-                <Button type="button" variant="outline" disabled={couponBusy || !couponInput.trim()} onClick={applyCoupon}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={couponBusy || !couponInput.trim()}
+                  onClick={applyCoupon}
+                >
                   {couponBusy ? "A validar..." : "Aplicar"}
                 </Button>
               </div>
               {appliedCoupon && (
                 <p className="text-xs text-emerald-500 mt-2">
-                  Cupão {appliedCoupon.code} aplicado: -{fmt(appliedCoupon.discount_cents, p.currency)}
+                  Cupão {appliedCoupon.code} aplicado: -
+                  {fmt(appliedCoupon.discount_cents, p.currency)}
                 </p>
               )}
             </div>
@@ -501,7 +532,11 @@ function Checkout() {
                           active ? "ring-2 ring-gold" : ""
                         }`}
                       >
-                        <img src={multicaixaLogo} alt="Multicaixa" className="w-12 h-auto object-contain" />
+                        <img
+                          src={multicaixaLogo}
+                          alt="Multicaixa"
+                          className="w-12 h-auto object-contain"
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -563,7 +598,8 @@ function Checkout() {
                   <img src={emisLogo} alt="EMIS" className="h-6 w-auto" />
                 </div>
                 <p className="text-[11px] leading-snug text-muted-foreground text-left">
-                  Pagamentos processados na rede Multicaixa, gerida pela EMIS — Empresa Interbancária de Serviços.
+                  Pagamentos processados na rede Multicaixa, gerida pela EMIS — Empresa
+                  Interbancária de Serviços.
                 </p>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Upload, X, Loader2, ImageIcon, FileText } from "lucide-react";
+import { X, Loader2, ImageIcon, FileText, Video } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 type Props = {
   value: string | null | undefined;
   onChange: (url: string | null) => void;
-  kind?: "image" | "file";
+  kind?: "image" | "file" | "video";
   label?: string;
   hint?: string;
   accept?: string;
   productKey?: string; // e.g. product id or slug for folder grouping
+  /** Botão pequeno em vez do bloco grande (opções, logótipo, etc.). */
+  compact?: boolean;
 };
 
 const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
@@ -24,6 +26,7 @@ export function MediaUpload({
   hint,
   accept,
   productKey,
+  compact = false,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -33,7 +36,7 @@ export function MediaUpload({
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-    const maxMB = kind === "image" ? 8 : 200;
+    const maxMB = kind === "image" ? 8 : kind === "video" ? 120 : 200;
     if (file.size > maxMB * 1024 * 1024) {
       toast.error(`Ficheiro maior que ${maxMB}MB`);
       return;
@@ -70,7 +73,13 @@ export function MediaUpload({
   }
 
   const isImage = kind === "image";
-  const Icon = isImage ? ImageIcon : FileText;
+  const isVideo = kind === "video";
+  const Icon = isImage ? ImageIcon : isVideo ? Video : FileText;
+  const defaultAccept = isImage
+    ? "image/png,image/jpeg,image/webp,image/gif"
+    : isVideo
+      ? "video/mp4,video/webm,video/quicktime,video/ogg"
+      : undefined;
 
   return (
     <div>
@@ -79,7 +88,7 @@ export function MediaUpload({
         ref={inputRef}
         type="file"
         className="hidden"
-        accept={accept ?? (isImage ? "image/png,image/jpeg,image/webp,image/gif" : undefined)}
+        accept={accept ?? defaultAccept}
         onChange={pickFile}
       />
 
@@ -87,6 +96,14 @@ export function MediaUpload({
         <div className="relative rounded-xl border border-border bg-card overflow-hidden group">
           {isImage ? (
             <img src={value} alt="" className="w-full h-48 object-cover" />
+          ) : isVideo ? (
+            <video
+              src={value}
+              className="w-full h-48 bg-black object-contain"
+              controls
+              playsInline
+              preload="metadata"
+            />
           ) : (
             <div className="flex items-center gap-3 p-4">
               <div className="h-10 w-10 rounded-lg bg-primary/10 grid place-items-center">
@@ -110,6 +127,22 @@ export function MediaUpload({
             </Button>
           </div>
         </div>
+      ) : compact ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="w-full"
+        >
+          {uploading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Icon className="mr-2 h-4 w-4" />
+          )}
+          {uploading ? `A carregar… ${progress}%` : label || "Carregar"}
+        </Button>
       ) : (
         <button
           type="button"
@@ -128,10 +161,18 @@ export function MediaUpload({
                 <Icon className="h-5 w-5 text-primary-glow" />
               </div>
               <span className="font-medium text-foreground">
-                {isImage ? "Clique para enviar imagem" : "Clique para enviar ficheiro"}
+                {isImage
+                  ? "Clique para enviar imagem"
+                  : isVideo
+                    ? "Clique para enviar vídeo (VSL)"
+                    : "Clique para enviar ficheiro"}
               </span>
               <span className="text-xs">
-                {isImage ? "PNG, JPG, WEBP · até 8MB" : "Qualquer formato · até 200MB"}
+                {isImage
+                  ? "PNG, JPG, WEBP · até 8MB"
+                  : isVideo
+                    ? "MP4, WEBM, MOV · até 120MB"
+                    : "Qualquer formato · até 200MB"}
               </span>
             </>
           )}

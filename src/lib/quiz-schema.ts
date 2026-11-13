@@ -15,6 +15,14 @@ export type QuizMedia = {
   type: QuizMediaType;
   url: string;
   poster?: string | null;
+  /** VSL: player sem controlos nativos, com CTA desbloqueado no fim. */
+  vsl?: boolean;
+  /** Arranca em silêncio assim que a etapa aparece (padrão numa VSL). */
+  autoplay?: boolean;
+  /** Segundos até libertar o botão seguinte. 0/ausente = só no fim do vídeo. */
+  unlock_after?: number | null;
+  /** Legenda/etiqueta por cima do vídeo (ex.: "Assista até ao fim"). */
+  caption?: string | null;
 };
 
 export type QuizTheme = {
@@ -25,6 +33,8 @@ export type QuizTheme = {
   text: string;
   muted: string;
   logo_url: string | null;
+  /** Imagem de fundo opcional (cover) atrás do cartão do quiz. */
+  background_url?: string | null;
   font: "inter" | "display" | "system";
   show_progress: boolean;
   radius: number;
@@ -67,6 +77,7 @@ export type QuizStep =
       product_title?: string | null;
       price_label?: string | null;
       cta_label?: string | null;
+      media?: QuizMedia | null;
       testimonials?: { name: string; text: string }[];
     });
 
@@ -87,6 +98,7 @@ export function defaultQuizTheme(): QuizTheme {
     text: "#f5f7ff",
     muted: "#9aa4c2",
     logo_url: null,
+    background_url: null,
     font: "inter",
     show_progress: true,
     radius: 16,
@@ -97,10 +109,108 @@ export function emptyDefinition(): QuizDefinition {
   return { version: 1, theme: defaultQuizTheme(), start_step_id: "", steps: [] };
 }
 
+/* ------------------------------------------------------------------------- */
+/* Saneamento de valores vindos do editor                                      */
+/*                                                                             */
+/* Tudo o que é gravado no JSON é depois injetado em `src` de imagens/vídeos,  */
+/* em `style` inline e em navegação. Sem validação, um `javascript:` ou um     */
+/* `red;background-image:url(...)` transformava o quiz num vetor de injeção.   */
+/* ------------------------------------------------------------------------- */
+
+const ALLOWED_URL = /^(https?:\/\/[^\s<>"']+|\/[^\s<>"']*)$/i;
+
+/** Só http(s) e caminhos do próprio site. Qualquer outro esquema vira "". */
+export function safeUrl(raw: string | null | undefined): string {
+  const value = (raw ?? "").trim();
+  if (!value) return "";
+  if (value.length > 2000) return "";
+  return ALLOWED_URL.test(value) ? value : "";
+}
+
+const HEX = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+const RGB = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\)$/i;
+const HSL =
+  /^hsla?\(\s*\d{1,3}(?:deg)?\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\)$/i;
+
+/** Aceita apenas cores CSS simples — impede escapar do `style` inline. */
+export function safeColor(raw: string | null | undefined, fallback = "#2563eb"): string {
+  const value = (raw ?? "").trim();
+  if (HEX.test(value) || RGB.test(value) || HSL.test(value)) return value;
+  return fallback;
+}
+
+export function safeFont(raw: unknown): QuizTheme["font"] {
+  return raw === "display" || raw === "system" ? raw : "inter";
+}
+
+function sanitizeMedia(media: unknown): QuizMedia | null {
+  if (!media || typeof media !== "object") return null;
+  const m = media as Record<string, unknown>;
+  const type = m.type === "video" ? "video" : "image";
+  const url = safeUrl(typeof m.url === "string" ? m.url : "");
+  if (!url) return null;
+  const poster = safeUrl(typeof m.poster === "string" ? m.poster : "") || null;
+  const unlock = typeof m.unlock_after === "number" ? Math.round(m.unlock_after) : null;
+  return {
+    type,
+    url,
+    poster,
+    vsl: type === "video" ? m.vsl !== false : undefined,
+    autoplay: type === "video" ? m.autoplay !== false : undefined,
+    unlock_after: unlock && unlock > 0 ? Math.min(unlock, 3600) : null,
+    caption: typeof m.caption === "string" ? m.caption.slice(0, 120) : null,
+  };
+}
+
+/** Aplica saneamento a todo o quiz (guardar e também ao renderizar). */
+export function sanitizeDefinition(def: QuizDefinition): QuizDefinition {
+  const theme = def.theme ?? defaultQuizTheme();
+  const steps = (def.steps ?? []).map((step) => {
+    const clean: any = { ...step, media: sanitizeMedia((step as any).media) };
+    if (Array.isArray((step as any).options)) {
+      clean.options = (step as any).options.map((option: any) => ({
+        ...option,
+        image_url: safeUrl(option?.image_url) || null,
+      }));
+    }
+    if (Array.isArray((step as any).testimonials)) {
+      clean.testimonials = (step as any).testimonials.slice(0, 6).map((t: any) => ({
+        name: String(t?.name ?? "").slice(0, 120),
+        text: String(t?.text ?? "").slice(0, 400),
+      }));
+    }
+    return clean as QuizStep;
+  });
+
+  return {
+    version: 1,
+    start_step_id: def.start_step_id ?? "",
+    theme: {
+      ...defaultQuizTheme(),
+      ...theme,
+      primary: safeColor(theme.primary, "#2563eb"),
+      background: safeColor(theme.background, "#0b1020"),
+      surface: safeColor(theme.surface, "#131a2e"),
+      text: safeColor(theme.text, "#f5f7ff"),
+      muted: safeColor(theme.muted, "#9aa4c2"),
+      logo_url: safeUrl(theme.logo_url) || null,
+      background_url: safeUrl(theme.background_url) || null,
+      font: safeFont(theme.font),
+      show_progress: theme.show_progress !== false,
+      radius: Math.min(40, Math.max(0, Math.round(Number(theme.radius) || 0))),
+    },
+    steps,
+  };
+}
+
 const mediaSchema = z.object({
   type: z.enum(["image", "video"]),
   url: z.string().max(2000),
   poster: z.string().max(2000).nullish(),
+  vsl: z.boolean().optional(),
+  autoplay: z.boolean().optional(),
+  unlock_after: z.number().int().min(0).max(3600).nullish(),
+  caption: z.string().max(120).nullish(),
 });
 
 const optionSchema = z.object({
@@ -160,6 +270,7 @@ const definitionSchema = z.object({
     text: z.string().max(40),
     muted: z.string().max(40),
     logo_url: z.string().max(2000).nullish(),
+    background_url: z.string().max(2000).nullish(),
     font: z.enum(["inter", "display", "system"]),
     show_progress: z.boolean(),
     radius: z.number().int().min(0).max(40),
@@ -178,7 +289,7 @@ export function parseDraftDefinition(input: unknown): QuizDefinition {
       `Estrutura do quiz inválida (${where}): ${first?.message ?? "dados inválidos"}`,
     );
   }
-  return parsed.data as QuizDefinition;
+  return sanitizeDefinition(parsed.data as QuizDefinition);
 }
 
 /** Valida a estrutura completa do quiz antes de publicar. Lança erro legível em PT. */
@@ -237,9 +348,22 @@ export function progressOf(def: QuizDefinition, stepId: string) {
   return Math.min(1, (i + 1) / def.steps.length);
 }
 
-/** Fonte do tema (com valores por omissão se o JSON vier incompleto). */
+/** Fonte do tema (saneada; protege dados antigos já gravados). */
 export function themeOf(def: Partial<QuizDefinition> | null | undefined): QuizTheme {
-  return { ...defaultQuizTheme(), ...((def?.theme as Partial<QuizTheme>) ?? {}) };
+  const merged = { ...defaultQuizTheme(), ...((def?.theme as Partial<QuizTheme>) ?? {}) };
+  return {
+    ...merged,
+    primary: safeColor(merged.primary, "#2563eb"),
+    background: safeColor(merged.background, "#0b1020"),
+    surface: safeColor(merged.surface, "#131a2e"),
+    text: safeColor(merged.text, "#f5f7ff"),
+    muted: safeColor(merged.muted, "#9aa4c2"),
+    logo_url: safeUrl(merged.logo_url) || null,
+    background_url: safeUrl(merged.background_url) || null,
+    font: safeFont(merged.font),
+    show_progress: merged.show_progress !== false,
+    radius: Math.min(40, Math.max(0, Math.round(Number(merged.radius) || 0))),
+  };
 }
 
 export function slugify(value: string) {

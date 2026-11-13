@@ -30,6 +30,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReferenceGeneration } from "@/components/payments/ReferenceGeneration";
+import { QuizShareDialog } from "@/components/quiz/QuizShareDialog";
+import { QuizLeadsDialog } from "@/components/quiz/QuizLeadsDialog";
 import { ReceiptUpload } from "@/components/payments/ReceiptUpload";
 import {
   PLAN_PRICES,
@@ -40,7 +42,13 @@ import {
   startFreeTrial,
   submitPlanReceipt,
 } from "@/lib/plans.functions";
-import { createQuiz, deleteQuiz, duplicateQuiz, listMyQuizzes, setQuizStatus } from "@/lib/quizzes.functions";
+import {
+  createQuiz,
+  deleteQuiz,
+  duplicateQuiz,
+  listMyQuizzes,
+  setQuizStatus,
+} from "@/lib/quizzes.functions";
 import { PAYPAY_REFERENCE } from "@/lib/payments.config";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -123,6 +131,12 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
   const [creating, setCreating] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("todos");
+  const [shareQuiz, setShareQuiz] = useState<{
+    slug: string;
+    title: string;
+    status: string;
+  } | null>(null);
+  const [leadsQuiz, setLeadsQuiz] = useState<{ id: string; title: string } | null>(null);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["my-quizzes"],
@@ -149,7 +163,8 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
   }
 
   async function remove(id: string) {
-    if (!confirm("Tem a certeza que deseja eliminar este quiz? Esta ação não pode ser revertida.")) return;
+    if (!confirm("Tem a certeza que deseja eliminar este quiz? Esta ação não pode ser revertida."))
+      return;
     try {
       await deleteFn({ data: { id } });
       toast.success("Quiz eliminado");
@@ -182,7 +197,7 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
   }
 
   const items = data?.items ?? [];
-  
+
   const filteredItems = items.filter((quiz: any) => {
     const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase());
     if (activeTab === "todos") return matchesSearch;
@@ -197,7 +212,10 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
     rascunhos: items.filter((q: any) => q.status === "rascunho").length,
     totalViews: items.reduce((sum: number, q: any) => sum + (q.visits || 0), 0),
     totalLeads: items.reduce((sum: number, q: any) => sum + (q.leads || 0), 0),
-    totalConversions: items.reduce((sum: number, q: any) => sum + Math.floor((q.visits || 0) * (q.conversion || 0)), 0),
+    totalConversions: items.reduce(
+      (sum: number, q: any) => sum + Math.floor((q.visits || 0) * (q.conversion || 0)),
+      0,
+    ),
   };
 
   return (
@@ -217,7 +235,9 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <Button
             onClick={async () => {
               if (!title.trim()) {
-                document.getElementById("quiz-create-title")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                document
+                  .getElementById("quiz-create-title")
+                  ?.scrollIntoView({ behavior: "smooth", block: "center" });
                 document.getElementById("quiz-create-title")?.focus();
                 return;
               }
@@ -251,12 +271,35 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
         <CardContent className="p-4 space-y-3">
           <div>
             <h2 className="font-semibold">Criar novo quiz</h2>
-            <p className="text-sm text-muted-foreground">Dê um nome ao quiz para abrir o editor e adicionar etapas, imagens, vídeos e ofertas.</p>
+            <p className="text-sm text-muted-foreground">
+              Dê um nome ao quiz para abrir o editor e adicionar etapas, imagens, vídeos e ofertas.
+            </p>
           </div>
-          <form className="flex flex-col sm:flex-row gap-2" onSubmit={(event) => { event.preventDefault(); void create(); }}>
-            <Input id="quiz-create-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Nome do quiz" maxLength={120} className="min-w-0 flex-1" />
-            <Button type="submit" disabled={creating} className="gradient-brand text-primary-foreground">
-              {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+          <form
+            className="flex flex-col sm:flex-row gap-2"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void create();
+            }}
+          >
+            <Input
+              id="quiz-create-title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Nome do quiz"
+              maxLength={120}
+              className="min-w-0 flex-1"
+            />
+            <Button
+              type="submit"
+              disabled={creating}
+              className="gradient-brand text-primary-foreground"
+            >
+              {creating ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4 mr-2" />
+              )}
               Criar quiz
             </Button>
           </form>
@@ -339,9 +382,7 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle>Meus Quizzes</CardTitle>
-              <CardDescription>
-                Gerencie todos os seus quizzes desde este painel
-              </CardDescription>
+              <CardDescription>Gerencie todos os seus quizzes desde este painel</CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative">
@@ -377,7 +418,9 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                   <div>
                     <p className="font-medium">Nenhum quiz encontrado</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {searchTerm ? "Tente ajustar a sua pesquisa" : "Crie o seu primeiro quiz para começar"}
+                      {searchTerm
+                        ? "Tente ajustar a sua pesquisa"
+                        : "Crie o seu primeiro quiz para começar"}
                     </p>
                   </div>
                   {!searchTerm && (
@@ -437,7 +480,11 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                             {quiz.steps || 0} etapas
                           </div>
                           <div>
-                            Actualizado {formatDistanceToNow(new Date(quiz.updated_at), { addSuffix: true, locale: ptBR })}
+                            Actualizado{" "}
+                            {formatDistanceToNow(new Date(quiz.updated_at), {
+                              addSuffix: true,
+                              locale: ptBR,
+                            })}
                           </div>
                         </div>
                       </div>
@@ -447,6 +494,28 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                             Editar
                           </Button>
                         </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setShareQuiz({
+                              slug: quiz.slug,
+                              title: quiz.title,
+                              status: quiz.status,
+                            })
+                          }
+                        >
+                          <Share2 className="mr-1 h-3.5 w-3.5" />
+                          Link
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setLeadsQuiz({ id: quiz.id, title: quiz.title })}
+                        >
+                          <Users className="mr-1 h-3.5 w-3.5" />
+                          {quiz.leads || 0}
+                        </Button>
                         <Button size="sm" variant="outline" onClick={() => duplicate(quiz.id)}>
                           <Copy className="h-3.5 w-3.5 mr-1" />
                           Duplicar
@@ -477,6 +546,20 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
           </Tabs>
         </CardContent>
       </Card>
+
+      <QuizShareDialog
+        open={!!shareQuiz}
+        onOpenChange={(open) => !open && setShareQuiz(null)}
+        slug={shareQuiz?.slug ?? ""}
+        title={shareQuiz?.title ?? "Quiz"}
+        published={shareQuiz?.status === "publicado"}
+      />
+      <QuizLeadsDialog
+        open={!!leadsQuiz}
+        onOpenChange={(open) => !open && setLeadsQuiz(null)}
+        quizId={leadsQuiz?.id ?? null}
+        title={leadsQuiz?.title ?? "Quiz"}
+      />
     </div>
   );
 }

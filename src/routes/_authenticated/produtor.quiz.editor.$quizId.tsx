@@ -2,12 +2,14 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ArrowLeft, Eye, Loader2, Save, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, Send, Share2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getMyQuiz, saveQuiz, setQuizStatus } from "@/lib/quizzes.functions";
 import { QuizEditor } from "@/components/quiz/QuizEditor";
+import { QuizShareDialog } from "@/components/quiz/QuizShareDialog";
+import { quizPublicUrl } from "@/lib/quiz-links";
 
 export const Route = createFileRoute("/_authenticated/produtor/quiz/editor/$quizId")({
   head: () => ({
@@ -31,6 +33,7 @@ function QuizEditorPage() {
 
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   async function save(definition: any, title?: string) {
     setSaving(true);
@@ -124,19 +127,20 @@ function QuizEditorPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/quiz/preview">
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                Pré-visualizar
-              </Button>
-            </Link>
+            <Button variant="outline" size="sm" onClick={() => setShareOpen(true)}>
+              <Share2 className="h-4 w-4 mr-2" />
+              Link do quiz
+            </Button>
+            {quiz.status === "publicado" && (
+              <a href={quizPublicUrl(quiz.slug)} target="_blank" rel="noreferrer">
+                <Button variant="outline" size="sm">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Abrir
+                </Button>
+              </a>
+            )}
             {quiz.status === "publicado" ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={unpublish}
-                disabled={publishing}
-              >
+              <Button variant="outline" size="sm" onClick={unpublish} disabled={publishing}>
                 {publishing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Despublicar
               </Button>
@@ -156,6 +160,13 @@ function QuizEditorPage() {
         </div>
       </header>
       <QuizEditor quiz={quiz} onSave={save} saving={saving} />
+      <QuizShareDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        slug={quiz.slug}
+        title={quiz.title}
+        published={quiz.status === "publicado"}
+      />
     </div>
   );
 }

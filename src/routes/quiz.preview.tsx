@@ -37,6 +37,23 @@ const DEMO: QuizDefinition = {
       description: "Demora menos de 1 minuto e no fim mostramos a solução certa para o seu caso.",
       media: { type: "image", url: cover },
       button_label: "Começar",
+      next: "vsl",
+    },
+    {
+      id: "vsl",
+      type: "info_media",
+      title: "Veja como funciona em 2 minutos",
+      description: "Este é o comportamento de uma VSL: o botão só aparece quando o vídeo termina.",
+      media: {
+        type: "video",
+        url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+        poster: cover,
+        vsl: true,
+        autoplay: true,
+        caption: "Assista até ao fim",
+      },
+      button_label: "Já vi, continuar",
+      next: "objetivo",
     },
     {
       id: "objetivo",
