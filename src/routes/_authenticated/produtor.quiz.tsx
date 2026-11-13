@@ -451,13 +451,15 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
-                          <Link
-                            to="/produtor/quiz/editor/$quizId"
-                            params={{ quizId: quiz.id }}
-                            className="font-semibold hover:text-primary transition-colors truncate"
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.assign(`/produtor/quiz/editor/${encodeURIComponent(quiz.id)}`);
+                            }}
+                            className="font-semibold hover:text-primary transition-colors truncate text-left"
                           >
                             {quiz.title}
-                          </Link>
+                          </button>
                           <Badge variant={quiz.status === "publicado" ? "default" : "secondary"}>
                             {quiz.status === "publicado" ? "Publicado" : "Rascunho"}
                           </Badge>
@@ -489,11 +491,16 @@ function PremiumActive({ plan, onChanged }: { plan: any; onChanged: () => void }
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Link to="/produtor/quiz/editor/$quizId" params={{ quizId: quiz.id }}>
-                          <Button size="sm" variant="outline">
-                            Editar
-                          </Button>
-                        </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          type="button"
+                          onClick={() => {
+                            window.location.assign(`/produtor/quiz/editor/${encodeURIComponent(quiz.id)}`);
+                          }}
+                        >
+                          Editar
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
