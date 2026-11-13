@@ -26,9 +26,16 @@ function QuizEditorPage() {
   const saveQuizFn = useServerFn(saveQuiz);
   const setStatusFn = useServerFn(setQuizStatus);
 
-  const { data: quiz, isLoading } = useQuery({
+  const {
+    data: quiz,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["my-quiz", quizId],
     queryFn: () => getQuizFn({ data: { id: quizId } }),
+    retry: 1,
   });
 
   const [saving, setSaving] = useState(false);
@@ -85,10 +92,27 @@ function QuizEditorPage() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="mx-auto max-w-xl p-6 sm:p-10 text-center space-y-4">
+        <h1 className="text-lg font-semibold">Não foi possível abrir o editor</h1>
+        <p className="text-sm text-muted-foreground break-words">
+          {(error as Error)?.message || "Ocorreu um erro ao carregar este quiz."}
+        </p>
+        <div className="flex justify-center gap-2">
+          <Button variant="outline" onClick={() => refetch()}>Tentar novamente</Button>
+          <Link to="/produtor/quiz">
+            <Button variant="outline">Voltar aos quizzes</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (!quiz) {
     return (
       <div className="p-10 text-center">
-        <p className="text-muted-foreground">Quiz não encontrado</p>
+        <p className="text-muted-foreground">Quiz não encontrado ou sem acesso.</p>
         <Link to="/produtor/quiz">
           <Button variant="outline" className="mt-4">
             Voltar
